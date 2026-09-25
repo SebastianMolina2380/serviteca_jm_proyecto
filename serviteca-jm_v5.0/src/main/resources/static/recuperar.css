@@ -1,0 +1,200 @@
+:root {
+        --black: #0a0a0a;
+        --black2: #111;
+        --black3: #1a1a1a;
+        --black4: #252525;
+        --green: #22c55e;
+        --green2: #16a34a;
+        --green3: #15803d;
+        --yellow: #facc15;
+        --white: #f1f5f9;
+        --gray1: #94a3b8;
+        --gray2: #64748b;
+        --red: #ef4444;
+      }
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Exo 2", sans-serif;
+        background:
+          radial-gradient(
+            ellipse at 70% 40%,
+            rgba(250, 204, 21, 0.06) 0%,
+            transparent 50%
+          ),
+          linear-gradient(135deg, #000 0%, #1a1500 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      h1,
+      h2 {
+        font-family: "Oswald", sans-serif;
+        font-weight: 700;
+      }
+      .card {
+        background: var(--black2);
+        border: 1px solid var(--black4);
+        border-radius: 16px;
+        padding: 40px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+      }
+      .logo-area {
+        text-align: center;
+        margin-bottom: 28px;
+      }
+      .icon-big {
+        font-size: 3.5rem;
+        margin-bottom: 12px;
+      }
+      .logo-area h2 {
+        font-size: 1.5rem;
+        color: var(--yellow);
+        letter-spacing: 2px;
+      }
+      .logo-area p {
+        font-size: 0.78rem;
+        color: var(--gray1);
+        margin-top: 4px;
+        line-height: 1.5;
+      }
+      .fg {
+        margin-bottom: 16px;
+      }
+      .fl {
+        display: block;
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--gray1);
+        margin-bottom: 6px;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+      }
+      .fc {
+        width: 100%;
+        background: var(--black3);
+        border: 1px solid var(--black4);
+        border-radius: 8px;
+        padding: 11px 14px;
+        color: var(--white);
+        font-size: 0.88rem;
+        font-family: "Exo 2", sans-serif;
+        outline: none;
+        transition: all 0.2s;
+      }
+      .fc:focus {
+        border-color: var(--yellow);
+      }
+      .btn-send {
+        width: 100%;
+        background: var(--green);
+        color: #000;
+        padding: 13px;
+        border: none;
+        border-radius: 8px;
+        font-family: "Oswald", sans-serif;
+        font-size: 0.95rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-top: 4px;
+      }
+      .btn-send:hover {
+        background: var(--green2);
+      }
+      /* ETIQUETA: Mensaje de éxito */
+      .success {
+        display: none;
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid var(--green3);
+        border-radius: 8px;
+        padding: 14px;
+        margin-top: 16px;
+        font-size: 0.78rem;
+        color: var(--green);
+        text-align: center;
+        line-height: 1.5;
+      }
+      /* ETIQUETA: Mensaje de error */
+      .error {
+        display: none;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid var(--red);
+        border-radius: 7px;
+        padding: 10px;
+        margin-top: 12px;
+        font-size: 0.76rem;
+        color: var(--red);
+        text-align: center;
+      }
+      /* ETIQUETA: Link volver */
+      .back {
+        display: block;
+        text-align: center;
+        margin-top: 18px;
+        font-size: 0.74rem;
+        color: var(--yellow);
+        text-decoration: none;
+      }
+      .back:hover {
+        color: var(--green);
+      }
+      /* ETIQUETA: Pasos del proceso */
+      .steps {
+        display: flex;
+        gap: 8px;
+        margin: 20px 0;
+        background: var(--black3);
+        padding: 14px;
+        border-radius: 10px;
+      }
+      .step-item {
+        flex: 1;
+        text-align: center;
+      }
+      .step-num {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--black4);
+        border: 1px solid var(--black4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.72rem;
+        font-weight: 700;
+        margin: 0 auto 6px;
+        font-family: "Oswald", sans-serif;
+        color: var(--gray1);
+      }
+      .step-num.act {
+        background: var(--yellow);
+        color: #000;
+        border-color: var(--yellow);
+      }
+      .step-txt {
+        font-size: 0.6rem;
+        color: var(--gray2);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      /* Responsive para recuperar contraseña */
+      @media (max-width: 480px) {
+        body {padding:12px}
+        .card {padding:20px;max-width:360px;border-radius:12px}
+        .logo-area img {width:56px}
+        .logo-area h2 {font-size:1.2rem}
+        .fg {margin-bottom:12px}
+        .fc {padding:10px 12px;font-size:.86rem}
+        .btn-send {padding:12px;font-size:.9rem}
+      }

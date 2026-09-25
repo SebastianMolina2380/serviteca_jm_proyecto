@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serviteca JM — Inicio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    >
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="serviteca-theme.css">
+</head>
+  <body>
+    <!-- ── NAVBAR ── -->
+    <nav>
+      <div style="display: flex; align-items: center; gap: 12px">
+        <img
+                class="sb-logo"
+                src="jm-logo.png"
+                alt="JM"
+        />
+        <span class="brand">JM <em>SERVITECA</em></span>
+      </div>
+      <div class="nav-links">
+        <a class="nl active" href="#hero">Inicio</a>
+        <a class="nl" href="#servicios">Servicios</a>
+        <a class="nl" href="#nosotros">Nosotros</a>
+        <a class="nl" href="#testimonios">Clientes</a>
+        <a class="nl" href="#contacto">Contacto</a>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center">
+        <button type="button" id="hambtn" class="btn-g" aria-label="Menú">☰</button>
+        <a href="login.html" class="btn btn-g">Iniciar sesión</a>
+        <a href="login.html" class="btn btn-y">📅 Agendar Cita</a>
+      </div>
+    </nav>
+    <!-- ── HERO ── -->
+    <section class="hero" id="hero">
+      <div class="hero-cont">
+        <div class="eye">
+          <span class="eye-dot"></span> Taller Especializado · TUNJA
+        </div>
+        <h1 class="h1 fu">Tu vehículo<br />merece lo<br /><em>mejor</em></h1>
+        <p class="hero-p fu d1">
+          Alineación, frenos, diagnóstico computarizado y más. Agenda en minutos
+          y recibe confirmación instantánea.
+        </p>
+        <div class="hero-btns fu d2">
+          <a href="login.html" class="btn btn-y">📅 Agendar ahora</a>
+          <a href="#servicios" class="btn btn-o">Ver servicios</a>
+        </div>
+        <div class="stats fu d3">
+          <div class="stat">
+            <div class="stat-num">+850</div>
+            <div class="stat-lbl">Clientes</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">12+</div>
+            <div class="stat-lbl">Años exp.</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">4.9★</div>
+            <div class="stat-lbl">Calificación</div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-tire">🔧</div>
+    </section>
+
+    <!-- ── SERVICIOS ── -->
+    <section class="section sec-dark" id="servicios">
+      <div class="sec-head">
+        <div class="sec-eye">Lo que hacemos</div>
+        <h2 class="sec-h2">Nuestros <em>Servicios</em></h2>
+        <p class="sec-p">
+          Técnicos certificados con equipos de diagnóstico de última generación.
+        </p>
+      </div>
+      <div class="srv-grid">
+        <div class="srv">
+          <span class="srv-ico">🔧</span>
+          <div class="srv-name">Mantenimiento</div>
+          <div class="srv-desc">
+            Cambio de aceite, filtros, bujías y revisión general completa.
+          </div>
+          <div class="srv-price">Desde 5.000</div>
+          <button type="button" class="srv-btn" onclick="location.href = 'login.html'">
+            Solicitar
+          </button>
+        </div>
+        <div class="srv">
+          <span class="srv-ico">🛑</span>
+          <div class="srv-name">Frenos</div>
+          <div class="srv-desc">
+            Revisión, cambio de pastillas, discos y calibración.
+          </div>
+          <div class="srv-price">Desde 0.000</div>
+          <button type="button" class="srv-btn" onclick="location.href = 'login.html'">
+            Solicitar
+          </button>
+        </div>
+        <div class="srv">
+          <span class="srv-ico">⚙️</span>
+          <div class="srv-name">Alineación</div>
+          <div class="srv-desc">
+            Corrección de ángulos y balanceo con equipo digital.
+          </div>
+          <div class="srv-price">Desde 5.000</div>
+          <button type="button" class="srv-btn" onclick="location.href = 'login.html'">
+            Solicitar
+          </button>
+        </div>
+        <div class="srv">
+          <span class="srv-ico">💻</span>
+          <div class="srv-name">Diagnóstico</div>
+          <div class="srv-desc">
+            Lectura de códigos y solución de fallas electrónicas.
+          </div>
+          <div class="srv-price">Desde 5.000</div>
+          <button type="button" class="srv-btn" onclick="location.href = 'login.html'">
+            Solicitar
+          </button>
+        </div>
+        <div class="srv">
+          <span class="srv-ico">🔋</span>
+          <div class="srv-name">Eléctrico</div>
+          <div class="srv-desc">
+            Batería, alternador, arranque y cableado completo.
+          </div>
+          <div class="srv-price">Desde 0.000</div>
+          <button type="button" class="srv-btn" onclick="location.href = 'login.html'">
+            Solicitar
+          </button>
+        </div>
+        <div class="srv">
+          <span class="srv-ico">🏎️</span>
+          <div class="srv-name">Llantas</div>
+          <div class="srv-desc">
+            Montaje, parche, nitrógeno y presión de llantas.
+          </div>
+          <div class="srv-price">Desde 5.000</div>
+           <button type="button" class="srv-btn" onclick="location.href='Login.html'">
+            Solicitar
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── NOSOTROS ── -->
+    <section class="section" id="nosotros">
+      <div class="sec-head">
+        <div class="sec-eye">Por qué elegirnos</div>
+        <h2 class="sec-h2">Tu confianza es <em>nuestra prioridad</em></h2>
+      </div>
+      <div class="why-grid">
+        <div>
+          <div class="why-ico">🏆</div>
+          <h3 class="why-h3">12 Años de Experiencia</h3>
+          <p class="why-p">
+            Más de una década atendiendo vehículos en Bogotá con calidad
+            garantizada.
+          </p>
+        </div>
+        <div>
+          <div class="why-ico">🔬</div>
+          <h3 class="why-h3">Diagnóstico Digital</h3>
+          <p class="why-p">
+            Equipos de última generación para identificar fallas con precisión.
+          </p>
+        </div>
+        <div>
+          <div class="why-ico">📲</div>
+          <h3 class="why-h3">Notificaciones Instantáneas</h3>
+          <p class="why-p">
+            Te avisamos por WhatsApp cuando tu vehículo esté listo.
+          </p>
+        </div>
+        <div>
+          <div class="why-ico">✅</div>
+          <h3 class="why-h3">Garantía en Repuestos</h3>
+          <p class="why-p">
+            Todos los repuestos tienen garantía de marcas reconocidas.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TESTIMONIOS ── -->
+    <section class="section sec-dark" id="testimonios">
+      <div class="sec-head">
+        <div class="sec-eye">Opiniones</div>
+        <h2 class="sec-h2">Lo que dicen nuestros <em>Clientes</em></h2>
+      </div>
+      <div class="testi-grid">
+        <div class="testi">
+          <div class="stars">★★★★★</div>
+          <p class="testi-txt">
+            "Excelente servicio, muy rápido y profesional. Me avisaron por
+            WhatsApp en todo momento."
+          </p>
+          <div class="testi-name">Carlos Mendoza</div>
+          <div class="testi-car">Toyota Corolla 2020</div>
+        </div>
+        <div class="testi">
+          <div class="stars">★★★★★</div>
+          <p class="testi-txt">
+            "La app para agendar es super fácil. El diagnóstico fue muy
+            detallado y el precio justo."
+          </p>
+          <div class="testi-name">Luisa Torres</div>
+          <div class="testi-car">Renault Sandero 2019</div>
+        </div>
+        <div class="testi">
+          <div class="stars">★★★★☆</div>
+          <p class="testi-txt">
+            "Buen trabajo en los frenos, técnicos muy profesionales. El taller
+            está muy bien equipado."
+          </p>
+          <div class="testi-name">Andrés Ríos</div>
+          <div class="testi-car">Chevrolet Spark 2021</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CONTACTO ── -->
+    <div class="contact" id="contacto">
+      <div class="contact-grid">
+        <div class="cinfo">
+          <h3>
+            ¿Dónde <span style="color: var(--yellow)">encontrarnos?</span>
+          </h3>
+          <p
+                  style="
+              color: var(--gray1);
+              font-size: 0.88rem;
+              margin-bottom: 22px;
+              line-height: 1.7;
+            "
+          >
+            Visítanos o agenda tu cita en línea. Atendemos con cita previa y sin
+            cita sujeto a disponibilidad.
+          </p>
+          <div class="citem">
+            <span class="cico">📍</span
+            ><span>Villapinzon-Tunja,Tunja,Boyaca GJ8W+8W</span>
+          </div>
+          <div class="citem">
+            <span class="cico">📱</span><span>+57 313 309 6458</span>
+          </div>
+          <div class="citem">
+            <span class="cico">✉️</span><span>jm.serviteca@gmail.com</span>
+          </div>
+          <div class="citem">
+            <span class="cico">🕐</span><span>Lun–Sáb: 7:00 AM – 6:00 PM</span>
+          </div>
+
+          <!-- BOTONES EN LÍNEA: Agendar Cita + WhatsApp -->
+          <div style="margin-top: 22px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center">
+            <a href="login.html" class="btn btn-y">📅 Agendar Cita</a>
+            <a href="https://wa.me/573133096458" class="btn btn-o btn-whatsapp" target="_blank" rel="noopener noreferrer">
+              <i class="fa-brands fa-whatsapp"></i> WhatsApp
+            </a>
+          </div>
+        </div>
+
+        <div class="cform">
+          <h4>Envíanos un mensaje</h4>
+          <div class="form-group">
+            <label class="fl" for="contact-name">Nombre</label>
+            <input id="contact-name" name="name" class="fc" placeholder="Tu nombre completo" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="fl" for="contact-phone">Teléfono</label>
+              <input id="contact-phone" name="phone" class="fc" placeholder="300 000 0000">
+            </div>
+            <div class="form-group">
+              <label class="fl" for="contact-email">Correo</label>
+              <input id="contact-email" name="email" class="fc" placeholder="correo@ejemplo.com" type="email" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="fl" for="contact-message">Mensaje</label>
+            <textarea
+                    id="contact-message"
+                    name="message"
+                    class="fc"
+                    rows="3"
+                    placeholder="¿En qué podemos ayudarte?"
+            ></textarea>
+          </div>
+          <button type="button" class="btn btn-y"
+                  style="width: 100%; justify-content: center; padding: 13px"
+          >
+            Enviar mensaje
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>© 2026 Serviteca JM · PRODISSJM v1.0</span>
+      <span style="color: var(--yellow)">TUNJA-BOYACA,COLOMBIA</span>
+    </div>
+
+    <!-- BOTÓN FLOTANTE MOVIDO A LA IZQUIERDA -->
+    <a href="https://wa.me/573133096458" class="wa wa-left" target="_blank" rel="noopener noreferrer" aria-label="Contacto WhatsApp">
+      <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <script src="index.js"></script>
+    <script src="chatbot.js"></script>
+  </body>
+</html>
+

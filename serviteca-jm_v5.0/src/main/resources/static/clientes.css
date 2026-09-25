@@ -1,0 +1,134 @@
+
+/* CLIENTES: complementa usuarios.css para conservar exactamente
+   la estructura del panel, sidebar y topbar de Gestión de Usuarios. */
+
+.clientes-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.clientes-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.clientes-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: min(520px, 100%);
+  background: var(--black2);
+  border: 1px solid var(--black4);
+  border-radius: 8px;
+  padding: 0 12px;
+}
+
+.clientes-search span {
+  color: var(--gray2);
+  font-size: 0.9rem;
+}
+
+.clientes-search input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--white);
+  padding: 11px 4px;
+  font-family: "Exo 2", sans-serif;
+  font-size: 0.82rem;
+}
+
+.clientes-search input::placeholder {
+  color: var(--gray2);
+}
+
+.clientes-count {
+  color: var(--gray1);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.clientes-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.clientes-card .tw {
+  overflow-x: auto;
+}
+
+.clientes-card table {
+  width: 100%;
+  min-width: 850px;
+  border-collapse: collapse;
+}
+
+.clientes-card th {
+  padding: 12px;
+  background: var(--black3);
+  color: var(--gray1);
+  border-bottom: 1px solid var(--black4);
+  text-align: left;
+  font-size: 0.68rem;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.clientes-card td {
+  padding: 13px 12px;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.42);
+  color: var(--white);
+  font-size: 0.78rem;
+  vertical-align: middle;
+}
+
+.clientes-card tbody tr {
+  transition: background 0.2s;
+}
+
+.clientes-card tbody tr:hover {
+  background: var(--black3);
+}
+
+.clientes-card tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.cliente-vacio,
+.cliente-error {
+  text-align: center !important;
+  padding: 30px !important;
+}
+
+.cliente-vacio {
+  color: var(--gray1) !important;
+}
+
+.cliente-error {
+  color: var(--red) !important;
+}
+
+@media (max-width: 760px) {
+  .clientes-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .clientes-search {
+    width: 100%;
+  }
+
+  .clientes-count {
+    align-self: flex-end;
+  }
+
+  .pg-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

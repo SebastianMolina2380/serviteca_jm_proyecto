@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Serviteca JM — Gestión de Usuarios</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link
+          href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"
+  >
+  <link rel="stylesheet" href="usuarios.css">
+  <script src="role-guard.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="serviteca-theme.css">
+</head>
+<body>
+
+<div class="layout">
+  <!-- 1. BARRA LATERAL -->
+  <aside class="sb">
+    <div class="sb-head">
+      <img
+              class="sb-logo"
+              src="jm-logo.png"
+              alt="JM"
+      />
+      <div>
+        <div class="sb-brand">JM SERVITECA<small>PRODISJM v1.0</small></div>
+      </div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-sec">Principal</div>
+      <a class="sb-link" href="dashboard.html"
+      ><span class="sb-ico">📊</span> Dashboard</a
+      >
+      <a class="sb-link" href="citas.html"
+      ><span class="sb-ico">📅</span> Citas
+        <span class="sb-badge">4</span></a
+      >
+      <a class="sb-link" href="nueva-cita.html"
+      ><span class="sb-ico">➕</span> Nueva Cita</a
+      >
+      <a class="sb-link" href="clientes.html"
+      ><span class="sb-ico">👤</span> Clientes</a
+      >
+      <a class="sb-link" href="vehiculo.html"
+      ><span class="sb-ico">🚗</span> Vehículos</a
+      >
+      <div class="sb-sec" style="margin-top: 8px">Administración</div>
+      <a class="sb-link active" href="usuarios.html"
+      ><span class="sb-ico">👥</span> Usuarios</a
+      >
+      <a class="sb-link" href="inventario.html"
+      ><span class="sb-ico">🔩</span> Inventario
+        <span class="sb-badge" style="background: var(--red)">2</span></a
+      >
+      <a class="sb-link" href="facturacion.html"
+      ><span class="sb-ico">💵</span> Facturación</a
+      >
+      <a class="sb-link" href="reportes.html"
+      ><span class="sb-ico">📈</span> Reportes</a
+      >
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-av" id="sbav">JM</div>
+      <div>
+        <div class="sb-uname" id="sbname">Admin</div>
+        <div class="sb-urole" id="sbrole">Administrador</div>
+      </div>
+      <a href="index.html" class="sb-out" title="Cerrar sesión">⏻</a>
+    </div>
+  </aside>
+
+  <!-- 2. CONTENEDOR PRINCIPAL QUE ENTRAPA TOPBAR Y CONTENIDO -->
+  <main class="main">
+    <div class="topbar">
+      <button type="button"
+              id="hambtn"
+              class="btn-ghost btn btn-primary"
+              aria-label="Abrir menú"
+              title="Abrir menú"
+      >
+        ☰
+      </button>
+      <div class="tb-title">Gestión de Usuarios</div>
+      <span
+              style="font-size: 0.74rem; color: var(--gray1)"
+              id="tbdate"
+      ></span>
+      <div class="av">JM</div>
+    </div>
+
+    <div class="pg">
+      <!-- PANTALLA P09: Gestión de Usuarios -->
+      <div class="pg-head">
+        <div>
+          <div class="pg-title">Gestión de Usuarios</div>
+          <div class="pg-sub">Roles y accesos del sistema</div>
+        </div>
+        <a href="nuevo-usuario.html" class="btn btn-y btn-primary">➕ Nuevo Usuario</a>
+      </div>
+      <!-- ETIQUETA: Tabla de usuarios con roles y estado -->
+      <div class="card" style="padding: 0; overflow: hidden">
+        <div class="tw">
+          <table>
+            <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Correo</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th>Últ. acceso</th>
+              <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody id="tbody-usuarios"><tr><td colspan="6">Cargando usuarios...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<script src="usuarios.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

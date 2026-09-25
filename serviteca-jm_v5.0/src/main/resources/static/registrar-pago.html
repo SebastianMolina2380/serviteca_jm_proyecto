@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Serviteca JM — Registrar pago</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Exo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f172a;--panel:#121824;--panel2:#182233;--line:#293548;--text:#f8fafc;--muted:#94a3b8;--green:#22c55e;--yellow:#facc15;--danger:#ef4444;--radius:16px}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#172b2a 0,transparent 35%),var(--bg);color:var(--text);font-family:"Exo 2",sans-serif}.layout{min-height:100vh;display:flex}.sidebar{width:250px;background:#0b1220;border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column}.brand{display:flex;align-items:center;gap:12px;padding:8px 10px 22px;border-bottom:1px solid var(--line)}.brand img{width:54px;height:54px;object-fit:contain}.brand b{font-family:Oswald,sans-serif;font-size:20px;letter-spacing:1px}.brand small{display:block;color:var(--muted);font-size:11px}.nav{padding-top:18px;display:grid;gap:7px}.nav a{color:#cbd5e1;text-decoration:none;padding:12px 14px;border-radius:10px}.nav a:hover,.nav a.active{background:#162234;color:var(--yellow);border-left:3px solid var(--green)}.logout{margin-top:auto;color:var(--muted);text-decoration:none;padding:12px}.main{flex:1;min-width:0}.topbar{height:72px;border-bottom:1px solid var(--line);background:#0d1524e8;backdrop-filter:blur(12px);display:flex;align-items:center;gap:16px;padding:0 28px;position:sticky;top:0;z-index:5}.hamb{display:none;background:none;border:0;color:#fff;font-size:26px}.title{font-family:Oswald,sans-serif;font-size:24px;letter-spacing:.6px}.date{margin-left:auto;color:var(--muted);font-size:13px}.page{max-width:1000px;margin:0 auto;padding:32px}.hero{border:1px solid var(--line);border-radius:20px;padding:26px;background:linear-gradient(135deg,#142333,#101927);box-shadow:0 18px 45px #0005;margin-bottom:20px}.eyebrow{color:var(--green);font-weight:700;letter-spacing:2px;font-size:12px}.hero h1{font-family:Oswald,sans-serif;margin:6px 0;font-size:36px}.hero p{color:var(--muted);margin:0}.form-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:24px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.field{display:grid;gap:7px}.field.full{grid-column:1/-1}.field label{font-size:13px;color:#cbd5e1;font-weight:600}.field input,.field select,.field textarea{width:100%;background:#0c1421;border:1px solid #334155;color:#fff;border-radius:10px;padding:12px 13px;font:inherit;outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px #22c55e22}.invoice-box{padding:15px;border:1px solid #334155;border-radius:12px;background:#0c1421;display:grid;gap:4px}.invoice-box strong{color:var(--yellow);font-family:Oswald,sans-serif;font-size:22px}.invoice-box span{color:var(--muted)}.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}.btn{border:1px solid #475569;border-radius:10px;padding:11px 17px;text-decoration:none;color:#fff;background:#182233;cursor:pointer;font:inherit;font-weight:700}.btn:hover{filter:brightness(1.1)}.btn-yellow{background:var(--yellow);border-color:var(--yellow);color:#111827}.message{margin-top:15px;min-height:22px;color:#fca5a5}.message.ok{color:#86efac}.hidden{display:none!important}@media(max-width:800px){.sidebar{position:fixed;left:-270px;top:0;bottom:0;z-index:20;transition:.2s}.sidebar.open{left:0}.hamb{display:block}.date{display:none}.page{padding:20px}.grid{grid-template-columns:1fr}.field.full{grid-column:auto}}
+</style>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="serviteca-theme.css">
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><img src="/jm-logo.png" alt="JM Serviteca"><div><b>JM SERVITECA</b><small>Gestión de pagos</small></div></div>
+  <nav class="nav">
+    <a href="dashboard.html">📊 Dashboard</a>
+    <a href="citas.html">📅 Citas</a>
+    <a href="vehiculo.html">🚗 Vehículos</a>
+    <a href="usuarios.html">👥 Usuarios</a>
+    <a href="facturacion.html" class="active">💳 Facturación</a>
+    <a href="reportes.html">📈 Reportes</a>
+  </nav>
+  <a class="logout" href="index.html">⏻ Cerrar sesión</a>
+</aside>
+<main class="main">
+<header class="topbar"><button class="hamb" id="hamburger" type="button">☰</button><div class="title">Registrar pago</div><div class="date" id="today"></div></header>
+<section class="page">
+<div class="hero"><div class="eyebrow">SERVITECA JM · CAJA</div><h1>Registrar pago</h1><p>Asocia el pago a una factura y actualiza su medio de pago en el sistema.</p></div>
+<form class="form-card" id="payment-form" novalidate>
+<div class="grid">
+<div class="field full"><label for="factura">Factura asociada</label><select id="factura" name="factura" required><option value="">Cargando facturas…</option></select></div>
+<div class="field"><label>Resumen</label><div class="invoice-box" id="invoice-summary"><span>Selecciona una factura.</span></div></div>
+<div class="field"><label for="metodo">Método de pago</label><select id="metodo" name="metodo" required><option value="Efectivo">Efectivo</option><option value="Tarjeta">Tarjeta</option><option value="Transferencia">Transferencia</option><option value="Nequi">Nequi</option><option value="Daviplata">Daviplata</option><option value="Otro">Otro</option></select></div>
+<div class="field"><label for="monto">Monto recibido (COP)</label><input id="monto" name="monto" type="number" min="0" step="1" required></div>
+<div class="field"><label for="fecha">Fecha del pago</label><input id="fecha" name="fecha" type="date" required></div>
+<div class="field full"><label for="notas">Notas</label><textarea id="notas" name="notas" rows="4" maxlength="500" placeholder="Observaciones del pago…"></textarea></div>
+</div>
+<div id="payment-message" class="message" role="alert"></div>
+<div class="actions"><a class="btn" href="facturacion.html">Cancelar</a><button class="btn btn-yellow" type="submit">💳 Confirmar pago</button></div>
+</form>
+</section>
+</main>
+</div>
+<script src="registrar-pago.js"></script>
+</body>
+</html>

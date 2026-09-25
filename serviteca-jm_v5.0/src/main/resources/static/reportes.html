@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Serviteca JM — Reportes</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Fuentes Google -->
+  <link
+          href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"
+  >
+  <!-- Hojas de Estilo -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="reportes.css">
+  <!-- Scripts de Protección/Roles -->
+  <script src="role-guard.js"></script>
+  <link rel="stylesheet" href="serviteca-theme.css">
+</head>
+<body>
+<div class="layout">
+  <!-- BARRA LATERAL / SIDEBAR -->
+  <aside class="sb" id="sidebar">
+    <div class="sb-head">
+      <img class="sb-logo" src="jm-logo.png" alt="JM Serviteca Logo" />
+      <div>
+        <div class="sb-brand">JM SERVITECA<small>PRODISJM v1.0</small></div>
+      </div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-sec">Principal</div>
+      <a class="sb-link" href="dashboard.html"><span class="sb-ico">📊</span> Dashboard</a>
+      <a class="sb-link" href="citas.html"><span class="sb-ico">📅</span> Citas <span class="sb-badge">4</span></a>
+      <a class="sb-link" href="nueva-cita.html"><span class="sb-ico">➕</span> Nueva Cita</a>
+      <a class="sb-link" href="clientes.html"><span class="sb-ico">👤</span> Clientes</a>
+      <a class="sb-link" href="vehiculo.html"><span class="sb-ico">🚗</span> Vehículos</a>
+      <div class="sb-sec" style="margin-top: 8px">Administración</div>
+      <a class="sb-link" href="usuarios.html"><span class="sb-ico">👥</span> Usuarios</a>
+      <a class="sb-link" href="inventario.html"><span class="sb-ico">🔩</span> Inventario <span class="sb-badge" style="background: var(--red)">2</span></a>
+      <a class="sb-link" href="facturacion.html"><span class="sb-ico">💵</span> Facturación</a>
+      <a class="sb-link active" href="reportes.html"><span class="sb-ico">📈</span> Reportes</a>
+
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-av" id="sbav">JM</div>
+      <div>
+        <div class="sb-uname" id="sbname">Admin</div>
+        <div class="sb-urole" id="sbrole">Administrador</div>
+      </div>
+      <a href="index.html" class="sb-out" title="Cerrar sesión">⏻</a>
+    </div>
+  </aside>
+
+  <!-- ÁREA PRINCIPAL -->
+  <div class="main">
+    <div class="topbar">
+      <button type="button" id="hambtn" class="btn btn-ghost" onclick="toggleSb()">☰</button>
+      <div class="tb-title">Reportes</div>
+      <span style="font-size: 0.74rem; color: var(--gray1)" id="tbdate"></span>
+      <div class="av">JM</div>
+    </div>
+
+    <div class="pg">
+      <!-- ENCABEZADO DE LA PÁGINA -->
+      <div class="pg-head">
+        <div>
+          <div class="pg-title">Reportes</div>
+          <div class="pg-sub">Métricas y análisis de desempeño</div>
+        </div>
+        <div style="display: flex; gap: 8px">
+          <button type="button" class="btn btn-ghost btn-sm">📄 Exportar PDF</button>
+          <button type="button" class="btn btn-primary btn-sm">📊 Exportar Excel</button>
+        </div>
+      </div>
+
+      <!-- FILA DE MÉTRICAS / GRÁFICAS -->
+      <div class="two" style="margin-bottom: 16px">
+        <!-- GRÁFICA DE INGRESOS POR SEMANA (CORREGIDA) -->
+        <div class="card">
+          <h4 style="font-size: 0.95rem; letter-spacing: 0.3px; margin-bottom: 14px;">
+            Ingresos por Semana — Marzo 2026
+          </h4>
+          <div class="bar-chart">
+            <div class="bc">
+              <div class="bf" style="height: 50px"></div>
+              <div class="bl">Sem 1</div>
+              <div class="bv">$1.1M</div>
+            </div>
+            <div class="bc">
+              <div class="bf" style="height: 65px"></div>
+              <div class="bl">Sem 2</div>
+              <div class="bv">$1.4M</div>
+            </div>
+            <div class="bc">
+              <div class="bf" style="height: 78px; background: var(--yellow); box-shadow: 0 0 12px rgba(250, 204, 21, 0.4);"></div>
+              <div class="bl">Sem 3</div>
+              <div class="bv" style="color: var(--yellow); font-weight: 800">$1.7M</div>
+            </div>
+            <div class="bc">
+              <div class="bf" style="height: 28px; background: var(--black4); border: 1px dashed var(--black3);"></div>
+              <div class="bl">Sem 4</div>
+              <div class="bv" style="color: var(--gray2)">Proy.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BARRAS DE SERVICIOS MÁS SOLICITADOS -->
+        <div class="card">
+          <h4 style="font-size: 0.95rem; letter-spacing: 0.3px; margin-bottom: 14px;">
+            Servicios más Solicitados
+          </h4>
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.78rem;">
+                <span>Mantenimiento</span><span style="color: var(--yellow)">38%</span>
+              </div>
+              <div class="prog-w">
+                <div class="prog-f" style="width: 38%; background: var(--yellow)"></div>
+              </div>
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.78rem;">
+                <span>Frenos</span><span style="color: var(--green)">24%</span>
+              </div>
+              <div class="prog-w">
+                <div class="prog-f" style="width: 24%"></div>
+              </div>
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.78rem;">
+                <span>Alineación</span><span style="color: var(--green)">18%</span>
+              </div>
+              <div class="prog-w">
+                <div class="prog-f" style="width: 18%"></div>
+              </div>
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.78rem;">
+                <span>Diagnóstico</span><span style="color: var(--green)">14%</span>
+              </div>
+              <div class="prog-w">
+                <div class="prog-f" style="width: 14%"></div>
+              </div>
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.78rem;">
+                <span>Otros</span><span style="color: var(--green)">6%</span>
+              </div>
+              <div class="prog-w">
+                <div class="prog-f" style="width: 6%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABLA DE DESEMPEÑO POR TÉCNICO -->
+      <div class="card" style="padding: 0; overflow: hidden">
+        <div style="padding: 14px 20px 10px">
+          <h4 style="font-size: 0.95rem; letter-spacing: 0.3px;">
+            Desempeño por Técnico — Marzo 2026
+          </h4>
+        </div>
+        <div class="tw">
+          <table>
+            <thead>
+            <tr>
+              <th>Técnico</th>
+              <th>Servicios</th>
+              <th>Completados</th>
+              <th>Cancelados</th>
+              <th>Tiempo Prom.</th>
+              <th>Calificación</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>Carlos Ruiz</td>
+              <td>18</td>
+              <td><span class="badge bg">17</span></td>
+              <td><span class="badge br">1</span></td>
+              <td>2.3 hrs</td>
+              <td style="color: var(--yellow)">★ 4.9</td>
+            </tr>
+            <tr>
+              <td>Miguel Pérez</td>
+              <td>15</td>
+              <td><span class="badge bg">14</span></td>
+              <td><span class="badge br">1</span></td>
+              <td>2.1 hrs</td>
+              <td style="color: var(--yellow)">★ 4.8</td>
+            </tr>
+            <tr>
+              <td>Juan Gómez</td>
+              <td>12</td>
+              <td><span class="badge bg">12</span></td>
+              <td><span class="badge bgr">0</span></td>
+              <td>1.9 hrs</td>
+              <td style="color: var(--yellow)">★ 5.0</td>
+            </tr>
+            <tr>
+              <td>Andrés López</td>
+              <td>10</td>
+              <td><span class="badge bg">9</span></td>
+              <td><span class="badge br">1</span></td>
+              <td>2.5 hrs</td>
+              <td style="color: var(--yellow)">★ 4.7</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div id="sb-overlay" onclick="toggleSb()"></div>
+</div>
+
+<!-- SCRIPTS -->
+<script>
+  function toggleSb() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+</script>
+<script src="reportes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

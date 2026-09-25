@@ -1,0 +1,8 @@
+# Ignore generated validation reports
+w3c-reports/
+
+# Node / environment files
+node_modules/
+.env
+.env.*
+*.log

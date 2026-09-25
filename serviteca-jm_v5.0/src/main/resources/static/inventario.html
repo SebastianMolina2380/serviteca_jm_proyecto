@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Serviteca JM — Inventario de Repuestos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link
+          href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"
+  >
+  <link rel="stylesheet" href="inventario.css">
+  <script src="role-guard.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="serviteca-theme.css">
+</head>
+<body>
+
+<div class="layout">
+  <!-- 1. BARRA LATERAL -->
+  <aside class="sb">
+    <div class="sb-head">
+      <img
+              class="sb-logo"
+              src="jm-logo.png"
+              alt="JM"
+      />
+      <div>
+        <div class="sb-brand">JM SERVITECA<small>PRODISJM v1.0</small></div>
+      </div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-sec">Principal</div>
+      <a class="sb-link" href="dashboard.html"
+      ><span class="sb-ico">📊</span> Dashboard</a
+      >
+      <a class="sb-link" href="citas.html"
+      ><span class="sb-ico">📅</span> Citas
+        <span class="sb-badge">4</span></a
+      >
+      <a class="sb-link" href="nueva-cita.html"
+      ><span class="sb-ico">➕</span> Nueva Cita</a
+      >
+      <a class="sb-link" href="clientes.html"
+      ><span class="sb-ico">👤</span> Clientes</a
+      >
+      <a class="sb-link" href="vehiculo.html"
+      ><span class="sb-ico">🚗</span> Vehículos</a
+      >
+      <div class="sb-sec" style="margin-top: 8px">Administración</div>
+      <a class="sb-link" href="usuarios.html"
+      ><span class="sb-ico">👥</span> Usuarios</a
+      >
+      <a class="sb-link active" href="inventario.html"
+      ><span class="sb-ico">🔩</span> Inventario
+        <span class="sb-badge" style="background: var(--red)">2</span></a
+      >
+      <a class="sb-link" href="facturacion.html"
+      ><span class="sb-ico">💵</span> Facturación</a
+      >
+      <a class="sb-link" href="reportes.html"
+      ><span class="sb-ico">📈</span> Reportes</a
+      >
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-av" id="sbav">JM</div>
+      <div>
+        <div class="sb-uname" id="sbname">Admin</div>
+        <div class="sb-urole" id="sbrole">Administrador</div>
+      </div>
+      <a href="index.html" class="sb-out" title="Cerrar sesión">⏻</a>
+    </div>
+  </aside>
+
+  <!-- 2. CONTENEDOR PRINCIPAL QUE ENVOLVERÁ TOPBAR Y CONTENIDO -->
+  <main class="main">
+    <div class="topbar">
+      <button type="button"
+              id="hambtn"
+              class="btn-ghost btn btn-primary"
+              aria-label="Abrir menú"
+              title="Abrir menú"
+      >
+        ☰
+      </button>
+      <div class="tb-title">Inventario de Repuestos</div>
+      <span
+              style="font-size: 0.74rem; color: var(--gray1)"
+              id="tbdate"
+      ></span>
+      <div class="av">JM</div>
+    </div>
+
+    <div class="pg">
+      <!-- PANTALLA P10: Inventario de Repuestos -->
+      <div class="pg-head">
+        <div>
+          <div class="pg-title">Inventario de Repuestos</div>
+          <div class="pg-sub">Control de stock e insumos</div>
+        </div>
+        <div style="display: flex; gap: 8px">
+          <button type="button" class="btn btn-gh btn btn-primary" style="font-size: 0.76rem">
+            📊 Exportar
+          </button>
+          <button type="button" class="btn btn-y btn btn-primary">➕ Registrar entrada</button>
+        </div>
+      </div>
+
+      <!-- ETIQUETA: Alerta de stock mínimo -->
+      <div
+              style="
+              background: rgba(239, 68, 68, 0.08);
+              border: 1px solid var(--red);
+              border-radius: 8px;
+              padding: 12px 16px;
+              margin-bottom: 16px;
+              font-size: 0.82rem;
+              color: var(--red);
+            "
+      >
+        ⚠️ <strong>2 repuestos</strong> están por debajo del stock mínimo.
+        Realiza el pedido pronto.
+      </div>
+
+      <!-- ETIQUETA: Tabla de inventario con estados de stock -->
+      <div class="card" style="padding: 0; overflow: hidden">
+        <div class="tw">
+          <table>
+            <thead>
+            <tr>
+              <th>Repuesto / Insumo</th>
+              <th>Categoría</th>
+              <th>Stock Actual</th>
+              <th>Stock Mínimo</th>
+              <th>Unidad</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody id="tbody-inventario">
+            <tr>
+              <td>Pastillas de freno</td>
+              <td>Frenos</td>
+              <td>12</td>
+              <td>5</td>
+              <td>Juegos</td>
+              <td><span class="badge bg">OK</span></td>
+              <td style="display: flex; gap: 5px">
+                <button type="button" class="btn-sm-g btn btn-primary">+ Entrada</button>
+                <button type="button" class="btn-sm-g btn btn-primary">- Salida</button>
+              </td>
+            </tr>
+            <tr>
+              <td style="color: var(--red); font-weight: 600">
+                Aceite motor 5W-30
+              </td>
+              <td>Mantenimiento</td>
+              <td style="color: var(--red); font-weight: 700">3</td>
+              <td>10</td>
+              <td>Litros</td>
+              <td><span class="badge br">⚠️ Bajo</span></td>
+              <td style="display: flex; gap: 5px">
+                <button type="button" class="btn-sm-g btn btn-primary">+ Entrada</button>
+                <button type="button" class="btn-sm-g btn btn-primary">- Salida</button>
+              </td>
+            </tr>
+            <tr>
+              <td style="color: var(--red); font-weight: 600">
+                Filtro de aceite
+              </td>
+              <td>Mantenimiento</td>
+              <td style="color: var(--red); font-weight: 700">2</td>
+              <td>8</td>
+              <td>Unidades</td>
+              <td><span class="badge br">⚠️ Bajo</span></td>
+              <td style="display: flex; gap: 5px">
+                <button type="button" class="btn-sm-g btn btn-primary">+ Entrada</button>
+                <button type="button" class="btn-sm-g btn btn-primary">- Salida</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Discos de freno</td>
+              <td>Frenos</td>
+              <td>6</td>
+              <td>2</td>
+              <td>Pares</td>
+              <td><span class="badge bg">OK</span></td>
+              <td style="display: flex; gap: 5px">
+                <button type="button" class="btn-sm-g btn btn-primary">+ Entrada</button>
+                <button type="button" class="btn-sm-g btn btn-primary">- Salida</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Bujías NGK</td>
+              <td>Mantenimiento</td>
+              <td>20</td>
+              <td>8</td>
+              <td>Unidades</td>
+              <td><span class="badge bg">OK</span></td>
+              <td style="display: flex; gap: 5px">
+                <button type="button" class="btn-sm-g btn btn-primary">+ Entrada</button>
+                <button type="button" class="btn-sm-g btn btn-primary">- Salida</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Líquido de frenos</td>
+              <td>Frenos</td>
+              <td>5</td>
+              <td>3</td>
+              <td>Litros</td>
+              <td><span class="badge bg">OK</span></td>
+              <td style="display: flex; gap: 5px">
+                <button type="button" class="btn-sm-g btn btn-primary">+ Entrada</button>
+                <button type="button" class="btn-sm-g btn btn-primary">- Salida</button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<script src="inventario.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

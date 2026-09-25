@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Serviteca JM — Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link
+          href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"
+  >
+  <!-- ETIQUETA P01: Login / Inicio de Sesión -->
+  <link rel="stylesheet" href="login.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="serviteca-theme.css">
+</head>
+<body>
+<!-- PANTALLA P01: Login / Inicio de Sesión -->
+<div class="card">
+  <!-- COMPONENTE: Logo y encabezado -->
+  <div class="card-logo">
+    <div class="card-logo">
+      <img
+              class="sb-logo"
+              src="jm-logo.png"
+              alt="JM"
+      />
+    <h2>PRODISJM</h2>
+    <p>Serviteca JM · Sistema de Gestión de Citas y Servicios</p>
+  </div>
+
+  <!-- COMPONENTE: Selector de rol de usuario -->
+  <div class="roles" id="roles">
+    <button type="button" class="role" onclick="setRole('cliente', this)">
+      👤 Cliente
+    </button>
+    <button type="button" class="role" onclick="setRole('tecnico', this)">
+      🔧 Técnico
+    </button>
+    <button type="button" class="role active" onclick="setRole('admin', this)">⚙️ Admin</button>
+  </div>
+
+  <form id="loginForm">
+    <!-- COMPONENTE: Campo correo electrónico -->
+    <div class="fg">
+      <label class="fl" for="email">Correo electrónico</label>
+      <input
+              class="fc"
+              type="email"
+              id="email"
+              name="email"
+              placeholder="usuario@servitecajm.com"
+              required
+      />
+    </div>
+
+    <!-- COMPONENTE: Campo contraseña con botón Ojo -->
+    <div class="fg">
+      <label class="fl" for="pass">Contraseña</label>
+      <div class="password-wrap">
+        <input
+                class="fc"
+                type="password"
+                id="pass"
+                name="password"
+                placeholder="••••••••"
+                required
+        >
+        <button
+                type="button"
+                class="eye"
+                data-toggle-password="#pass"
+                aria-label="Mostrar contraseña"
+                title="Mostrar contraseña"
+        >👁</button>
+      </div>
+    </div>
+
+    <!-- COMPONENTE: Recordar sesión -->
+    <div class="remember">
+      <input type="checkbox" id="rem" name="remember">
+      <label for="rem">Recordar sesión</label>
+    </div>
+
+    <!-- COMPONENTE: Botón ingresar -->
+    <button type="submit" class="btn-login btn btn-primary">
+      INGRESAR AL SISTEMA →
+    </button>
+  </form>
+
+  <!-- COMPONENTE: Alerta de error -->
+  <div class="error" id="err">
+    ❌ Ingresa correo y contraseña para continuar.
+  </div>
+
+  <!-- COMPONENTE: Links pie -->
+  <div class="foot">
+    <a href="recuperar.html">¿Olvidaste tu contraseña?</a>
+    <a href="index.html">← Volver al sitio</a>
+  </div>
+</div>
+
+<script src="login.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

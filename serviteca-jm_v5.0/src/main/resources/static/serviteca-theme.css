@@ -1,0 +1,157 @@
+/* =========================================================
+   SERVITECA JM — SISTEMA VISUAL GLOBAL
+   Dark Technical / Automotive Theme
+   ========================================================= */
+:root {
+  --bg: #0f172a;
+  --bg-gradient: radial-gradient(circle at 80% 0, #153327 0, transparent 28%), linear-gradient(135deg, #0f172a, #0b1220);
+  --sidebar-bg: #0a111d;
+  --topbar-bg: #0d1524e8;
+  --panel: #151f2e;
+
+  --line: #2b3a4e;
+  --yellow: #facc15;
+  --green: #22c55e;
+  --blue-kpi: #60a5fa;
+  --white: #f8fafc;
+  --muted: #94a3b8;
+  --muted-light: #cbd5e1;
+  --danger: #ef4444;
+  --orange: #f97316;
+  --sidebar: 255px;
+  --topbar: 72px;
+  --radius: 12px;
+  --shadow: 0 14px 40px rgba(0,0,0,.32);
+}
+
+html, body { min-height: 100%; }
+body {
+  background: var(--bg-gradient) !important;
+  background-attachment: fixed !important;
+  color: var(--white) !important;
+  font-family: "Exo 2", sans-serif !important;
+}
+
+h1, h2, h3, h4, h5, h6,
+.pg-title, .tb-title, .top-title, .title, .brand strong, .sb-brand,
+.card h2, .showroom h1, .hero h1 {
+  font-family: "Oswald", sans-serif !important;
+}
+
+/* Layout */
+.layout, .panel-layout { background: transparent !important; }
+.main, .panel-main { background: transparent !important; }
+
+/* Sidebar */
+.sidebar, .sb {
+  background: var(--sidebar-bg) !important;
+  border-right: 1px solid var(--line) !important;
+}
+.sidebar .brand, .sb-head {
+  border-bottom-color: var(--line) !important;
+}
+.sidebar .nav a, .nav a, .sb-link {
+  color: var(--muted-light) !important;
+  border-left: 3px solid transparent;
+  transition: .2s ease;
+}
+.sidebar .nav a:hover, .sidebar .nav a.active,
+.nav a:hover, .nav a.active,
+.sb-link:hover, .sb-link.active {
+  background: #152434 !important;
+  color: var(--yellow) !important;
+  border-left-color: var(--green) !important;
+}
+
+/* Topbar */
+.topbar {
+  background: var(--topbar-bg) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border-bottom: 1px solid var(--line) !important;
+}
+
+/* Cards / panels */
+.card, .kpi, .kpi-card, .form-card, .panel, .content-card,
+.showroom, .hero, .facturas-card {
+  background: var(--panel-gradient) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 14px !important;
+  box-shadow: var(--shadow);
+}
+
+.showroom {
+  background: linear-gradient(115deg, #13271f, #111a29 65%, #1c2020) !important;
+}
+
+/* Text */
+.pg-sub, .top-date, .date, .muted, .userbox small, .sb-urole,
+.form-label, .fl, label, .nav-title, .sb-sec {
+  color: var(--muted) !important;
+}
+
+/* Buttons */
+.btn, button.btn {
+  border-radius: 10px !important;
+  font-family: "Exo 2", sans-serif !important;
+  font-weight: 600;
+}
+.btn-primary, .btn-g, .btn-green, .btn-success {
+  background: var(--green) !important;
+  border-color: var(--green) !important;
+  color: #052e16 !important;
+}
+.btn-yellow, .btn-y {
+  background: var(--yellow) !important;
+  border-color: var(--yellow) !important;
+  color: #111827 !important;
+}
+.btn-ghost, .btn-gh, .btn-secondary, .btn-outline-secondary {
+  background: #182437 !important;
+  border: 1px solid #40516a !important;
+  color: var(--white) !important;
+}
+.btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+/* Inputs */
+input, select, textarea,
+.form-control, .fc, .field input, .field select, .field textarea {
+  background: #0e1725 !important;
+  border: 1px solid var(--line) !important;
+  color: var(--white) !important;
+  border-radius: 10px !important;
+}
+input::placeholder, textarea::placeholder { color: #64748b !important; }
+input:focus, select:focus, textarea:focus,
+.form-control:focus, .fc:focus {
+  border-color: var(--green) !important;
+  box-shadow: 0 0 0 3px rgba(34,197,94,.15) !important;
+}
+
+/* Tables / lists */
+table, .table { color: var(--white) !important; }
+th, .table thead th {
+  background: #0e1725 !important;
+  color: var(--muted-light) !important;
+  border-color: var(--line) !important;
+}
+td, .table td { border-color: var(--line) !important; color: var(--white) !important; }
+tbody tr:hover, .table tbody tr:hover { background: rgba(255,255,255,.025) !important; }
+
+/* KPI */
+.kpi, .kpi-card { position: relative; overflow: hidden; }
+.kpi::before, .kpi-card::before { background: var(--green) !important; }
+.kpi.kb::before, .kpi-card.kb::before { background: var(--blue-kpi) !important; }
+.kpi.ky::before, .kpi-card.ky::before { background: var(--yellow) !important; }
+.kpi-val, .kpi-value { color: var(--white) !important; font-family: "Oswald", sans-serif !important; }
+
+/* Common accent elements */
+.brand strong, .sb-brand, .invoice-item strong { color: var(--yellow) !important; }
+.avatar { background: var(--yellow) !important; color: #111827 !important; }
+.badge-green, .bg { color: var(--green) !important; }
+.badge-yellow, .by { color: var(--yellow) !important; }
+
+/* Mobile */
+@media (max-width: 900px) {
+  .sidebar, .sb { box-shadow: 18px 0 45px rgba(0,0,0,.4); }
+}

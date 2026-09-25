@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serviteca JM — Recuperar Contraseña</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    >
+    <!-- ETIQUETA P12: Recuperar Contraseña -->
+    <link rel="stylesheet" href="recuperar.css">
+    <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="serviteca-theme.css">
+</head>
+  <body>
+<div class="alert alert-success alert-dismissible fade show m-3" role="alert">Sistema actualizado con Bootstrap.</div>
+    <!-- PANTALLA P12: Recuperar Contraseña -->
+    <div class="card">
+      <!-- COMPONENTE: Encabezado con ícono -->
+      <div class="logo-area">
+        <img
+                class="sb-logo"
+                src="jm-logo.png"
+          style="width: 60px; border-radius: 8px; margin-bottom: 10px"
+        /><br />
+        <div class="icon-big" style="font-size: 2rem">🔑</div>
+        <h2>RECUPERAR ACCESO</h2>
+        <p>
+          Ingresa tu correo registrado y te enviaremos un enlace para
+          restablecer tu contraseña.
+        </p>
+      </div>
+
+      <!-- COMPONENTE: Pasos del proceso de recuperación -->
+      <div class="steps">
+        <div class="step-item">
+          <div class="step-num act">1</div>
+          <div class="step-txt">Ingresa correo</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-txt">Revisa email</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-txt">Nueva clave</div>
+        </div>
+      </div>
+
+      <!-- COMPONENTE: Campo correo -->
+      <div class="fg">
+        <label class="fl" for="rec-email">Correo electrónico registrado</label>
+        <input
+          class="fc"
+          type="email"
+          id="rec-email"
+          name="email"
+          placeholder="correo@servitecajm.com"
+          required
+        />
+      </div>
+
+      <!-- COMPONENTE: Botón enviar -->
+      <button type="button" class="btn-send btn btn-primary" onclick="doRecover()">
+        ENVIAR ENLACE DE RECUPERACIÓN
+      </button>
+
+      <!-- COMPONENTE: Mensaje de éxito -->
+      <div class="success" id="ok">
+        ✅ <strong>Enlace enviado.</strong><br />
+        Revisa tu bandeja de entrada. Si el correo está registrado, recibirás
+        las instrucciones en los próximos minutos.
+      </div>
+
+      <!-- COMPONENTE: Mensaje de error -->
+      <div class="error" id="err">⚠️ Ingresa un correo electrónico válido.</div>
+
+      <!-- COMPONENTE: Link volver al login -->
+      <a href="login.html" class="back">← Volver al inicio de sesión</a>
+    </div>
+
+    <script src="recuperar.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

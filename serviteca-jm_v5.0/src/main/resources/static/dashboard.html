@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Serviteca JM — Dashboard General</title>
+  <link
+          href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"
+  >
+  <link rel="stylesheet" href="dashboard.css">
+  <script src="role-guard.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="serviteca-theme.css">
+</head>
+<body>
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sb">
+    <div class="sb-head">
+      <img
+              class="sb-logo"
+              src="jm-logo.png"
+              alt="JM"
+      />
+      <div>
+        <div class="sb-brand">JM SERVITECA<small>PRODISJM v1.0</small></div>
+      </div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-sec">Principal</div>
+      <a class="sb-link" href="dashboard.html"
+      ><span class="sb-ico">📊</span> Dashboard</a
+      >
+      <a class="sb-link" href="citas.html"
+      ><span class="sb-ico">📅</span> Citas
+        <span class="sb-badge">4</span></a
+      >
+      <a class="sb-link" href="nueva-cita.html"
+      ><span class="sb-ico">➕</span> Nueva Cita</a
+      >
+      <a class="sb-link" href="clientes.html"
+      ><span class="sb-ico">👤</span> Clientes</a
+      >
+      <a class="sb-link" href="vehiculo.html"
+      ><span class="sb-ico">🚗</span> Vehículos</a
+      >
+      <div class="sb-sec" style="margin-top: 8px">Administración</div>
+      <a class="sb-link" href="usuarios.html"
+      ><span class="sb-ico">👥</span> Usuarios</a
+      >
+      <a class="sb-link" href="inventario.html"
+      ><span class="sb-ico">🔩</span> Inventario
+        <span class="sb-badge" style="background: var(--red)">2</span></a
+      >
+      <a class="sb-link" href="facturacion.html"
+      ><span class="sb-ico">💵</span> Facturación</a
+      >
+      <a class="sb-link" href="reportes.html"
+      ><span class="sb-ico">📈</span> Reportes</a
+      >
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-av" id="sbav">JM</div>
+      <div>
+        <div class="sb-uname" id="sbname">Admin</div>
+        <div class="sb-urole" id="sbrole">Administrador</div>
+      </div>
+      <a href="index.html" class="sb-out" title="Cerrar sesión">⏻</a>
+    </div>
+  </aside>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="main">
+    <div class="topbar">
+      <button type="button" id="hambtn" class="btn-gh" aria-label="Abrir menú" title="Abrir menú">☰</button>
+      <div class="tb-title">Dashboard General</div>
+      <button type="button" class="notif-btn">
+        <span class="ndot" aria-hidden="true"></span>
+        🔔
+      </button>
+      <span
+              style="font-size: 0.74rem; color: var(--gray1)"
+              id="tbdate"
+      ></span>
+      <div class="av">JM</div>
+    </div>
+
+    <div class="pg">
+      <!-- PANTALLA P05: Dashboard Administrativo -->
+      <div class="pg-head">
+        <div>
+          <div class="pg-title">Dashboard General</div>
+          <div class="pg-sub">Resumen operativo del día</div>
+        </div>
+        <a
+                href="reportes.html"
+                class="btn btn-gh"
+                style="font-size: 0.76rem"
+        >📄 Ver Reportes</a
+        >
+      </div>
+
+      <!-- Tarjetas KPI indicadores clave -->
+      <div class="kpi-grid">
+        <div class="kpi">
+          <span class="kpi-ico">📅</span>
+          <div class="kpi-lbl">Citas Hoy</div>
+          <div class="kpi-val" id="kpi-citas">0</div>
+          <div class="kpi-sub">↑ 3 más que ayer</div>
+        </div>
+        <div class="kpi ko">
+          <span class="kpi-ico">🔧</span>
+          <div class="kpi-lbl">En Taller</div>
+          <div class="kpi-val" id="kpi-taller">0</div>
+          <div class="kpi-sub">3 en proceso</div>
+        </div>
+        <div class="kpi ky">
+          <span class="kpi-ico">💵</span>
+          <div class="kpi-lbl">Ingresos Semana</div>
+          <div class="kpi-val" id="kpi-ingresos">$0</div>
+          <div class="kpi-sub">↑ 18% vs ant.</div>
+        </div>
+        <div class="kpi kr">
+          <span class="kpi-ico">❌</span>
+          <div class="kpi-lbl">Canceladas</div>
+          <div class="kpi-val" id="kpi-canceladas">0</div>
+          <div class="kpi-sub">Esta semana</div>
+        </div>
+        <div class="kpi kb">
+          <span class="kpi-ico">👨‍🔧</span>
+          <div class="kpi-lbl">Técnicos</div>
+          <div class="kpi-val" id="kpi-tecnicos">0</div>
+          <div class="kpi-sub">1 en descanso</div>
+        </div>
+        <div class="kpi" style="--g: #a78bfa">
+          <span class="kpi-ico">⭐</span>
+          <div class="kpi-lbl">Calificación</div>
+          <div class="kpi-val" id="kpi-calificacion">-</div>
+          <div class="kpi-sub">Último mes</div>
+        </div>
+      </div>
+
+      <!-- Tabla citas del día + Estado técnicos -->
+      <div class="two">
+        <div class="card">
+          <div
+                  style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 14px;
+                "
+          >
+            <h4 style="font-size: 0.95rem; letter-spacing: 0.3px">
+              Citas de Hoy
+            </h4>
+            <a href="citas.html" class="btn-sm">Ver todas</a>
+          </div>
+          <div class="tw">
+            <table>
+              <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Servicio</th>
+                <th>Hora</th>
+                <th>Estado</th>
+              </tr>
+              </thead>
+              <tbody id="citas-hoy">
+              <tr>
+                <td>Carlos M.</td>
+                <td>Frenos</td>
+                <td>08:30</td>
+                <td><span class="badge bg">Completada</span></td>
+              </tr>
+              <tr>
+                <td>Luisa T.</td>
+                <td>Alineación</td>
+                <td>09:00</td>
+                <td><span class="badge bo">En proceso</span></td>
+              </tr>
+              <tr>
+                <td>Andrés R.</td>
+                <td>Diagnóstico</td>
+                <td>10:30</td>
+                <td><span class="badge by">Pendiente</span></td>
+              </tr>
+              <tr>
+                <td>María G.</td>
+                <td>Aceite</td>
+                <td>11:00</td>
+                <td><span class="badge bgr">Confirmada</span></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <h4
+                  style="
+                  font-size: 0.95rem;
+                  letter-spacing: 0.3px;
+                  margin-bottom: 14px;
+                "
+          >
+            Estado Técnicos
+          </h4>
+          <div class="ti">
+            <div class="tav">CR</div>
+            <div>
+              <div class="tn">Carlos Ruiz</div>
+              <div class="tt">Frenos · TKT-0041</div>
+            </div>
+            <div class="sdot sdo"></div>
+          </div>
+          <div class="ti">
+            <div class="tav">MP</div>
+            <div>
+              <div class="tn">Miguel Pérez</div>
+              <div class="tt">Alineación · TKT-0042</div>
+            </div>
+            <div class="sdot sdo"></div>
+          </div>
+          <div class="ti">
+            <div class="tav">JG</div>
+            <div>
+              <div class="tn">Juan Gómez</div>
+              <div class="tt">Disponible</div>
+            </div>
+            <div class="sdot sdg"></div>
+          </div>
+          <div class="ti">
+            <div class="tav">AL</div>
+            <div>
+              <div class="tn">Andrés López</div>
+              <div class="tt">Disponible</div>
+            </div>
+            <div class="sdot sdg"></div>
+          </div>
+          <div class="ti">
+            <div class="tav">SM</div>
+            <div>
+              <div class="tn">Sergio Mora</div>
+              <div class="tt">Descanso</div>
+            </div>
+            <div class="sdot sdx"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="dashboard.js" defer></script>
+</body>
+</html>

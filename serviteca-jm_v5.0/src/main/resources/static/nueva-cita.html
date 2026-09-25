@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Serviteca JM — Nueva Cita</title>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="nueva-cita.css">
+  <script src="role-guard.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="serviteca-theme.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sb">
+    <div class="sb-head">
+      <img class="sb-logo" src="jm-logo.png" alt="JM" />
+      <div>
+        <div class="sb-brand">JM SERVITECA<small>PRODISJM v1.0</small></div>
+      </div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-sec">Principal</div>
+      <a class="sb-link" href="dashboard.html"><span class="sb-ico">📊</span> Dashboard</a>
+      <a class="sb-link" href="citas.html"><span class="sb-ico">📅</span> Citas <span class="sb-badge">4</span></a>
+      <a class="sb-link active" href="nueva-cita.html"><span class="sb-ico">➕</span> Nueva Cita</a>
+      <a class="sb-link" href="clientes.html"><span class="sb-ico">👤</span> Clientes</a>
+      <a class="sb-link" href="vehiculo.html"><span class="sb-ico">🚗</span> Vehículos</a>
+      <div class="sb-sec" style="margin-top: 8px">Administración</div>
+      <a class="sb-link" href="usuarios.html"><span class="sb-ico">👥</span> Usuarios</a>
+      <a class="sb-link" href="inventario.html"><span class="sb-ico">🔩</span> Inventario <span class="sb-badge" style="background: var(--red)">2</span></a>
+      <a class="sb-link" href="facturacion.html"><span class="sb-ico">💵</span> Facturación</a>
+      <a class="sb-link" href="reportes.html"><span class="sb-ico">📈</span> Reportes</a>
+      <div class="sb-sec" style="margin-top: 8px">Portales</div>
+      <a class="sb-link" href="portal-cliente.html"><span class="sb-ico">👤</span> Portal Cliente</a>
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-av" id="sbav">JM</div>
+      <div>
+        <div class="sb-uname" id="sbname">Admin</div>
+        <div class="sb-urole" id="sbrole">Administrador</div>
+      </div>
+      <a href="index.html" class="sb-out" title="Cerrar sesión">⏻</a>
+    </div>
+  </aside>
+
+  <div id="sb-overlay"></div>
+
+  <!-- SE AGREGA EL CONTENEDOR <main class="main"> -->
+  <main class="main">
+    <div class="topbar">
+      <button type="button" id="hambtn" class="btn-ghost" aria-label="Abrir menú" title="Abrir menú">☰</button>
+      <div class="tb-title">Nueva Cita</div>
+      <span style="font-size: 0.74rem; color: var(--gray1)" id="tbdate"></span>
+      <div class="av">JM</div>
+    </div>
+
+    <div class="pg">
+      <div class="pg-head">
+        <div>
+          <div class="pg-title">Nueva Cita</div>
+          <div class="pg-sub">Registro en 4 pasos</div>
+        </div>
+        <a href="citas.html" class="btn btn-ghost">✕ Cancelar</a>
+      </div>
+
+      <div class="stepper">
+        <div class="stp done" id="stp1">
+          <div class="stp-c">✓</div>
+          <div class="stp-lbl">Cliente</div>
+        </div>
+        <div class="stp-line done"></div>
+        <div class="stp active" id="stp2">
+          <div class="stp-c">2</div>
+          <div class="stp-lbl">Vehículo</div>
+        </div>
+        <div class="stp-line" id="l2"></div>
+        <div class="stp pend" id="stp3">
+          <div class="stp-c">3</div>
+          <div class="stp-lbl">Servicio</div>
+        </div>
+        <div class="stp-line" id="l3"></div>
+        <div class="stp pend" id="stp4">
+          <div class="stp-c">4</div>
+          <div class="stp-lbl">Confirmar</div>
+        </div>
+      </div>
+
+      <!-- Paso 1 -->
+      <div id="p1" class="card" style="display: none">
+        <h4 style="font-family: 'Oswald', sans-serif; color: var(--yellow); font-size: 1rem; letter-spacing: 0.5px; margin-bottom: 18px;">
+          PASO 1 — DATOS DEL CLIENTE
+        </h4>
+        <div class="fr">
+          <div class="fg">
+            <label class="fl" for="tipo-doc">Tipo Doc.</label>
+            <select class="fc" id="tipo-doc" name="doc_type">
+              <option>Cédula</option>
+              <option>Pasaporte</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl" for="numero-doc">Número</label>
+            <input class="fc" id="numero-doc" name="doc_number" placeholder="12345678" required>
+          </div>
+        </div>
+        <div class="fr">
+          <div class="fg">
+            <label class="fl" for="nombre-cliente">Nombre Completo</label>
+            <input class="fc" id="nombre-cliente" name="full_name" placeholder="Nombre y apellido" required>
+          </div>
+          <div class="fg">
+            <label class="fl" for="telefono-cliente">Teléfono</label>
+            <input class="fc" id="telefono-cliente" name="phone" placeholder="300 000 0000" required>
+          </div>
+        </div>
+        <div class="fr">
+          <div class="fg">
+            <label class="fl" for="correo-cliente">Correo</label>
+            <input class="fc" id="correo-cliente" name="email" placeholder="cliente@correo.com" type="email" required>
+          </div>
+          <div class="fg">
+            <label class="fl" for="procedencia-cliente">Procedencia</label>
+            <select class="fc" id="procedencia-cliente" name="city">
+              <option>Bogotá</option>
+              <option>Tunja</option>
+              <option>Cundinamarca</option>
+              <option>Otro</option>
+            </select>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px;">
+          <a href="citas.html" class="btn btn-ghost">Cancelar</a>
+          <button type="button" class="btn btn-yellow" onclick="goStep(2)">Continuar →</button>
+        </div>
+      </div>
+
+      <!-- Paso 2 -->
+      <div id="p2" class="card">
+        <h4 style="font-family: 'Oswald', sans-serif; color: var(--yellow); font-size: 1rem; letter-spacing: 0.5px; margin-bottom: 18px;">
+          PASO 2 — DATOS DEL VEHÍCULO
+        </h4>
+        <div class="fr">
+          <div class="fg">
+            <label class="fl" for="placa-vehiculo">Placa</label>
+            <input class="fc" id="placa-vehiculo" name="license_plate" placeholder="ABC-123" style="text-transform: uppercase; letter-spacing: 2px; font-weight: 700; font-size: 1rem;" required />
+          </div>
+          <div class="fg">
+            <label class="fl" for="tipo-vehiculo">Tipo</label>
+            <select class="fc" id="tipo-vehiculo" name="vehicle_type" required>
+              <option value="">— Seleccione tipo —</option>
+              <option>Automóvil</option>
+              <option>Camioneta</option>
+              <option>Moto</option>
+            </select>
+          </div>
+        </div>
+        <div class="fr3">
+          <div class="fg">
+            <label class="fl" for="marca-vehiculo">Marca</label>
+            <select class="fc" id="marca-vehiculo" name="brand" required>
+              <option value="">— Seleccione marca —</option>
+              <option>Toyota</option>
+              <option>Renault</option>
+              <option>Chevrolet</option>
+              <option>Mazda</option>
+              <option>Hyundai</option>
+              <option>Kia</option>
+              <option>TVS</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl" for="modelo-vehiculo">Modelo</label>
+            <input class="fc" id="modelo-vehiculo" name="model" placeholder="Corolla" required>
+          </div>
+          <div class="fg">
+            <label class="fl" for="anio-vehiculo">Año</label>
+            <input class="fc" id="anio-vehiculo" name="year" placeholder="2020" type="number" required>
+          </div>
+        </div>
+        <div class="fr">
+          <div class="fg">
+            <label class="fl" for="kilometraje-vehiculo">Kilometraje</label>
+            <input class="fc" id="kilometraje-vehiculo" name="mileage" placeholder="48500" type="number" required>
+          </div>
+          <div class="fg">
+            <label class="fl" for="color-vehiculo">Color</label>
+            <input class="fc" id="color-vehiculo" name="color" placeholder="Blanco" required>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px;">
+          <button type="button" class="btn btn-ghost" onclick="goStep(1)">← Anterior</button>
+          <button type="button" class="btn btn-yellow" onclick="goStep(3)">Continuar →</button>
+        </div>
+      </div>
+
+      <!-- Paso 3 -->
+      <div id="p3" class="card" style="display: none">
+        <h4 style="font-family: 'Oswald', sans-serif; color: var(--yellow); font-size: 1rem; letter-spacing: 0.5px; margin-bottom: 18px;">
+          PASO 3 — SERVICIO Y FECHA
+        </h4>
+        <div style="font-size: 0.72rem; color: var(--gray1); margin-bottom: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px;">
+          Selecciona el servicio
+        </div>
+        <div class="svc-grid" style="margin-bottom: 20px">
+          <div class="svc sel" onclick="selSvc(this)"><span class="svc-i">🛑</span><div class="svc-n">Frenos</div></div>
+          <div class="svc" onclick="selSvc(this)"><span class="svc-i">⚙️</span><div class="svc-n">Alineación</div></div>
+          <div class="svc" onclick="selSvc(this)"><span class="svc-i">🔧</span><div class="svc-n">Mantenimiento</div></div>
+          <div class="svc" onclick="selSvc(this)"><span class="svc-i">💻</span><div class="svc-n">Diagnóstico</div></div>
+          <div class="svc" onclick="selSvc(this)"><span class="svc-i">🔋</span><div class="svc-n">Eléctrico</div></div>
+          <div class="svc" onclick="selSvc(this)"><span class="svc-i">🏎️</span><div class="svc-n">Llantas</div></div>
+          <div class="svc" onclick="selSvc(this)"><span class="svc-i">🌡️</span><div class="svc-n">A/C</div></div>
+          <div class="svc" onclick="selSvc(this)"><span class="svc-i">🔩</span><div class="svc-n">Suspensión</div></div>
+        </div>
+        <div class="fr">
+          <div class="fg">
+            <label class="fl" for="fecha-preferida">Fecha preferida</label>
+            <input class="fc" id="fecha-preferida" name="preferred_date" type="date" required>
+          </div>
+          <div class="fg">
+            <label class="fl" for="hora-disponible">Hora disponible</label>
+            <select class="fc" id="hora-disponible" name="time_slot" required>
+              <option value="">— Seleccione hora —</option>
+              <option>07:00 AM</option>
+              <option>08:00 AM</option>
+              <option selected>09:00 AM</option>
+              <option disabled>10:00 AM — Ocupado</option>
+              <option>11:00 AM</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg">
+          <label class="fl" for="tecnico-asignado">Técnico asignado</label>
+          <select class="fc" id="tecnico-asignado" name="technician" required>
+            <option value="">— Seleccione técnico —</option>
+            <option>Juan Gómez — Disponible</option>
+            <option>Andrés López — Disponible</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl" for="observaciones">Observaciones del cliente</label>
+          <textarea class="fc" id="observaciones" name="observations" rows="2" placeholder="Ruido al frenar, vibración en el volante..."></textarea>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px;">
+          <button type="button" class="btn btn-ghost" onclick="goStep(2)">← Anterior</button>
+          <button type="button" class="btn btn-yellow" onclick="goStep(4)">Continuar →</button>
+        </div>
+      </div>
+
+      <!-- Paso 4 -->
+      <div id="p4" class="card" style="display: none">
+        <h4 style="font-family: 'Oswald', sans-serif; color: var(--yellow); font-size: 1rem; letter-spacing: 0.5px; margin-bottom: 18px;">
+          PASO 4 — CONFIRMACIÓN
+        </h4>
+        <div style="background: var(--black3); border-radius: 10px; padding: 20px; margin-bottom: 18px; border: 1px solid var(--black4);">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px">
+            <div>
+              <div style="font-size: 0.62rem; color: var(--gray1); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;">Cliente</div>
+              <div style="font-size: 0.88rem; color: #fff; font-weight: 600">Carlos Mendoza</div>
+            </div>
+            <div>
+              <div style="font-size: 0.62rem; color: var(--gray1); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;">Vehículo</div>
+              <div style="font-size: 0.88rem; color: #fff; font-weight: 600">Toyota Corolla · ABC-123</div>
+            </div>
+            <div>
+              <div style="font-size: 0.62rem; color: var(--gray1); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;">Servicio</div>
+              <div style="font-size: 0.88rem; color: var(--yellow); font-weight: 700; font-family: 'Oswald', sans-serif;">Frenos</div>
+            </div>
+            <div>
+              <div style="font-size: 0.62rem; color: var(--gray1); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;">Técnico</div>
+              <div style="font-size: 0.88rem; color: #fff; font-weight: 600">Juan Gómez</div>
+            </div>
+            <div>
+              <div style="font-size: 0.62rem; color: var(--gray1); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;">Fecha y Hora</div>
+              <div style="font-size: 0.88rem; color: #fff; font-weight: 600">20 Mar 2026 · 09:00 AM</div>
+            </div>
+            <div>
+              <div style="font-size: 0.62rem; color: var(--gray1); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;">Notificación</div>
+              <div style="font-size: 0.88rem; color: var(--green); font-weight: 600;">📲 WhatsApp + ✉️ Correo</div>
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px">
+          <button type="button" class="btn btn-ghost" onclick="goStep(3)">← Anterior</button>
+          <button type="button" class="btn btn-yellow" onclick="goStep(5)">✅ Confirmar Cita</button>
+        </div>
+      </div>
+
+      <!-- Pantalla Final -->
+      <div id="p5" class="card" style="display: none; text-align: center; padding: 50px 40px">
+        <div style="font-size: 4rem; margin-bottom: 16px">✅</div>
+        <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.8rem; color: var(--yellow); margin-bottom: 8px; letter-spacing: 1px;">¡CITA REGISTRADA!</h3>
+        <p style="color: var(--gray1); font-size: 0.88rem; margin-bottom: 20px;">El cliente recibirá confirmación por WhatsApp y correo electrónico.</p>
+        <div style="background: var(--black3); border-radius: 8px; padding: 14px; display: inline-block; font-size: 0.82rem; color: #fff; margin-bottom: 28px;">
+          <strong style="color: var(--green); font-family: 'Oswald', sans-serif;">TKT-0050</strong> · Carlos Mendoza · ABC-123 · Frenos · 20/03/2026 09:00
+        </div>
+        <br />
+        <a href="citas.html" class="btn btn-yellow">Ver todas las citas →</a>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="nueva-cita.js"></script>
+</body>
+</html>

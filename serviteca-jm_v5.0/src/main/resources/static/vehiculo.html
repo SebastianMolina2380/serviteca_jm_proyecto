@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Serviteca JM — Vehículos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Exo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Estilos CSS -->
+  <link rel="stylesheet" href="serviteca-theme.css">
+  <link rel="stylesheet" href="vehiculo.css">
+</head>
+<body>
+<div class="panel-layout">
+
+  <!-- SIDEBAR IZQUIERDA -->
+  <aside class="sb" id="sidebar">
+    <div class="sb-head">
+      <div class="sb-brand">
+        JM SERVITECA
+        <small>PRODISJM v1.0</small>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      <div class="sb-sec">PRINCIPAL</div>
+      <a href="/dashboard.html" class="sb-link">
+        <span class="sb-ico">📊</span> Dashboard
+      </a>
+      <a href="/citas.html" class="sb-link">
+        <span class="sb-ico">📅</span> Citas <span class="sb-badge">4</span>
+      </a>
+      <a href="/nueva-cita.html" class="sb-link">
+        <span class="sb-ico">➕</span> Nueva Cita
+      </a>
+      <a href="/clientes.html" class="sb-link">
+        <span class="sb-ico">👤</span> Clientes
+      </a>
+      <a href="/vehiculo.html" class="sb-link active">
+        <span class="sb-ico">🚗</span> Vehículos
+      </a>
+
+      <div class="sb-sec">ADMINISTRACIÓN</div>
+      <a href="/usuarios.html" class="sb-link">
+        <span class="sb-ico">👥</span> Usuarios
+      </a>
+      <a href="/inventario.html" class="sb-link">
+        <span class="sb-ico">🔧</span> Inventario <span class="sb-badge">2</span>
+      </a>
+      <a href="/facturacion.html" class="sb-link">
+        <span class="sb-ico">💵</span> Facturación
+      </a>
+      <a href="/reportes.html" class="sb-link">
+        <span class="sb-ico">📈</span> Reportes
+      </a>
+      <div class="sb-sec" style="margin-top: 8px">Portales</div>
+      <a class="sb-link" href="portal-cliente.html"><span class="sb-ico">👤</span> Portal Cliente</a>
+    </nav>
+
+    <div class="sb-foot">
+      <div class="sb-av">JP</div>
+      <div>
+        <div class="sb-uname">Juan Perez</div>
+        <div class="sb-urole">Administrador</div>
+      </div>
+      <button class="sb-out" type="button" title="Cerrar sesión">⏻</button>
+    </div>
+  </aside>
+
+  <!-- OVERLAY PARA CERRAR MENÚ EN MÓVILES -->
+  <div id="sb-overlay"></div>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="panel-main">
+    <header class="topbar">
+      <button id="hambtn" type="button" aria-label="Abrir menú">☰</button>
+      <div class="tb-title">SERVITECA JM · GESTIÓN</div>
+      <button class="tb-notif" type="button" title="Notificaciones">
+        🔔
+        <span class="ndot"></span>
+      </button>
+      <div class="tb-av">JP</div>
+    </header>
+
+    <main class="page">
+      <section class="hero">
+        <div class="muted">SERVITECA JM · GESTIÓN</div>
+        <h1>Vehículos</h1>
+        <div class="muted">Consulta la flota registrada, abre su ficha y gestiona el servicio asociado.</div>
+        <div class="toolbar">
+          <input id="buscar-vehiculo" class="input" type="search" placeholder="Buscar por placa, marca, modelo o color…" autocomplete="off">
+          <a class="btn btn-green" href="/nuevo-vehiculo">＋ Nuevo vehículo</a>
+          <span id="vehiculos-count" class="muted">Cargando…</span>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card">
+          <div class="card-head"><h2>Vehículos registrados</h2><span class="muted">PostgreSQL</span></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Placa</th><th>Marca</th><th>Modelo</th><th>Color</th><th>Kilometraje</th><th>Acciones</th></tr></thead>
+              <tbody id="tbody-vehiculos"><tr><td colspan="6" class="empty">Cargando vehículos…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <aside class="card detail" id="ficha-vehiculo">
+          <div class="card-head" style="padding:0 0 15px;border-bottom:1px solid var(--line)"><h2>Ficha del vehículo</h2><span id="ficha-estado" class="muted">Sin seleccionar</span></div>
+          <div class="vehicle-top" style="margin-top:15px">
+            <div class="stat"><div class="label">Placa</div><div id="ficha-placa" class="value plate">—</div></div>
+            <div class="stat"><div class="label">Detalle</div><div id="ficha-detalle" class="value">—</div></div>
+            <div class="stat"><div class="label">Kilometraje</div><div id="ficha-km" class="value">—</div></div>
+          </div>
+          <div class="service-box">
+            <div class="label">Marca / Modelo</div><div id="ficha-marca-modelo" class="value">—</div>
+            <div class="label" style="margin-top:12px">Color</div><div id="ficha-color" class="value">—</div>
+          </div>
+          <div class="service-box">
+            <div style="display:flex;justify-content:space-between;gap:10px"><strong>Servicio actual</strong><span id="ficha-progreso-label" class="muted">0%</span></div>
+            <div class="progress"><div id="ficha-progreso"></div></div>
+            <div id="ficha-servicio" class="muted">Seleccione un vehículo.</div>
+          </div>
+          <div class="detail-actions">
+            <button id="btn-notificar" class="btn btn-green" type="button">📲 Notificar cliente</button>
+            <button id="btn-listo" class="btn btn-yellow" type="button">✅ Marcar como listo</button>
+            <button id="btn-reagendar" class="btn btn-ghost" type="button">📅 Reagendar</button>
+            <button id="btn-cancelar" class="btn btn-danger" type="button">✕ Cancelar servicio</button>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- LÓGICA DE CONTROL Y API -->
+<script src="role-guard.js"></script>
+<script src="vehiculo.js"></script>
+</body>
+</html>
