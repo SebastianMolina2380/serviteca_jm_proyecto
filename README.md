@@ -4,7 +4,7 @@ Sistema web de gestión operativa para "Serviteca JM", taller automotriz ubicado
 
  Descripción
 
-El SGCSJ es una aplicación web desarrollada para automatizar y centralizar los procesos críticos de Serviteca JM. Reemplaza los registros manuales por una solución tecnológica robusta que garantiza trazabilidad completa de cada servicio prestado, desde el agendamiento de la cita hasta la emisión de la factura.
+El PRODISJM es una aplicación web desarrollada para automatizar y centralizar los procesos críticos de Serviteca JM. Reemplaza los registros manuales por una solución tecnológica robusta que garantiza trazabilidad completa de cada servicio prestado, desde el agendamiento de la cita hasta la emisión de la factura.
 
 Este proyecto fue desarrollado en el marco del programa **Tecnología en Análisis y Desarrollo de Software (ADSO)** del SENA — Ficha 3171149-B.
 
