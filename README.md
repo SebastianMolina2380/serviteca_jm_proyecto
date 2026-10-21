@@ -105,7 +105,7 @@ spring.security.user.name=[pendiente de completar]
 spring.security.user.password=[pendiente de completar]
 
 # Puerto
-server.port=8080
+server.port=8082
 ```
 
 > Nunca subas el archivo `application.properties` con credenciales reales al repositorio.** Usa `.gitignore` para excluirlo.
