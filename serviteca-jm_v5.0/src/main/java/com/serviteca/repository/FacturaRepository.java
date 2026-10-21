@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.Lock;
+import jakarta.persistence.LockModeType;
+import java.util.Optional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -25,6 +28,10 @@ public interface FacturaRepository extends JpaRepository<Factura, Integer> {
     List<Factura> findByCitaIdCita(Integer idCita);
 
     boolean existsByCitaIdCita(Integer idCita);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select f from Factura f where f.idFactura = :id")
+    Optional<Factura> findByIdForUpdate(@Param("id") Integer id);
 
     List<Factura> findByFechaBetween(LocalDate desde, LocalDate hasta);
 

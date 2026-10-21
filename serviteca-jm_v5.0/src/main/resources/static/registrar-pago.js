@@ -43,8 +43,6 @@
       weekday:"long", year:"numeric", month:"long", day:"numeric"
     });
 
-    $("hamburger")?.addEventListener("click", () => $("sidebar")?.classList.toggle("open"));
-
     const data = await request("/api/facturas");
     invoices = Array.isArray(data) ? data : [];
 
@@ -53,8 +51,8 @@
 
     select.innerHTML = `<option value="">Seleccione una factura</option>` +
       invoices.map(invoice => `
-        <option value="${esc(invoice.idFactura)}" ${String(invoice.idFactura) === String(queryId) ? "selected" : ""}>
-          ${esc(invoice.numeroFactura || `JM ${invoice.idFactura}`)} · ${esc(invoice.usuario?.nombre || "Cliente")} · ${money(invoice.total)}
+        <option value="${esc(invoice.idFactura)}" ${Number(invoice.saldoPendiente ?? invoice.total) <= 0 ? "disabled" : ""} ${String(invoice.idFactura) === String(queryId) ? "selected" : ""}>
+          ${esc(invoice.numeroFactura || `JM ${invoice.idFactura}`)} · ${esc(invoice.adquirente?.razonSocial || "Cliente")} · saldo ${money(invoice.saldoPendiente ?? invoice.total)}
         </option>
       `).join("");
 
@@ -81,10 +79,12 @@
 
     summary.innerHTML = `
       <strong>${esc(invoice.numeroFactura || `JM ${invoice.idFactura}`)}</strong>
-      <span>Cliente: ${esc(invoice.usuario?.nombre || "—")}</span>
-      <span>Total: ${money(invoice.total)}</span>`;
+      <span>Cliente: ${esc(invoice.adquirente?.razonSocial || "—")}</span>
+      <span>Total: ${money(invoice.total)}</span>
+      <span>Pagado: ${money(invoice.pagado)}</span>
+      <span>Saldo pendiente: ${money(invoice.saldoPendiente)}</span>`;
 
-    $("monto").value = Math.round(Number(invoice.total) || 0);
+    $("monto").value = Number(invoice.saldoPendiente ?? invoice.total ?? 0).toFixed(2);
   }
 
   async function submitPayment(event) {
@@ -103,38 +103,33 @@
     if (!date) return showError("Selecciona la fecha del pago.");
     if (!Number.isFinite(amount) || amount <= 0) return showError("Ingresa un monto válido.");
 
-    const total = Number(invoice.total) || 0;
-    if (Math.abs(amount - total) > 0.01) {
-      return showError(`El monto debe coincidir con el total de la factura: ${money(total)}.`);
+    const saldo = Number(invoice.saldoPendiente ?? invoice.total) || 0;
+    if (saldo <= 0) return showError("La factura ya está pagada.");
+    if (amount - saldo > 0.001) {
+      return showError(`El monto supera el saldo pendiente: ${money(saldo)}.`);
     }
 
     try {
-      const payload = {
-        usuario: { idUsuario: Number(invoice.usuario?.idUsuario) },
-        cita: { idCita: Number(invoice.cita?.idCita) },
-        subtotal: Number(invoice.subtotal) || Math.round(total / 1.19 * 100) / 100,
-        formaPago: "Contado",
-        medioPago: method
-      };
-
-      await request(`/api/facturas/${encodeURIComponent(invoice.idFactura)}`, {
-        method: "PUT",
-        body: JSON.stringify(payload)
+      const keyName = `jm_pago_idempotencia_${invoice.idFactura}`;
+      let idempotencyKey = sessionStorage.getItem(keyName);
+      if (!idempotencyKey) {
+        idempotencyKey = crypto.randomUUID();
+        sessionStorage.setItem(keyName, idempotencyKey);
+      }
+      await request(`/api/facturas/${encodeURIComponent(invoice.idFactura)}/pagos`, {
+        method: "POST",
+        body: JSON.stringify({
+          monto: amount,
+          metodo: method,
+          fecha: date,
+          notas,
+          claveIdempotencia: idempotencyKey
+        })
       });
-
-      const localPayments = JSON.parse(localStorage.getItem("jm_pagos") || "{}");
-      localPayments[String(invoice.idFactura)] = {
-        factura: invoice.idFactura,
-        monto: amount,
-        metodo: method,
-        fecha: date,
-        notas,
-        registradoEn: new Date().toISOString()
-      };
-      localStorage.setItem("jm_pagos", JSON.stringify(localPayments));
+      sessionStorage.removeItem(keyName);
 
       message.className = "message ok";
-      message.textContent = "Pago registrado y factura actualizada correctamente.";
+      message.textContent = "Pago registrado correctamente en PostgreSQL.";
 
       window.setTimeout(() => {
         location.href = `facturacion.html?factura=${encodeURIComponent(invoice.idFactura)}`;

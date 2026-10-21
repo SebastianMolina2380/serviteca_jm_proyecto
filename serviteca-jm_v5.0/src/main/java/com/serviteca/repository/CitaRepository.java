@@ -4,12 +4,19 @@ import com.serviteca.modelos.Cita;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.Lock;
+import jakarta.persistence.LockModeType;
+import java.util.Optional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
 public interface CitaRepository extends JpaRepository<Cita, Integer> {
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select c from Cita c where c.idCita = :id")
+    Optional<Cita> findByIdForUpdate(@Param("id") Integer id);
 
     List<Cita> findByFecha(LocalDate fecha);
     List<Cita> findByEstado(Cita.Estado estado);

@@ -19,13 +19,14 @@
   --r: 10px;
   --shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
 }
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* Estandar de dashboard.html: width 100% (no 100vw, que incluye
+   la scrollbar y provoca scroll horizontal) y overflow-x para
+   que ningun descendiente desborde el eje horizontal. */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
 }
+
 html {
   scroll-behavior: smooth;
 }
@@ -282,6 +283,20 @@ textarea:focus {
     padding: 8px 14px;
     font-size: 0.8rem;
   }
+
+  /* Movil (< 600px): campos y acciones del asistente a ancho
+     completo, para que nada se corte ni se desplace a 430px. */
+  .fc {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .btn {
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+  }
 }
 #hambtn {
   display: none;
@@ -306,13 +321,40 @@ textarea:focus {
   background-color: var(--black) !important;
   overflow-x: hidden !important;
 }
+/* Sidebar fijo. position:sticky aqui rompia la barra: .layout
+   tiene overflow-x:hidden, que convierte a ese ancestro en el
+   scrollport del sticky. Como .layout nunca scrollea en el eje Y
+   (crece con su contenido y quien scrollea es el documento), el
+   sticky nunca se activaba y la barra se desplazaba con la pagina.
+   fixed es relativo al viewport, por lo que queda inmune a ese
+   ancestro. left:0 la ancla al borde y margin-left de .main (mas
+   abajo) recompensa los 240px que deja de ocupar al salir del
+   flujo. z-index por encima del topbar (50) y del overlay (90). */
 .sb, .sidebar {
   width: var(--sidebar, 240px) !important;
   min-width: var(--sidebar, 240px) !important;
   flex-shrink: 0 !important;
-  position: sticky !important;
+  position: fixed !important;
   top: 0 !important;
+  left: 0 !important;
   height: 100vh !important;
+  z-index: 1000 !important;
+}
+/* Movil (<=900px): el bloque anterior es de nivel superior y se
+   aplica a todos los anchos, por lo que en pantalla estrecha el
+   sidebar seguia DENTRO del flujo y reservaba var(--sidebar) de
+   ancho. Eso encogia .main y empujaba el asistente hacia la
+   derecha, dejandolo recortado por la izquierda. Se fuerza
+   position: fixed para que quede fuera del flujo y conserve el
+   patron off-canvas (translateX + .open) de styles.css. */
+@media (max-width: 900px) {
+  .sb,
+  .sidebar {
+    position: fixed !important;
+    width: 220px !important;
+    min-width: 220px !important;
+    flex-shrink: 0 !important;
+  }
 }
 .sb-head {
   padding: 16px;
@@ -430,10 +472,21 @@ textarea:focus {
 .sb-out:hover {
   color: var(--red);
 }
+/* Estandar de dashboard.css:297-307. Sin min-height: 100vh el
+   contenedor colapsaba al alto de su contenido y el fondo no
+   cubria la altura total del viewport, dejando bloques blancos
+   al hacer scroll. overflow-y:auto deja el scroll vertical al
+   propio main, igual que en dashboard. */
 .main {
   flex: 1 1 auto !important;
   min-width: 0 !important;
-  margin-left: 0 !important;  /* Elimina márgenes huérfanos */
+  min-height: 100vh;
+  overflow-y: auto;
+  /* El sidebar es fixed y ya no ocupa ancho en el flujo flex, así
+     que .main debe desplazarse exactamente var(--sidebar) para que
+     el contenido arranque donde termina la barra. Antes valía 0
+     porque el sidebar era sticky y reservaba ese ancho él solo. */
+  margin-left: var(--sidebar, 240px) !important;
   left: 0 !important;
   display: flex !important;
   flex-direction: column !important;
@@ -445,6 +498,67 @@ textarea:focus {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+}
+/* Movil (<=900px): el sidebar pasa a off-canvas (translateX) y no
+   debe dejar margen. Va DESPUES de la regla .main de escritorio
+   porque las media queries no suman especificidad: con la misma
+   especificidad gana el orden de origen y una media query anterior
+   habria sido anulada por esa regla. */
+@media (max-width: 900px) {
+  .main,
+  .panel-main {
+    margin-left: 0 !important;
+  }
+}
+
+/* ============================================================
+   PASO 2 · selector de vehículo (existente / nuevo)
+   ============================================================ */
+.vh-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.vh-tab {
+  flex: 1 1 180px;
+  padding: 10px 14px;
+  font-family: "Oswald", sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.4px;
+  background: transparent;
+  color: var(--gray1);
+  border: 1px solid var(--black4);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.vh-tab:hover {
+  color: var(--green);
+  border-color: var(--green);
+}
+
+/* Activo: verde oscuro institucional con filo dorado. Sobre ese
+   verde el texto claro da contraste AAA. */
+.vh-tab.is-active,
+.vh-tab.is-active:hover {
+  background: var(--green);
+  color: #F4F1E9;
+  border-color: #B3945D;
+  font-weight: 700;
+}
+
+.veh-resumen {
+  background: var(--black3);
+  border: 1px solid var(--black4);
+  border-radius: 8px;
+  padding: 10px 12px;
+  min-height: 42px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--gray1);
 }
 .topbar {
   height: var(--topbar);
@@ -523,6 +637,37 @@ textarea:focus {
   color: var(--gray1);
   margin-top: 2px;
 }
+
+/* ==========================================================
+   RESPIRACION DEL ENCABEZADO DE LA VISTA
+   ----------------------------------------------------------
+   El padding de .pg lo fija serviteca-premium.css con
+   !important (especificidad 0,2,0): en desktop
+   clamp(20px, 3vw, 42px) y en tablet/movil baja a 22px y 18px.
+   Para ampliarlo desde aqui hace falta especificidad 0,3,0 y
+   !important, o la regla quedaria pisada.
+
+   max() actua como suelo de 32px sin bajar nunca el valor del
+   estandar: en desktop clamp ya supera los 32px y se conserva
+   igual que en dashboard.html y clientes.html; en tablet y
+   movil manda el suelo de 32px, que es donde el titulo
+   "Registro en 4 pasos" quedaba pegado al topbar sticky.
+   ========================================================== */
+.layout .main .pg {
+  padding-top: max(32px, clamp(28px, 3vw, 42px)) !important;
+}
+
+/* Ninguna hoja declara margin-top sobre .pg-head, de modo que
+   basta la especificidad para separarlo del topbar. */
+.layout .main .pg-head {
+  margin-top: 8px;
+}
+
+/* "Registro en 4 pasos" respira respecto a "Nueva Cita"
+   (el valor base era 2px). */
+.layout .main .pg-sub {
+  margin-top: 6px;
+}
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
@@ -538,6 +683,18 @@ textarea:focus {
   padding: 18px;
   position: relative;
   overflow: hidden;
+}
+
+/* Tarjeta del asistente (Paso 1..5).
+   width/max-width + margin auto impiden que la tarjeta se
+   desplace o se corte hacia la izquierda en viewports moviles
+   (430px), y border-box evita que el padding empuje el ancho. */
+.card {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: auto;
 }
 .kpi-card::before,
 .kpi::before {
@@ -837,4 +994,44 @@ tr:hover td {
   font-size: 0.68rem;
   font-weight: 600;
   color: var(--white);
+}
+
+/* ==========================================================
+   MOVIL (<=600px) - CENTRADO DEL ASISTENTE
+   ----------------------------------------------------------
+   La tarjeta del paso (y sus predecesoras) debe ocupar el
+   ancho completo y quedar centrada, de modo que nunca se
+   desplace ni se recorte por la izquierda a 320px-430px.
+
+   Se usa margin-inline: auto en lugar de margin: 0 auto:
+   lo que resuelve el desplazamiento horizontal es el auto
+   de izquierda y derecha, y dejar el margen vertical intacto
+   evita que las tarjetas apiladas se peguen entre si.
+
+   NOTA: .wizard-container y .step-content no existen en
+   este proyecto; el asistente se compone con .card +
+   .stepper. Se listan igualmente a modo de defensa por si
+   se incorporan en el futuro.
+   ========================================================== */
+@media (max-width: 600px) {
+  .pg,
+  .pg-body,
+  .content,
+  .card,
+  .wizard-container,
+  .step-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Ningun descendiente puede heredar un ancho fijo que
+     desborde el contenedor. */
+  .card *,
+  .step-content * {
+    max-width: 100%;
+  }
 }

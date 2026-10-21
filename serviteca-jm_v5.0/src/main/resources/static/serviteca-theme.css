@@ -1,30 +1,73 @@
 /* =========================================================
-   SERVITECA JM — SISTEMA VISUAL GLOBAL
-   Dark Technical / Automotive Theme
+   JM SERVITECA — SISTEMA VISUAL GLOBAL v2.0
+   Paleta extraída del logo oficial del negocio:
+   Verde institucional #1B8A2E · Amarillo #F5C200
+   Autor: Sergio — SENA ADSO Ficha 3171149-B
    ========================================================= */
-:root {
-  --bg: #0f172a;
-  --bg-gradient: radial-gradient(circle at 80% 0, #153327 0, transparent 28%), linear-gradient(135deg, #0f172a, #0b1220);
-  --sidebar-bg: #0a111d;
-  --topbar-bg: #0d1524e8;
-  --panel: #151f2e;
 
-  --line: #2b3a4e;
-  --yellow: #facc15;
-  --green: #22c55e;
-  --blue-kpi: #60a5fa;
-  --white: #f8fafc;
-  --muted: #94a3b8;
-  --muted-light: #cbd5e1;
-  --danger: #ef4444;
-  --orange: #f97316;
-  --sidebar: 255px;
-  --topbar: 72px;
-  --radius: 12px;
-  --shadow: 0 14px 40px rgba(0,0,0,.32);
+:root {
+  /* ─── COLORES INSTITUCIONALES JM SERVITECA ─── */
+  --jm-verde:          #1B8A2E;   /* Verde logo — color primario */
+  --jm-verde-dark:     #146122;   /* Verde oscuro — hover/presionado */
+  --jm-verde-light:    #23A83A;   /* Verde claro — estados activos */
+  --jm-verde-muted:    rgba(27, 138, 46, 0.12); /* Fondo sutil verde */
+
+  --jm-amarillo:       #F5C200;   /* Amarillo logo "JM Serviteca" */
+  --jm-amarillo-dark:  #C49B00;   /* Amarillo oscuro — hover */
+  --jm-amarillo-muted: rgba(245, 194, 0, 0.12); /* Fondo sutil amarillo */
+
+  /* ─── ALIAS PARA COMPATIBILIDAD CON EL CÓDIGO EXISTENTE ─── */
+  --green:         var(--jm-verde);
+  --green2:        var(--jm-verde-dark);
+  --green3:        #0F6B1D;       /* Verde más oscuro para gradientes */
+  --yellow:        var(--jm-amarillo);
+  --yellow2:       var(--jm-amarillo-dark);
+
+  /* ─── FONDOS ─── */
+  --bg:            #0F0F0F;       /* Negro base */
+  --black:         #0F0F0F;
+  --black2:        #1A1A1A;       /* Superficie — cards, panels */
+  --black3:        #242424;       /* Nivel elevado */
+  --black4:        #2E2E2E;       /* Bordes y separadores */
+  --sidebar-bg:    #111111;       /* Fondo sidebar */
+  --topbar-bg:     rgba(17, 17, 17, 0.95);
+  --panel:         #1A1A1A;
+  --panel-gradient: linear-gradient(145deg, #1A1A1A, #141414);
+
+  /* ─── TEXTO ─── */
+  --white:         #F0F0F0;
+  --muted:         #8A8A8A;
+  --muted-light:   #B0B0B0;
+
+  /* ─── BORDES Y LÍNEAS ─── */
+  --line:          #2E2E2E;
+
+  /* ─── ESTADOS SEMÁNTICOS ─── */
+  --color-success: var(--jm-verde);
+  --color-warning: var(--jm-amarillo);
+  --danger:        #C0392B;
+  --red:           #C0392B;
+  --orange:        #D35400;
+  --blue-kpi:      #2980B9;
+
+  /* ─── GRADIENTES ─── */
+  --bg-gradient:
+    radial-gradient(circle at 80% 0, rgba(27, 138, 46, 0.08) 0%, transparent 35%),
+    radial-gradient(circle at 10% 90%, rgba(245, 194, 0, 0.04) 0%, transparent 30%),
+    linear-gradient(135deg, #0F0F0F, #141414);
+
+  /* ─── LAYOUT ─── */
+  --sidebar:  255px;
+  --topbar:   72px;
+  --radius:   12px;
+  --shadow:   0 14px 40px rgba(0, 0, 0, 0.45);
 }
 
+/* ─────────────────────────────────────────
+   BASE
+───────────────────────────────────────── */
 html, body { min-height: 100%; }
+
 body {
   background: var(--bg-gradient) !important;
   background-attachment: fixed !important;
@@ -33,47 +76,92 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6,
-.pg-title, .tb-title, .top-title, .title, .brand strong, .sb-brand,
-.card h2, .showroom h1, .hero h1 {
+.pg-title, .tb-title, .top-title, .title,
+.brand strong, .sb-brand, .card h2,
+.showroom h1, .hero h1 {
   font-family: "Oswald", sans-serif !important;
 }
 
-/* Layout */
-.layout, .panel-layout { background: transparent !important; }
-.main, .panel-main { background: transparent !important; }
+/* ─────────────────────────────────────────
+   LAYOUT GENERAL
+───────────────────────────────────────── */
+.layout, .panel-layout {
+  background: transparent !important;
+}
 
-/* Sidebar */
+.main, .panel-main {
+  background: transparent !important;
+}
+
+/* ─────────────────────────────────────────
+   SIDEBAR
+───────────────────────────────────────── */
 .sidebar, .sb {
   background: var(--sidebar-bg) !important;
   border-right: 1px solid var(--line) !important;
 }
+
 .sidebar .brand, .sb-head {
-  border-bottom-color: var(--line) !important;
-}
-.sidebar .nav a, .nav a, .sb-link {
-  color: var(--muted-light) !important;
-  border-left: 3px solid transparent;
-  transition: .2s ease;
-}
-.sidebar .nav a:hover, .sidebar .nav a.active,
-.nav a:hover, .nav a.active,
-.sb-link:hover, .sb-link.active {
-  background: #152434 !important;
-  color: var(--yellow) !important;
-  border-left-color: var(--green) !important;
+  border-bottom: 1px solid var(--line) !important;
 }
 
-/* Topbar */
+/* Logo de marca en amarillo institucional */
+.sb-brand,
+.brand strong,
+.sidebar .brand strong {
+  color: var(--jm-amarillo) !important;
+}
+
+/* Links del sidebar */
+.sidebar .nav a,
+.nav a,
+.sb-link {
+  color: var(--muted-light) !important;
+  border-left: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.sidebar .nav a:hover,
+.sidebar .nav a.active,
+.nav a:hover,
+.nav a.active,
+.sb-link:hover,
+.sb-link.active {
+  background: rgba(27, 138, 46, 0.15) !important;
+  color: var(--jm-amarillo) !important;
+  border-left-color: var(--jm-verde) !important;
+}
+
+/* Badge de notificaciones */
+.sb-badge {
+  background: var(--jm-verde) !important;
+}
+
+/* Rol del usuario en sidebar */
+.sb-urole {
+  color: var(--jm-verde-light) !important;
+}
+
+/* ─────────────────────────────────────────
+   TOPBAR
+───────────────────────────────────────── */
 .topbar {
   background: var(--topbar-bg) !important;
   backdrop-filter: blur(14px) !important;
   -webkit-backdrop-filter: blur(14px) !important;
-  border-bottom: 1px solid var(--line) !important;
+  border-bottom: 2px solid var(--jm-verde) !important;
 }
 
-/* Cards / panels */
-.card, .kpi, .kpi-card, .form-card, .panel, .content-card,
-.showroom, .hero, .facturas-card {
+/* ─────────────────────────────────────────
+   CARDS Y PANELS
+───────────────────────────────────────── */
+.card,
+.kpi,
+.kpi-card,
+.form-card,
+.panel,
+.content-card,
+.showroom {
   background: var(--panel-gradient) !important;
   border: 1px solid var(--line) !important;
   border-radius: 14px !important;
@@ -81,77 +169,1056 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .showroom {
-  background: linear-gradient(115deg, #13271f, #111a29 65%, #1c2020) !important;
+  background: linear-gradient(115deg, #141414, #111111 65%, #141414) !important;
+  border-left: 3px solid var(--jm-verde) !important;
 }
 
-/* Text */
-.pg-sub, .top-date, .date, .muted, .userbox small, .sb-urole,
-.form-label, .fl, label, .nav-title, .sb-sec {
+/* ─────────────────────────────────────────
+   TEXTO Y MUTED
+───────────────────────────────────────── */
+.pg-sub, .top-date, .date, .muted,
+.userbox small, .sb-urole,
+.form-label, .fl, label,
+.nav-title, .sb-sec {
   color: var(--muted) !important;
 }
 
-/* Buttons */
+/* ─────────────────────────────────────────
+   BOTONES
+───────────────────────────────────────── */
 .btn, button.btn {
   border-radius: 10px !important;
   font-family: "Exo 2", sans-serif !important;
   font-weight: 600;
+  transition: all 0.2s ease !important;
 }
-.btn-primary, .btn-g, .btn-green, .btn-success {
-  background: var(--green) !important;
-  border-color: var(--green) !important;
-  color: #052e16 !important;
+
+/* Botón primario — verde institucional */
+.btn-primary,
+.btn-g,
+.btn-green,
+.btn-success {
+  background: var(--jm-verde) !important;
+  border-color: var(--jm-verde) !important;
+  color: #FFFFFF !important;
 }
-.btn-yellow, .btn-y {
-  background: var(--yellow) !important;
-  border-color: var(--yellow) !important;
-  color: #111827 !important;
+
+.btn-primary:hover,
+.btn-g:hover,
+.btn-green:hover,
+.btn-success:hover {
+  background: var(--jm-verde-dark) !important;
+  border-color: var(--jm-verde-dark) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(27, 138, 46, 0.35) !important;
 }
-.btn-ghost, .btn-gh, .btn-secondary, .btn-outline-secondary {
-  background: #182437 !important;
-  border: 1px solid #40516a !important;
+
+/* Botón acento — amarillo institucional */
+.btn-yellow,
+.btn-y {
+  background: var(--jm-amarillo) !important;
+  border-color: var(--jm-amarillo) !important;
+  color: #111111 !important;
+  font-weight: 700 !important;
+}
+
+.btn-yellow:hover,
+.btn-y:hover {
+  background: var(--jm-amarillo-dark) !important;
+  border-color: var(--jm-amarillo-dark) !important;
+  transform: translateY(-1px);
+}
+
+/* Botón fantasma */
+.btn-ghost,
+.btn-gh,
+.btn-secondary,
+.btn-outline-secondary {
+  background: #1E1E1E !important;
+  border: 1px solid var(--line) !important;
   color: var(--white) !important;
 }
-.btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
 
-/* Inputs */
+.btn-ghost:hover,
+.btn-gh:hover {
+  border-color: var(--jm-verde) !important;
+  color: var(--jm-verde-light) !important;
+}
+
+/* Botones pequeños */
+.btn-sm {
+  background: var(--jm-verde) !important;
+  color: #FFFFFF !important;
+  border: none !important;
+}
+
+.btn-sm-g,
+.btn-sm-ghost {
+  background: transparent !important;
+  border: 1px solid var(--line) !important;
+  color: var(--muted) !important;
+}
+
+.btn-sm-g:hover,
+.btn-sm-ghost:hover {
+  border-color: var(--jm-verde) !important;
+  color: var(--jm-verde-light) !important;
+}
+
+/* Hover general */
+.btn:hover {
+  filter: brightness(1.06);
+}
+
+/* ─────────────────────────────────────────
+   INPUTS Y FORMULARIOS
+───────────────────────────────────────── */
 input, select, textarea,
-.form-control, .fc, .field input, .field select, .field textarea {
-  background: #0e1725 !important;
+.form-control, .fc,
+.field input, .field select, .field textarea {
+  background: #141414 !important;
   border: 1px solid var(--line) !important;
   color: var(--white) !important;
   border-radius: 10px !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
 }
-input::placeholder, textarea::placeholder { color: #64748b !important; }
+
+input::placeholder,
+textarea::placeholder {
+  color: #555555 !important;
+}
+
 input:focus, select:focus, textarea:focus,
 .form-control:focus, .fc:focus {
-  border-color: var(--green) !important;
-  box-shadow: 0 0 0 3px rgba(34,197,94,.15) !important;
+  border-color: var(--jm-verde) !important;
+  box-shadow: 0 0 0 3px rgba(27, 138, 46, 0.2) !important;
+  outline: none !important;
 }
 
-/* Tables / lists */
-table, .table { color: var(--white) !important; }
+/* ─────────────────────────────────────────
+   TABLAS
+───────────────────────────────────────── */
+table, .table {
+  color: var(--white) !important;
+}
+
 th, .table thead th {
-  background: #0e1725 !important;
+  background: #141414 !important;
   color: var(--muted-light) !important;
   border-color: var(--line) !important;
+  font-size: 0.68rem;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
 }
-td, .table td { border-color: var(--line) !important; color: var(--white) !important; }
-tbody tr:hover, .table tbody tr:hover { background: rgba(255,255,255,.025) !important; }
 
-/* KPI */
-.kpi, .kpi-card { position: relative; overflow: hidden; }
-.kpi::before, .kpi-card::before { background: var(--green) !important; }
-.kpi.kb::before, .kpi-card.kb::before { background: var(--blue-kpi) !important; }
-.kpi.ky::before, .kpi-card.ky::before { background: var(--yellow) !important; }
-.kpi-val, .kpi-value { color: var(--white) !important; font-family: "Oswald", sans-serif !important; }
+td, .table td {
+  border-color: var(--line) !important;
+  color: var(--white) !important;
+}
 
-/* Common accent elements */
-.brand strong, .sb-brand, .invoice-item strong { color: var(--yellow) !important; }
-.avatar { background: var(--yellow) !important; color: #111827 !important; }
-.badge-green, .bg { color: var(--green) !important; }
-.badge-yellow, .by { color: var(--yellow) !important; }
+tbody tr:hover,
+.table tbody tr:hover {
+  background: rgba(27, 138, 46, 0.05) !important;
+}
 
-/* Mobile */
+/* ─────────────────────────────────────────
+   KPI CARDS
+───────────────────────────────────────── */
+.kpi, .kpi-card {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Línea superior por defecto — verde institucional */
+.kpi::before,
+.kpi-card::before {
+  background: var(--jm-verde) !important;
+}
+
+/* Variantes de color en KPI */
+.kpi.kb::before,
+.kpi-card.kb::before { background: var(--blue-kpi) !important; }
+.kpi.ky::before,
+.kpi-card.ky::before { background: var(--jm-amarillo) !important; }
+.kpi.kr::before,
+.kpi-card.kr::before { background: var(--red) !important; }
+.kpi.ko::before,
+.kpi-card.ko::before { background: var(--orange) !important; }
+
+.kpi-val, .kpi-value {
+  color: var(--white) !important;
+  font-family: "Oswald", sans-serif !important;
+}
+
+.kpi-sub {
+  color: var(--jm-verde-light) !important;
+}
+
+.kpi.ky .kpi-sub,
+.kpi-card.ky .kpi-sub {
+  color: var(--jm-amarillo) !important;
+}
+
+/* ─────────────────────────────────────────
+   BADGES
+───────────────────────────────────────── */
+/* Verde — confirmado / activo */
+.badge-green, .bg {
+  background: rgba(27, 138, 46, 0.18) !important;
+  color: var(--jm-verde-light) !important;
+}
+
+/* Amarillo — pendiente / advertencia */
+.badge-yellow, .by {
+  background: rgba(245, 194, 0, 0.15) !important;
+  color: var(--jm-amarillo) !important;
+}
+
+/* Rojo — cancelado / error */
+.badge-red, .br {
+  background: rgba(192, 57, 43, 0.15) !important;
+  color: #E74C3C !important;
+}
+
+/* Gris — neutral */
+.badge-gray, .bgr {
+  background: rgba(138, 138, 138, 0.15) !important;
+  color: var(--muted-light) !important;
+}
+
+/* Naranja — en proceso */
+.badge-orange, .bo {
+  background: rgba(211, 84, 0, 0.15) !important;
+  color: #E67E22 !important;
+}
+
+/* ─────────────────────────────────────────
+   ELEMENTOS DE ACENTO
+───────────────────────────────────────── */
+
+/* Marca en amarillo institucional */
+.brand strong,
+.sb-brand,
+.invoice-item strong {
+  color: var(--jm-amarillo) !important;
+}
+
+/* Avatar con verde institucional */
+.avatar,
+.sb-av,
+.tb-av,
+.av {
+  background: var(--jm-verde) !important;
+  color: #FFFFFF !important;
+}
+
+/* Línea inferior activa del sidebar */
+.sb-link.active {
+  background: linear-gradient(135deg,
+    rgba(27, 138, 46, 0.25),
+    rgba(27, 138, 46, 0.10)
+  ) !important;
+  border-left-color: var(--jm-verde) !important;
+  color: var(--white) !important;
+}
+
+/* ─────────────────────────────────────────
+   PROGRESS BARS
+───────────────────────────────────────── */
+.prog-f, .prog-fill {
+  background: linear-gradient(90deg,
+    var(--jm-verde-dark),
+    var(--jm-verde-light)
+  ) !important;
+}
+
+/* ─────────────────────────────────────────
+   STEPPER (Nueva Cita)
+───────────────────────────────────────── */
+.stp.done .stp-c {
+  background: var(--jm-verde) !important;
+  color: #FFFFFF !important;
+}
+
+.stp.active .stp-c {
+  background: var(--jm-amarillo) !important;
+  color: #111111 !important;
+  box-shadow: 0 0 16px rgba(245, 194, 0, 0.4) !important;
+}
+
+.stp.active .stp-lbl {
+  color: var(--jm-amarillo) !important;
+}
+
+.stp-line.done {
+  background: var(--jm-verde) !important;
+}
+
+/* ─────────────────────────────────────────
+   SERVICIOS GRID (index.html)
+───────────────────────────────────────── */
+.svc:hover {
+  border-color: var(--jm-amarillo) !important;
+}
+
+.svc.sel {
+  border-color: var(--jm-amarillo) !important;
+  background: var(--jm-amarillo-muted) !important;
+}
+
+.svc-btn {
+  background: var(--jm-verde) !important;
+  color: #FFFFFF !important;
+}
+
+.svc-btn:hover {
+  background: var(--jm-amarillo) !important;
+  color: #111111 !important;
+}
+
+/* ─────────────────────────────────────────
+   FACTURACIÓN — INVOICE
+───────────────────────────────────────── */
+.invoice-item button {
+  background: var(--jm-verde) !important;
+  color: #FFFFFF !important;
+}
+
+.status {
+  background: rgba(27, 138, 46, 0.2) !important;
+  color: var(--jm-verde-light) !important;
+}
+
+/* ─────────────────────────────────────────
+   CHATBOT JM
+───────────────────────────────────────── */
+/* Los estilos del chat viven únicamente en chatbot.js (bloque
+   injectStyles), que los inyecta scopeados bajo #jm-chat-win.
+   Antes existía aquí un bloque paralelo con !important que, por
+   ir antes en el orden fuente, le ganaba a ese y producía un
+   aspecto híbrido: burbuja #1A1A1A con borde var(--line) claro
+   (#E4DED1, redeclarado por serviteca-premium.css) y chips en
+   verde/amarillo institucional en lugar del dorado del asesor. */
+
+/* ─────────────────────────────────────────
+   SCROLLBAR PERSONALIZADO
+───────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #141414;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--jm-verde-dark);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--jm-verde);
+}
+
+/* ─────────────────────────────────────────
+   SELECCIÓN DE TEXTO
+───────────────────────────────────────── */
+::selection {
+  background: rgba(27, 138, 46, 0.35);
+  color: var(--white);
+}
+
+/* ─────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────── */
 @media (max-width: 900px) {
-  .sidebar, .sb { box-shadow: 18px 0 45px rgba(0,0,0,.4); }
+  .sidebar, .sb {
+    box-shadow: 8px 0 30px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* ==========================================================
+   RESPONSIVO GLOBAL - REGLA UNIFICADA
+   ----------------------------------------------------------
+   Proteccion defensiva para todas las vistas:
+   .grid, .row, .main-content y .card se limitan al ancho de
+   su contenedor y usan border-box, de modo que padding y
+   borde no empujen el ancho total ni provoquen scroll
+   horizontal global en el body (iPhone / Android).
+   ========================================================== */
+.grid,
+.row,
+.main-content,
+.card {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Los hijos directos de un grid jamas deben forzar un ancho
+   mayor al de su pista: sin min-width: 0 no se comprimen y
+   desbordan el contenedor. */
+.grid > * {
+  min-width: 0;
+}
+
+/* Contenedor de tabla con scroll propio.
+   La tabla puede ser mas ancha que la pantalla, pero el scroll
+   vive dentro del contenedor y no en el body. */
+.table-responsive {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Filas flexibles: nunca desbordan, pasan a varias lineas. */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  max-width: 100%;
+}
+
+/* Ancho del contenido principal limitado al viewport. */
+.main-content {
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+/* ==========================================================
+   ESCALA RESPONSIVA GLOBAL - 320px a 430px
+   ----------------------------------------------------------
+   Bloqueo del desborde horizontal y ajuste al 100% del
+   contenedor en todas las vistas del sistema.
+   ========================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box !important;
+}
+
+html,
+body {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  margin: 0;
+  padding: 0;
+}
+
+.layout,
+.main-content,
+.container,
+.card,
+form,
+table {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Nota: table conserva su min-width propio (p. ej. 760px en
+   inventario). En CSS min-width gana siempre sobre max-width,
+   de modo que la tabla sigue siendo ancha y el scroll ocurre
+   dentro de .table-responsive, nunca en el body. */
+
+/* ---------------------------------------------------------
+   TIPOGRAFIA DE TITULOS EN MOVIL (320px - 430px)
+   clamp() mantiene el titulo dentro de un rango legible sin
+   perder escala en escritorio.
+   --------------------------------------------------------- */
+@media (max-width: 600px) {
+  .pg-title,
+  .layout .pg-title,
+  .panel-layout .pg-title {
+    font-size: clamp(1.5rem, 6.5vw, 1.8rem) !important;
+    line-height: 1.15;
+    word-break: break-word;
+  }
+
+  .tb-title,
+  .layout .tb-title {
+    font-size: 0.95rem;
+  }
+
+  h1 {
+    font-size: clamp(1.5rem, 6.5vw, 1.8rem);
+  }
+
+  h2 {
+    font-size: clamp(1.25rem, 5.5vw, 1.5rem);
+  }
+
+  h3 {
+    font-size: clamp(1.1rem, 5vw, 1.3rem);
+  }
+
+  /* Titulos largos no deben empujar el ancho del contenedor. */
+  .pg-title,
+  h1,
+  h2,
+  h3 {
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+}
+/* ==========================================================
+   ENCABEZADO DE PAGINA (.pg-head) EN MOVIL
+   ----------------------------------------------------------
+   Regla unica para todas las vistas: el bloque de titulo y el
+   bloque de acciones pasan a columna y los botones ocupan el
+   100%, de modo que cabeceras como "+ Nuevo Cliente",
+   "Exportar" o "+ Registrar entrada" nunca desbordan.
+   ========================================================== */
+@media (max-width: 600px) {
+  .pg-head {
+    align-items: stretch !important;
+    flex-direction: column !important;
+    gap: 12px;
+    max-width: 100%;
+  }
+
+  .pg-head > * {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .pg-head .vehiculos-actions,
+  .pg-head .clientes-actions,
+  .pg-head .inventario-actions,
+  .pg-head .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pg-head .btn {
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+}
+/* ==========================================================
+   ACCESO A "INICIAR SESION" EN MOVIL  (index.html)
+   ----------------------------------------------------------
+   El boton de texto "Iniciar sesion" de la barra se oculta en
+   pantalla estrecha (serviteca-premium.css lo hace con
+   #jm-home nav > div:last-child .btn-g { display: none }).
+   Se sustituye por dos accesos equivalentes:
+
+     1. .nav-login-icon  - icono de un toque junto a la
+        hamburguesa, dentro de la barra superior.
+     2. .nl-login        - ultimo item del desplegable movil
+        que abre la hamburguesa (.nav.open .nav-links).
+
+   Paleta reutilizada del propio proyecto para garantizar el
+   contraste: #F1E9D9 sobre la barra oscura (mismo color que
+   premium aplica a #hambtn) y #B3945D como dorado de estado
+   (mismo que su outline de :focus-visible).
+   ========================================================== */
+
+/* --- Boton de texto: fuera de la barra en todo el rango movil.
+       Se unifica en 900px para que icono y texto no convivan. --- */
+@media (max-width: 900px) {
+  .nav-login-text {
+    display: none !important;
+  }
+}
+
+/* --- Icono de acceso rapido junto a la hamburguesa --- */
+.nav-login-icon {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .nav-login-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(215, 222, 211, 0.28);
+    background: transparent;
+    color: #F1E9D9;
+    font-size: 0.95rem;
+    line-height: 1;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .nav-login-icon:hover,
+  .nav-login-icon:focus-visible {
+    background: #B3945D;
+    border-color: #B3945D;
+    color: #0D1611;
+    outline: none;
+  }
+
+  /* Area de toque minima comoda (40px) sin desbordar la barra. */
+  .nav-login-icon i {
+    font-size: 1rem;
+  }
+}
+
+/* --- Item de acceso dentro del desplegable movil ---
+       Oculto en escritorio: alli el boton de texto de la barra
+       ya ofrece la misma accion y no debe duplicarse. --- */
+.nl-login {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  /* El padre .nav-links esta en display:none mientras el menu
+     esta cerrado, por lo que este item solo aparece cuando la
+     hamburguesa lo despliega con .nav.open. */
+  .nav.open .nl-login {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 13px;
+    border-radius: 8px;
+    background: rgba(179, 148, 93, 0.16);
+    border: 1px solid rgba(179, 148, 93, 0.45);
+    color: #F1E9D9;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-decoration: none;
+    margin-top: 6px;
+  }
+
+  .nav.open .nl-login:hover,
+  .nav.open .nl-login:focus-visible {
+    background: #B3945D;
+    border-color: #B3945D;
+    color: #0D1611;
+    outline: none;
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════
+   DETALLE DE SERVICIO · modal (index.html)
+   -------------------------------------------------------------
+   Linea oscura y dorada: superficies negras, filete dorado y
+   texto en tono papel, con la misma familia serif editorial que
+   usan las vistas de referencia (dashboard/clientes).
+
+   Los tokens se declaran con valor propio dentro de .sd en lugar
+   de colgarse solo de --black2 / --yellow, porque serviteca-
+   premium.css se carga DESPUES de esta hoja y los redeclara a
+   blanco (#FFFFFF) y latón (#B3945D): el modal debe verse igual
+   de oscuro y dorado con cualquiera de los dos valores vigentes.
+   ═════════════════════════════════════════════════════════════ */
+
+.sd {
+  --sd-ink: #0A0A0A;
+  --sd-surface: #111111;
+  --sd-raised: #171717;
+  --sd-line: #2A2A2A;
+  --sd-gold: #B3945D;
+  --sd-gold-lt: #D0B77D;
+  --sd-paper: #F4F1E9; /* --jm-paper */
+  --sd-copy: #B0B0B0;
+  --sd-tone: rgba(179, 148, 93, 0.4);
+  --sd-title-font: 'DM Serif Display', Georgia, 'Times New Roman', serif;
+  --sd-body-font: 'DM Sans', 'Segoe UI', sans-serif;
+
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: var(--sd-body-font);
+  line-height: 1.6;
+}
+
+/* [hidden] debe ganar al display:flex declarado arriba. */
+.sd[hidden],
+.sd [hidden] {
+  display: none !important;
+}
+
+/* Scroll del fondo bloqueado mientras el detalle esta abierto. */
+body.sd-open {
+  overflow: hidden;
+}
+
+.sd-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 4, 4, 0.82);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: sd-fade 0.22s ease both;
+}
+
+.sd-panel {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  max-height: 92vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--sd-surface);
+  border: 1px solid rgba(179, 148, 93, 0.34);
+  border-radius: 16px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+  animation: sd-rise 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+  outline: none;
+}
+
+/* Cierre */
+.sd-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(244, 241, 233, 0.28);
+  background: rgba(10, 10, 10, 0.7);
+  color: var(--sd-paper);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.sd-close:hover,
+.sd-close:focus-visible {
+  background: var(--sd-gold);
+  border-color: var(--sd-gold);
+  color: var(--sd-ink);
+  outline: none;
+}
+
+/* ── Media / poster ── */
+.sd-media {
+  position: relative;
+  height: 216px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-bottom: 1px solid var(--sd-line);
+  /* Base fotografica + textura + tinte propio del servicio. Si la
+     foto no llegara a cargar, queda el gradiente: nunca hueco. */
+  background:
+    linear-gradient(165deg, var(--sd-tone), rgba(10, 10, 10, 0.9) 74%),
+    repeating-linear-gradient(
+      135deg,
+      rgba(244, 241, 233, 0.04) 0 2px,
+      transparent 2px 12px
+    ),
+    radial-gradient(120% 100% at 50% 0%, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.92)),
+    #101010 url('jm-fachada-serviteca.jpg') center / cover;
+}
+
+.sd-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(6, 6, 6, 0.92), transparent 62%);
+  pointer-events: none;
+}
+
+.sd-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sd-glyph {
+  position: relative;
+  z-index: 2;
+  font-size: clamp(3.6rem, 13vw, 5.4rem);
+  line-height: 1;
+  filter: drop-shadow(0 10px 26px rgba(0, 0, 0, 0.75));
+}
+
+.sd-media-tag {
+  position: absolute;
+  left: 20px;
+  bottom: 14px;
+  z-index: 2;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  color: var(--sd-gold-lt);
+}
+
+/* ── Cuerpo ── */
+.sd-body {
+  padding: 26px clamp(18px, 4vw, 34px) clamp(20px, 4vw, 30px);
+}
+
+.sd-kicker {
+  margin: 0 0 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2.6px;
+  text-transform: uppercase;
+  color: var(--sd-gold-lt);
+}
+
+.sd-title {
+  margin: 0 0 12px;
+  font-family: var(--sd-title-font) !important;
+  font-weight: 400;
+  font-size: clamp(1.5rem, 5.2vw, 2.1rem);
+  line-height: 1.16;
+  letter-spacing: 0.2px;
+  color: var(--sd-paper);
+}
+
+.sd-lead {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--sd-paper);
+}
+
+.sd-long {
+  margin: 10px 0 0;
+  font-size: 0.88rem;
+  color: var(--sd-copy);
+}
+
+/* ── Ficha de datos ── */
+.sd-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 20px 0 10px;
+  padding: 14px;
+  background: var(--sd-raised);
+  border: 1px solid var(--sd-line);
+  border-left: 3px solid var(--sd-gold);
+  border-radius: 10px;
+}
+
+.sd-fact {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.sd-fact-k {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--sd-copy);
+}
+
+.sd-fact-v {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--sd-gold-lt);
+  overflow-wrap: anywhere;
+}
+
+.sd-note {
+  margin: 0;
+  font-size: 0.72rem;
+  font-style: italic;
+  color: #8C8C8C;
+}
+
+/* ── Secciones ── */
+.sd-section {
+  margin-top: 22px;
+}
+
+.sd-h3 {
+  margin: 0 0 10px;
+  font-family: 'Oswald', sans-serif !important;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--sd-gold);
+}
+
+.sd-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 9px;
+}
+
+.sd-list li {
+  position: relative;
+  padding-left: 26px;
+  font-size: 0.87rem;
+  color: var(--sd-copy);
+}
+
+.sd-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 17px;
+  height: 17px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(179, 148, 93, 0.16);
+  border: 1px solid rgba(179, 148, 93, 0.5);
+  font-size: 0.6rem;
+  color: var(--sd-gold-lt);
+}
+
+.sd-specs {
+  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  gap: 8px 16px;
+  font-size: 0.85rem;
+}
+
+.sd-specs dt {
+  color: var(--sd-copy);
+}
+
+.sd-specs dd {
+  margin: 0;
+  text-align: right;
+  color: var(--sd-paper);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* ── Acciones ── */
+.sd-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 26px;
+  padding-top: 20px;
+  border-top: 1px solid var(--sd-line);
+}
+
+.sd-btn {
+  flex: 1 1 190px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 18px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.sd-btn-y {
+  background: var(--sd-gold);
+  color: var(--sd-ink);
+}
+
+.sd-btn-y:hover,
+.sd-btn-y:focus-visible {
+  background: var(--sd-gold-lt);
+  outline: none;
+}
+
+.sd-btn-ghost {
+  background: transparent;
+  border-color: rgba(244, 241, 233, 0.3);
+  color: var(--sd-paper);
+}
+
+.sd-btn-ghost:hover,
+.sd-btn-ghost:focus-visible {
+  border-color: var(--sd-gold);
+  color: var(--sd-gold-lt);
+  outline: none;
+}
+
+/* El foco de teclado de las tarjetas del carrusel se define en
+   index.css (.srv:focus-visible, junto al resto del componente). */
+
+@keyframes sd-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes sd-rise {
+  from { opacity: 0; transform: translateY(18px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ── Tablet < 900px ── */
+@media (max-width: 900px) {
+  .sd { padding: 16px; }
+  .sd-panel { max-width: 620px; }
+  .sd-media { height: 190px; }
+}
+
+/* ── Móvil < 600px ── */
+@media (max-width: 600px) {
+  .sd {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .sd-panel {
+    max-width: 100%;
+    max-height: 94vh;
+    border-radius: 16px 16px 0 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+  }
+
+  .sd-media { height: 164px; }
+
+  .sd-media-tag { left: 14px; bottom: 12px; }
+
+  /* Ficha a una columna para que nada se comprima a 320px. */
+  .sd-meta { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+
+  .sd-specs {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px 0;
+  }
+
+  .sd-specs dt { margin-top: 8px; }
+  .sd-specs dd { text-align: left; }
+
+  /* Acciones pegadas al pie: "Agendar Cita" siempre a la vista. */
+  .sd-actions {
+    position: sticky;
+    bottom: 0;
+    margin-top: 22px;
+    padding: 14px 0 4px;
+    background: linear-gradient(to top, var(--sd-surface) 72%, transparent);
+  }
+
+  .sd-btn { flex: 1 1 100%; }
 }

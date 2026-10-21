@@ -20,13 +20,6 @@
     --shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
 }
 
-*,
-*::before,
-*::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 
 html {
     scroll-behavior: smooth;
@@ -285,6 +278,8 @@ button {
     color: var(--white); /* Texto claro visible */
     border-radius: var(--r);
     padding: 20px;
+    overflow: hidden; /* Contiene las barras del grafico dentro
+                         de la tarjeta y corta cualquier residuo. */
 }
 
 .two {
@@ -293,44 +288,109 @@ button {
     gap: 16px;
 }
 
-/* COMPONENTE: GRÁFICO DE BARRAS */
-.bar-chart {
+/* ==========================================================
+   COMPONENTE: GRÁFICO DE BARRAS
+   ----------------------------------------------------------
+   styles.css se carga DESPUÉS de reportes.css y declara las
+   mismas clases (.bar-chart, .bc, .bf, .bl, .bv) con la misma
+   especificidad, por lo que las pisaba: fijaba height: 80px
+   sobre .bar-chart y eliminaba height: 100% y justify-content
+   de .bc. Sin pista de altura fija, cada .bc colapsaba a su
+   propio contenido y las barras se salían por arriba del
+   contenedor, cortándose todas a la misma altura.
+
+   Para ganar la cascada sin !important, todo el componente se
+   escopea bajo .card (0,2,0), que le gana a .bf (0,1,0).
+
+   La barra vive dentro de .btrack: una pista de altura fija
+   (170px) independiente de las etiquetas. Así height: X% se
+   resuelve contra la pista y nunca contra la columna completa,
+   que además contiene .bl y .bv.
+   ========================================================== */
+
+/* Contenedor: las columnas crecen de abajo hacia arriba.
+
+   height va AQUI, declarado. styles.css:824 fija .bar-chart a
+   80px con (0,1,0) y, al no overridearlo, esa regla seguia viva:
+   un .btrack de 170px desbordaba 90px hacia arriba y se
+   superponia al <h4> del titulo. position:relative + overflow:
+   hidden delimitan la caja y cortan cualquier residuo. */
+.card .bar-chart {
     display: flex;
     align-items: flex-end;
-    justify-content: space-around;
+    justify-content: space-between;
+    gap: 10px;
     height: 180px;
-    padding-top: 15px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding-top: 12px;
     border-bottom: 1px solid var(--black4);
 }
 
-.bc {
+/* Columna: pista + etiqueta + valor, centrados. */
+.card .bc {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
-    height: 100%;
     flex: 1;
+    min-width: 0;
 }
 
-.bf {
-    width: 42px;
-    background: var(--green);
+/* Pista de trazado: altura fija y ajena a .bl/.bv, de modo que
+   el porcentaje de la barra se resuelve contra ella.
+
+   130px = 180px (contenedor) - 12px (padding-top) - ~38px
+   (.bl + .bv). La barra mas alta ocupa 130/180 = 72% del
+   contenedor, por debajo del 80-85% pedido, con holgura para
+   que etiqueta y valor nunca salgan de la caja. */
+.card .btrack {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: 100%;
+    height: 130px;
+}
+
+/* Barra: la altura proporcional va en el HTML (dato), el
+   color institucional vive aquí. */
+.card .bf {
+    width: min(46px, 72%);
     border-radius: 6px 6px 0 0;
-    transition: height 0.3s ease;
+    background: linear-gradient(180deg,
+        var(--jm-verde) 0%,
+        var(--jm-verde-dark) 100%);
+    transition: filter .2s ease;
 }
 
-.bl {
-    font-size: 0.75rem;
+.card .bf:hover { filter: brightness(1.12); }
+
+/* Semana destacada (máximo del periodo): acento dorado. */
+.card .bf.is-max {
+    background: linear-gradient(180deg, #D0B77D 0%, #B3945D 100%);
+}
+
+/* Proyección: contorno punteado, sin relleno sólido. */
+.card .bf.is-proy {
+    background: rgba(179, 148, 93, 0.10);
+    border: 1px dashed #B3945D;
+}
+
+.card .bl {
+    font-size: 0.72rem;
     color: var(--gray1);
     margin-top: 8px;
 }
 
-.bv {
+.card .bv {
     font-size: 0.78rem;
     font-weight: 700;
     color: var(--white);
     margin-top: 2px;
 }
+
+.card .bv.is-max { color: #D0B77D; }
+.card .bv.is-proy { color: var(--gray2); font-weight: 600; }
 
 /* COMPONENTE: BARRAS DE PROGRESO */
 .prog-w {
@@ -448,11 +508,54 @@ a[href*="whatsapp"] {
     z-index: 9998 !important;
 }
 
-@media (max-width: 576px) {
+@media (max-width: 600px) {
     #chatbot-launcher,
     .chatbot-toggle-btn,
     #chat-widget-button {
         bottom: 80px !important; /* En móviles el Chatbot se coloca arriba de WhatsApp */
         right: 20px !important;
     }
+}
+/* ==========================================================
+   RESPONSIVO - REFUERZO ANTI-DESBORDE
+   ----------------------------------------------------------
+   Sin min-width: 0 los contenedores no pueden comprimirse por
+   debajo de su contenido y la tabla de reportes empujaba un
+   ancho mayor al viewport, generando scrollbar horizontal.
+   ========================================================== */
+.pg,
+.pg-body,
+.card {
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.card > * {
+  min-width: 0;
+}
+
+.tw,
+.tbl-wrap,
+.table-responsive {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 600px) {
+  .pg,
+  .pg-body {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .tw table,
+  .tbl-wrap table {
+    min-width: 640px;
+  }
 }

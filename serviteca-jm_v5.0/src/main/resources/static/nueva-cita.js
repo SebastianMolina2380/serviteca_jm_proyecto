@@ -44,6 +44,29 @@ document.addEventListener("DOMContentLoaded", function () {
     tbdate.textContent = `${date.getDate()} DE ${monthNames[date.getMonth()]}`;
   }
 
+  /* Servicio elegido en el detalle de index.html
+     (?servicio=Frenos). Solo preselecciona el chip del paso 3;
+     no salta de paso, para no saltarse la validación del wizard.
+     Al llegar a "PASO 3" ya aparecerá marcado. */
+  try {
+    const paramServicio = new URLSearchParams(window.location.search).get("servicio");
+    if (paramServicio) {
+      const norm = (s) =>
+        (s || "")
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .trim();
+      const buscado = norm(paramServicio);
+      document.querySelectorAll(".svc").forEach(function (chip) {
+        const n = chip.querySelector(".svc-n");
+        if (n && norm(n.textContent) === buscado) selSvc(chip);
+      });
+    }
+  } catch (e) {
+    /* sin cadena de consulta: nada que preseleccionar */
+  }
+
   const sb = document.querySelector(".sb");
   const hamb = document.getElementById("hambtn");
   const overlay = document.getElementById("sb-overlay");
@@ -66,6 +89,113 @@ document.addEventListener("DOMContentLoaded", function () {
   window.addEventListener("resize", () => {
     if (window.innerWidth > 900) closeSb();
   });
+
+  /* --------------------------------------------------------
+     PASO 2 · selector de vehículo
+     --------------------------------------------------------
+     /api/vehiculos devuelve {idvehiculo, idusuario, placa,
+     marca, modelo, color, kilometraje}. El modelo Vehiculo.java
+     no tiene campos de tipo ni de año, por lo que esos dos
+     datos del formulario de alta no llegan a persistirse.
+     ------------------------------------------------------ */
+  const selPlaca = document.getElementById("veh-placa");
+  const resumenVeh = document.getElementById("veh-resumen");
+  const avisoVacio = document.getElementById("veh-vacio");
+  const panelExistente = document.getElementById("veh-existente");
+  const panelNuevo = document.getElementById("veh-nuevo");
+  let vehiculosCargados = [];
+
+  function pintarResumen(v) {
+    if (!resumenVeh) return;
+    if (!v) { resumenVeh.textContent = "—"; return; }
+    const km = v.kilometraje != null
+      ? Number(v.kilometraje).toLocaleString("es-CO") + " km"
+      : "";
+    resumenVeh.innerHTML =
+      '<strong style="color:var(--green)">' + (v.placa || "—") + "</strong><br>" +
+      ((v.marca || "") + " " + (v.modelo || "")).trim() +
+      (v.color ? " · " + v.color : "") +
+      (km ? '<br><span style="color:var(--gray1)">' + km + "</span>" : "");
+  }
+
+  function cambiarModoVehiculo(modo) {
+    const esExistente = modo === "existente";
+    if (panelExistente) panelExistente.hidden = !esExistente;
+    if (panelNuevo) panelNuevo.hidden = esExistente;
+    document.querySelectorAll(".vh-tab").forEach(function (t) {
+      const activo = t.dataset.vhModo === modo;
+      t.classList.toggle("is-active", activo);
+      t.setAttribute("aria-selected", activo ? "true" : "false");
+    });
+  }
+
+  document.querySelectorAll("[data-vh-modo]").forEach(function (t) {
+    t.addEventListener("click", function () { cambiarModoVehiculo(t.dataset.vhModo); });
+  });
+
+  async function cargarVehiculos() {
+    if (!selPlaca) return;
+    try {
+      const r = await fetch("/api/vehiculos", { credentials: "same-origin" });
+      const data = await r.json().catch(function () { return []; });
+      if (!r.ok || !Array.isArray(data)) throw new Error("sin datos");
+
+      vehiculosCargados = data;
+      selPlaca.innerHTML = "";
+
+      /* Sin registros no tiene sentido mostrar un selector vacío:
+         se fuerza el modo de alta y se explica por qué. */
+      if (!data.length) {
+        selPlaca.appendChild(new Option("— Sin vehículos registrados —", ""));
+        selPlaca.disabled = true;
+        if (avisoVacio) avisoVacio.style.display = "block";
+        cambiarModoVehiculo("nuevo");
+        return;
+      }
+
+      selPlaca.appendChild(new Option("— Seleccione vehículo —", ""));
+      data.forEach(function (v) {
+        selPlaca.appendChild(
+          new Option(v.placa + " · " + v.marca + " " + v.modelo, String(v.idvehiculo))
+        );
+      });
+      selPlaca.disabled = false;
+      if (avisoVacio) avisoVacio.style.display = "none";
+      cambiarModoVehiculo("existente");
+    } catch (e) {
+      selPlaca.innerHTML = "";
+      selPlaca.disabled = true;
+      selPlaca.appendChild(new Option("— No se pudieron cargar los vehículos —", ""));
+      if (avisoVacio) avisoVacio.style.display = "block";
+      cambiarModoVehiculo("nuevo");
+    }
+  }
+
+  if (selPlaca) {
+    selPlaca.addEventListener("change", function () {
+      const id = selPlaca.value;
+      pintarResumen(vehiculosCargados.find(function (v) {
+        return String(v.idvehiculo) === id;
+      }));
+    });
+  }
+
+  /* La placa escrita a mano debe viajar en mayúsculas como se ve. */
+  const inpPlaca = document.getElementById("placa-vehiculo");
+  if (inpPlaca) {
+    inpPlaca.addEventListener("input", function () {
+      inpPlaca.value = inpPlaca.value.toUpperCase();
+    });
+  }
+
+  /* Consultable desde el paso 4 para confirmar la cita. */
+  window.vehiculoSeleccionado = function () {
+    return vehiculosCargados.find(function (v) {
+      return selPlaca && String(v.idvehiculo) === selPlaca.value;
+    }) || null;
+  };
+
+  cargarVehiculos();
 
   goStep(1);
 });

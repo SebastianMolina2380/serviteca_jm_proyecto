@@ -2,9 +2,8 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Serviteca JM — Portal del Cliente</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Serviteca JM - Portal del Cliente</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
@@ -13,6 +12,7 @@
       <script src="role-guard.js"></script>
     <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="serviteca-theme.css">
+  <link rel="stylesheet" href="serviteca-premium.css">
 </head>
   <body>
     <div class="layout">
@@ -30,37 +30,37 @@
         <nav class="sb-nav">
           <div class="sb-sec">Principal</div>
           <a class="sb-link" href="dashboard.html"
-          ><span class="sb-ico">📊</span> Dashboard</a
+          ><span class="sb-ico"></span> Dashboard</a
           >
           <a class="sb-link" href="citas.html"
-          ><span class="sb-ico">📅</span> Citas
+          ><span class="sb-ico"></span> Citas
             <span class="sb-badge">4</span></a
           >
           <a class="sb-link" href="nueva-cita.html"
           ><span class="sb-ico">➕</span> Nueva Cita</a
           >
           <a class="sb-link" href="clientes.html"
-          ><span class="sb-ico">👤</span> Clientes</a
+          ><span class="sb-ico"></span> Clientes</a
           >
           <a class="sb-link" href="vehiculo.html"
-          ><span class="sb-ico">🚗</span> Vehículos</a
+          ><span class="sb-ico"></span> Vehículos</a
           >
           <div class="sb-sec" style="margin-top: 8px">Administración</div>
           <a class="sb-link" href="usuarios.html"
-          ><span class="sb-ico">👥</span> Usuarios</a
+          ><span class="sb-ico"></span> Usuarios</a
           >
           <a class="sb-link" href="inventario.html"
-          ><span class="sb-ico">🔩</span> Inventario
+          ><span class="sb-ico"></span> Inventario
             <span class="sb-badge" style="background: var(--red)">2</span></a
           >
           <a class="sb-link" href="facturacion.html"
-          ><span class="sb-ico">💵</span> Facturación</a
+          ><span class="sb-ico"></span> Facturación</a
           >
           <a class="sb-link" href="reportes.html"
-          ><span class="sb-ico">📈</span> Reportes</a
+          ><span class="sb-ico"></span> Reportes</a
           >
           <div class="sb-sec" style="margin-top: 8px">Portales</div>
-          <a class="sb-link" href="portal-cliente.html"><span class="sb-ico">👤</span> Portal Cliente</a>
+          <a class="sb-link" href="portal-cliente.html"><span class="sb-ico"></span> Portal Cliente</a>
         </nav>
         <div class="sb-foot">
           <div class="sb-av" id="sbav">JM</div>
@@ -108,24 +108,18 @@
             "
           >
             <div>
-              <h2
-                style="
-                  font-family: &quot;Oswald&quot;, sans-serif;
-                  font-size: 1.7rem;
-                  font-weight: 700;
-                  color: #fff;
-                  letter-spacing: 0.5px;
-                "
-              >
-                Bienvenida, <span style="color: var(--green)">Luisa</span> 👋
+
+              <h2 style="..." id="saludo-usuario">
+                Bienvenida, <span id="nombre-usuario">Usuario</span> 
               </h2>
+
               <p
                 style="font-size: 0.8rem; color: var(--gray1); margin-top: 3px"
               >
                 Tienes 1 servicio en progreso y 1 cita próxima.
               </p>
             </div>
-            <a href="nueva-cita.html" class="btn btn-y btn btn-primary">📅 Solicitar Cita</a>
+            <a href="nueva-cita.html" class="btn btn-y btn btn-primary"> Solicitar Cita</a>
           </div>
           <!-- ETIQUETA: KPIs del portal del cliente -->
           <div class="kpi-grid" style="grid-template-columns: repeat(3, 1fr)">
@@ -194,7 +188,7 @@
                 href="nueva-cita.html"
                 class="btn btn-y btn btn-primary"
                 style="width: 100%; justify-content: center; display: flex"
-                >📅 Solicitar nueva cita</a
+                > Solicitar nueva cita</a
               >
             </div>
           </div>
@@ -237,6 +231,7 @@
       </div>
     </div>
     <script src="portal-cliente.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script src="sidebar.js" defer></script>
 </body>
 </html>
+

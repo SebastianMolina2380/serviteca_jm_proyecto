@@ -2,14 +2,14 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Serviteca JM — Factura Electrónica</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Serviteca JM - Factura Electrónica</title>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="role-guard.js"></script>
-  <link rel="stylesheet" href="citas.css">
+  <link rel="stylesheet" href="facturacion.css">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="serviteca-theme.css">
-  <link rel="stylesheet" href="facturacion.css">
+  <link rel="stylesheet" href="serviteca-premium.css">
 </head>
 <body>
 <div class="layout">
@@ -24,16 +24,16 @@
     <nav class="sb-nav">
       <div class="sb-sec">Principal</div>
       <a class="sb-link" href="dashboard.html"><span class="sb-ico">📊</span> Dashboard</a>
-      <a class="sb-link" href="citas.html"><span class="sb-ico">📅</span> Citas</a>
+      <a class="sb-link" href="citas.html"><span class="sb-ico">📅</span> Citas <span class="sb-badge">4</span></a>
       <a class="sb-link" href="nueva-cita.html"><span class="sb-ico">➕</span> Nueva Cita</a>
       <a class="sb-link" href="clientes.html"><span class="sb-ico">👤</span> Clientes</a>
       <a class="sb-link" href="vehiculo.html"><span class="sb-ico">🚗</span> Vehículos</a>
-
       <div class="sb-sec" style="margin-top: 8px">Administración</div>
       <a class="sb-link" href="usuarios.html"><span class="sb-ico">👥</span> Usuarios</a>
-      <a class="sb-link" href="inventario.html"><span class="sb-ico">🔩</span> Inventario</a>
+      <a class="sb-link" href="inventario.html"><span class="sb-ico">🔩</span> Inventario <span class="sb-badge" style="background: var(--red)">2</span></a>
       <a class="sb-link active" href="facturacion.html"><span class="sb-ico">💵</span> Facturación</a>
       <a class="sb-link" href="reportes.html"><span class="sb-ico">📈</span> Reportes</a>
+
     </nav>
     <div class="sb-foot">
       <div class="sb-av" id="sbav">JM</div>
@@ -56,7 +56,7 @@
       <div class="tb-title">Factura electrónica</div>
       <button type="button" class="notif-btn">
         <span class="ndot" aria-hidden="true"></span>
-        🔔
+        
       </button>
       <span style="font-size: 0.74rem; color: var(--gray1)" id="tbdate"></span>
       <div class="av">JM</div>
@@ -89,9 +89,9 @@
         <h1>Factura electrónica de venta</h1>
         <p>Consulta, imprime y guarda en PDF tus facturas con una presentación institucional optimizada para escritorio y móvil.</p>
         <div class="actions">
-          <button class="btn btn-y" id="print">🖨 Imprimir / Guardar PDF</button>
-          <button class="btn btn-g" id="register-payment">💳 Registrar pago</button>
-          <button class="btn btn-gh" id="export-excel">📊 Exportar Reporte</button>
+          <button class="btn btn-y" id="print"> Imprimir / Guardar PDF</button>
+          <button class="btn btn-g" id="register-payment"> Registrar pago</button>
+          <button class="btn btn-gh" id="export-excel"> Exportar Reporte</button>
         </div>
       </div>
 
@@ -99,8 +99,10 @@
       <div class="grid">
         <section class="card">
           <h2 style="margin-bottom: 16px;">Vista de factura</h2>
-          <div id="invoice-preview" class="invoice-preview">
-            <div class="empty">Cargando factura…</div>
+          <div class="invoice-sheet-wrap">
+            <div id="invoice-preview" class="invoice-preview">
+              <div class="empty">Cargando factura…</div>
+            </div>
           </div>
         </section>
 
@@ -114,5 +116,6 @@
 </div>
 
 <script src="facturacion.js"></script>
+<script src="sidebar.js" defer></script>
 </body>
 </html>

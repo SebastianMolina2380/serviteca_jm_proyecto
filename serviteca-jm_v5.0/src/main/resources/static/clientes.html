@@ -2,14 +2,15 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Serviteca JM — Gestión de Clientes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Serviteca JM - Gestión de Clientes</title>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="usuarios.css">
   <link rel="stylesheet" href="clientes.css">
   <script src="role-guard.js"></script>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="serviteca-theme.css">
+  <link rel="stylesheet" href="serviteca-premium.css">
 </head>
 <body>
 <div class="layout">
@@ -32,8 +33,7 @@
       <a class="sb-link" href="inventario.html"><span class="sb-ico">🔩</span> Inventario <span class="sb-badge" style="background: var(--red)">2</span></a>
       <a class="sb-link" href="facturacion.html"><span class="sb-ico">💵</span> Facturación</a>
       <a class="sb-link" href="reportes.html"><span class="sb-ico">📈</span> Reportes</a>
-      <div class="sb-sec" style="margin-top: 8px">Portales</div>
-      <a class="sb-link" href="portal-cliente.html"><span class="sb-ico">👤</span> Portal Cliente</a>
+
     </nav>
     <div class="sb-foot">
       <div class="sb-av" id="sbav">JM</div>
@@ -70,7 +70,7 @@
 
       <div class="clientes-toolbar">
         <div class="clientes-search">
-          <span>🔎</span>
+          <span></span>
           <input id="buscar-cliente" type="search" placeholder="Buscar por nombre, documento o correo...">
         </div>
         <div class="clientes-count" id="clientes-count">0 clientes</div>
@@ -97,5 +97,6 @@
   </main>
 </div>
 <script src="clientes.js"></script>
+<script src="sidebar.js" defer></script>
 </body>
 </html>

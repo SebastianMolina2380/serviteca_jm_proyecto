@@ -19,13 +19,6 @@
   --r: 10px;
   --shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
 }
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 html {
   scroll-behavior: smooth;
 }
@@ -1409,4 +1402,3 @@ tr:hover td {
   border-radius: 10px;
   padding: 20px;
 }
-:root {

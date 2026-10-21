@@ -4,8 +4,8 @@
     --black3: #1a1a1a;
     --black4: #252525;
     --green: #22c55e;
-    --green2: #16a34a;
-    --green3: #15803d;
+    --green2: #137537;
+    --green3: #075724;
     --yellow: #facc15;
     --yellow2: #eab308;
     --white: #f8fafc;
@@ -33,13 +33,6 @@
     --topbar: 72px;
 }
 
-*,
-*::before,
-*::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 
 html {
     scroll-behavior: smooth;
@@ -196,7 +189,7 @@ nav {
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
     .hero {
         padding: 36px 20px;
     }
@@ -415,92 +408,351 @@ nav {
     line-height: 1.6;
 }
 
-/* SERVICIOS CON PANEL GRADIENT */
-.srv-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
+/* ═════════════════════════════════════════════════════════════
+   CARRUSEL DE SERVICIOS · enfoque central
+   -------------------------------------------------------------
+   Pista con desplazamiento horizontal, snap al centro y tarjetas
+   de ancho fijo. Las flechas flotan a los costados por encima de
+   600px y bajan bajo la pista en móvil: a 320px no queda aire
+   lateral sin tapar la tarjeta.
+
+   Nota de color: --black2 y --yellow las redeclara
+   serviteca-premium.css (que carga despues de esta hoja), por lo
+   que aquí se usan los tokens estables --jm-brass / --jm-paper,
+   que nadie redefine, mas un valor literal de respaldo.
+   ═════════════════════════════════════════════════════════════ */
+
+.services-slider-container {
+    position: relative;
 }
 
+.services-track {
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 12px;
+    /* Barra oculta: el carrusel se maneja con las flechas. */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    /* Simetrica para que las flechas queden centradas en la
+       tarjeta y para que el hover no se recorte: overflow-x:auto
+       obliga a recortar tambien el eje vertical. */
+    padding: 18px 2px;
+}
+
+.services-track::-webkit-scrollbar {
+    display: none;
+}
+
+/* ── Tarjeta banner ── */
 .srv {
-    background: var(--panel-gradient);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 26px 20px;
-    transition: all 0.2s;
-    cursor: pointer;
+    flex: 0 0 320px;
+    width: 320px;
+    scroll-snap-align: center;
+    display: flex;
+    flex-direction: column;
     position: relative;
     overflow: hidden;
-}
-
-.srv::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: var(--yellow);
-    transform: scaleX(0);
-    transition: all 0.2s;
+    cursor: pointer;
+    background: linear-gradient(180deg, #151515 0%, #0C0C0C 100%);
+    border: 1px solid rgba(179, 148, 93, 0.32);
+    /* 14px: medida pedida para la tarjeta banner. */
+    border-radius: 14px;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+    transition: transform 0.3s ease, border-color 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
 .srv:hover {
-    border-color: var(--yellow);
-    transform: translateY(-5px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    transform: translateY(-6px) scale(1.015);
+    border-color: rgba(179, 148, 93, 0.75);
+    box-shadow: 0 18px 46px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(179, 148, 93, 0.25);
 }
 
-.srv:hover::after {
-    transform: scaleX(1);
+.srv:focus-visible {
+    outline: 2px solid #D0B77D;
+    outline-offset: 3px;
+}
+
+/* Enfoque central: en pantallas donde solo entra una o dos
+   tarjetas, la centrada gana realce. */
+@media (max-width: 900px) {
+    .srv.is-active {
+        border-color: rgba(179, 148, 93, 0.62);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55),
+            0 0 0 1px rgba(179, 148, 93, 0.2);
+    }
+}
+
+/* ── Banda superior: foto si existe, si no poster generado ── */
+.srv-media {
+    position: relative;
+    /* Más altura que la version previa (118px): la imagen gana
+       peso y la tarjeta se acerca al formato banner. */
+    height: 150px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(179, 148, 93, 0.22);
+    background:
+        linear-gradient(165deg, var(--srv-tone, rgba(179, 148, 93, 0.42)),
+            rgba(10, 10, 10, 0.92) 78%),
+        repeating-linear-gradient(
+            135deg,
+            rgba(244, 241, 233, 0.045) 0 2px,
+            transparent 2px 12px
+        ),
+        radial-gradient(120% 100% at 50% 0%, rgba(0, 0, 0, 0.25),
+            rgba(0, 0, 0, 0.9)),
+        #101010 url('jm-fachada-serviteca.jpg') center / cover;
+}
+
+.srv-media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    /* Veladura a tres paradas: base firme abajo para que el
+       texto y el glifo se lean sobre cualquier poster, caida
+       suave al medio y techo transparente para no apagar la
+       fotografia. */
+    background: linear-gradient(
+        to top,
+        rgba(6, 6, 6, 0.94) 0%,
+        rgba(6, 6, 6, 0.6) 32%,
+        rgba(6, 6, 6, 0.18) 58%,
+        transparent 78%
+    );
+    pointer-events: none;
+}
+
+/* Tinte propio de cada servicio: se cuelga del mismo atributo
+   data-servicio que usa el JavaScript, sin clases extra. */
+.srv[data-servicio='mantenimiento'] { --srv-tone: rgba(179, 148, 93, 0.46); }
+.srv[data-servicio='frenos'] { --srv-tone: rgba(184, 74, 54, 0.4); }
+.srv[data-servicio='alineacion'] { --srv-tone: rgba(27, 138, 46, 0.4); }
+.srv[data-servicio='diagnostico'] { --srv-tone: rgba(96, 146, 192, 0.4); }
+.srv[data-servicio='electrico'] { --srv-tone: rgba(245, 194, 0, 0.34); }
+.srv[data-servicio='llantas'] { --srv-tone: rgba(150, 150, 150, 0.36); }
+
+.srv-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.srv-tag {
+    position: absolute;
+    left: 14px;
+    top: 12px;
+    z-index: 2;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #D0B77D;
 }
 
 .srv-ico {
-    font-size: 2.2rem;
-    margin-bottom: 14px;
-    display: block;
+    position: relative;
+    z-index: 2;
+    font-size: 2.7rem;
+    line-height: 1;
+    filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.7));
+}
+
+/* ── Contenido ── */
+.srv-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 18px 18px;
 }
 
 .srv-name {
-    font-family: "Oswald", sans-serif;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 6px;
+    margin: 0;
+    font-family: 'DM Serif Display', Georgia, 'Times New Roman', serif !important;
+    font-weight: 400;
+    font-size: 1.14rem;
+    line-height: 1.24;
+    color: #F4F1E9;
 }
 
 .srv-desc {
-    font-size: 0.75rem;
-    color: var(--gray1);
-    line-height: 1.5;
-    margin-bottom: 12px;
+    margin: 0;
+    font-size: 0.8rem;
+    line-height: 1.55;
+    color: #A9A9A9;
 }
 
 .srv-price {
-    font-size: 0.8rem;
-    color: var(--yellow);
-    font-weight: 700;
+    margin-top: auto;
+    padding-top: 4px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    color: #D0B77D;
 }
 
-.srv-btn {
-    margin-top: 14px;
-    background: var(--green3);
-    color: #fff;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-size: 0.74rem;
+.srv-foot {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+}
+
+/* Disparador del modal de detalle */
+.srv-more {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: 1px solid rgba(179, 148, 93, 0.55);
+    border-radius: 8px;
+    padding: 9px 10px;
+    color: #D0B77D;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.72rem;
     font-weight: 600;
-    width: 100%;
-    transition: all 0.2s;
-    font-family: "Oswald", sans-serif;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
     cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.srv-more:hover,
+.srv-more:focus-visible {
+    background: #B3945D;
+    border-color: #B3945D;
+    color: #0A0A0A;
+    outline: none;
+}
+
+/* "Solicitar" conserva su destino original: login.html */
+.srv-btn {
+    flex: 0 0 auto;
+    background: #10281E;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: #fff;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
 }
 
 .srv-btn:hover {
-    background: var(--yellow);
-    color: #000;
+    background: #B3945D;
+    color: #0A0A0A;
+}
+
+/* ── Flechas de navegación ── */
+.slider-nav {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+    pointer-events: auto;
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1px solid rgba(179, 148, 93, 0.55);
+    /* Verde institucional semitransparente con desenfoque: la
+       flecha se lee sobre cualquier poster sin tapar la tarjeta. */
+    background: rgba(16, 40, 30, 0.82);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #D0B77D;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease,
+        border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.slider-btn-prev { left: -22px; }
+.slider-btn-next { right: -22px; }
+
+.slider-btn:hover,
+.slider-btn:focus-visible {
+    background: #B3945D;
+    border-color: #B3945D;
+    color: #0A0A0A;
+    outline: none;
+}
+
+/* Extremos: la flecha se apaga cuando ya no hay a donde ir. */
+.slider-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+    pointer-events: none;
+}
+
+/* ── Tablet ≤ 900px ── */
+@media (max-width: 900px) {
+    .slider-btn-prev { left: -12px; }
+    .slider-btn-next { right: -12px; }
+}
+
+/* ── Móvil ≤ 600px ── */
+@media (max-width: 600px) {
+    /* La pista gana el ancho de la sección para que la tarjeta
+       (320px) se vea casi completa y la que sigue asome. */
+    #servicios.section {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .services-track {
+        gap: 12px;
+        padding: 16px 0;
+        scroll-padding-inline: 8px;
+    }
+
+    .srv {
+        flex-basis: min(320px, 100%);
+        width: min(320px, 100%);
+    }
+
+    /* Sin aire lateral: las flechas bajan bajo la pista. */
+    .slider-nav {
+        position: static;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 4px;
+        pointer-events: auto;
+    }
+
+    .slider-btn {
+        position: static;
+        transform: none;
+        width: 44px;
+        height: 44px;
+    }
+
+    .srv-name { font-size: 1.06rem; }
 }
 
 /* WHY */
@@ -722,4 +974,43 @@ nav {
 
 .btn-whatsapp:hover {
     background-color: #20ba5a !important;
+}
+/* ==========================================================
+   MOVIL (320px - 600px) - CONTENEDOR CENTRAL Y ESCALA
+   ========================================================== */
+@media (max-width: 600px) {
+  .hero-cont {
+    width: 90% !important;
+    max-width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  .contact {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Titular principal legible en 320px - 430px. */
+  .h1 {
+    font-size: clamp(1.6rem, 8vw, 2.2rem) !important;
+    line-height: 1.08;
+    overflow-wrap: anywhere;
+  }
+
+  .sec-h2 {
+    font-size: clamp(1.4rem, 6.5vw, 1.8rem) !important;
+    overflow-wrap: anywhere;
+  }
+
+  .sec-p,
+  .hero-p {
+    font-size: 0.95rem;
+  }
+
+  .stat-num {
+    font-size: clamp(1.6rem, 7vw, 2.1rem);
+  }
 }

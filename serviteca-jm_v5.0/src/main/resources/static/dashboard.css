@@ -17,13 +17,6 @@
   --topbar: 62px;
 }
 
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
 html, body {
   overflow-x: hidden;
@@ -164,7 +157,9 @@ input:focus, select:focus, textarea:focus {
 /* PANEL LAYOUT DE ESCRITORIO */
 .layout {
   display: flex !important;
-  width: 100vw !important;
+  /* 100% y NO 100vw: 100vw incluye el ancho de la scrollbar y
+     provoca desbordamiento horizontal (scroll hacia la derecha). */
+  width: 100% !important;
   min-height: 100vh !important;
   background-color: var(--black, #0a0a0a) !important;
   overflow-x: hidden;
@@ -174,9 +169,15 @@ input:focus, select:focus, textarea:focus {
   width: 240px !important;
   min-width: 240px !important;
   flex-shrink: 0 !important;
-  position: sticky;
+  /* fixed y no sticky: .layout tiene overflow-x:hidden, lo que lo
+     convierte en el scrollport del sticky. Como ese ancestro no
+     scrollea, el sticky nunca se activaba y la barra se iba con el
+     contenido. .main (L299) ya compensa con margin-left:240px. */
+  position: fixed !important;
   top: 0;
+  left: 0;
   height: 100vh;
+  z-index: 1000;
 }
 
 .sb-head {
@@ -732,5 +733,37 @@ tr:hover td {
     font-size: 0.8rem;
     width: 100%;
     justify-content: center;
+  }
+}
+/* ==========================================================
+   MOVIL (<=900px) - SIDEBAR FUERA DEL FLUJO
+   ----------------------------------------------------------
+   En escritorio .sb usa position: sticky, lo que lo mantiene
+   DENTRO del flujo y le hace reservar 240px de ancho. En
+   pantallas estrechas eso encoge .main (ancho - 240px) y
+   comprime el contenido, e incluso lo empuja fuera del
+   viewport porque .layout meda 100vw.
+
+   Se pasa a position: fixed: no ocupa ancho y sigue el
+   mismo patron off-canvas (translateX) que styles.css ya
+   aplica y que sidebar.js alterna con la clase .open.
+   ========================================================== */
+@media (max-width: 900px) {
+  .layout {
+    width: 100% !important;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  .sb {
+    position: fixed !important;
+    flex-shrink: 0 !important;
+  }
+
+  .main {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0;
   }
 }

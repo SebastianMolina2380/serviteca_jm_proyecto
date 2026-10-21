@@ -63,8 +63,8 @@
         <article class="invoice-item">
           <div>
             <strong>${esc(i.numeroFactura || `JM ${i.idFactura}`)}</strong>
-            <div>${esc(i.usuario?.nombre || "Cliente")}</div>
-            <small>${esc(i.detalles?.map(d => d.nombre).join(", ") || "Servicio automotriz")} · ${dateCO(i.fecha)}</small>
+            <div>${esc(i.adquirente?.razonSocial || "Cliente")}</div>
+            <small>${esc(i.detalles?.map(d => d.descripcion).join(", ") || "Servicio automotriz")} · ${dateCO(i.fechaGeneracion)}</small>
           </div>
           <button type="button" data-id="${esc(i.idFactura)}">Ver</button>
         </article>`).join("")
@@ -83,67 +83,78 @@
     selected = i;
     const subtotal = Number(i.subtotal) || 0;
     const total = Number(i.total) || 0;
-    const iva = Math.max(0, total - subtotal);
-    const u = i.usuario || {};
-    const v = i.cita?.vehiculo || {};
+    const u = i.adquirente || {};
+    const emisor = i.emisor || {};
 
     const details = (i.detalles || []).length
         ? i.detalles.map((d, n) => `
         <tr>
           <td>${n + 1}</td>
-          <td>${esc(d.nombre || "Servicio")}</td>
+          <td>${esc(d.descripcion || "Servicio")}<br><small>${esc(d.codigo || "")} · ${esc(d.unidadMedida || "")}</small></td>
           <td class="right">${esc(d.cantidad ?? 1)}</td>
-          <td class="right">${money(d.subtotal ?? d.valor)}</td>
+          <td class="right">${money(d.valorUnitario)}</td>
+          <td class="right">${money(d.base)}</td>
+          <td class="right">${esc(d.tarifaIva)}%</td>
+          <td class="right">${money(d.iva)}</td>
+          <td class="right">${money(d.total)}</td>
         </tr>`).join("")
-        : `<tr><td>1</td><td>Servicio automotriz</td><td class="right">1</td><td class="right">${money(subtotal)}</td></tr>`;
+        : `<tr><td>1</td><td>Servicio automotriz</td><td class="right">1</td><td class="right">${money(subtotal)}</td><td class="right">${money(subtotal)}</td><td class="right">—</td><td class="right">${money(i.ivaTotal)}</td><td class="right">${money(total)}</td></tr>`;
 
     preview.innerHTML = `
       <div class="invoice-head">
         <img src="/jm-logo.png" alt="Serviteca JM">
         <div class="company">
-          <b>JOSE MANUEL QUINTERO BERMAL</b><br>
-          NIT 74.248.934-4<br>
-          AV CIRCUNVALAR VIA RUNTA ARAUCA<br>
-          Tel: (608) 3133096458 · Tunja - Colombia<br>
-          jm.serviteca@gmail.com
+          <b>${esc(emisor.razonSocial || "Emisor sin configurar")}</b><br>
+          NIT ${esc(emisor.numeroDocumento || "Pendiente de configurar")}<br>
+          ${esc(emisor.direccion || "Dirección pendiente de configurar")}<br>
+          Tel: ${esc(emisor.telefono || "—")} · ${esc(emisor.ciudad || "")}<br>
+          ${esc(emisor.correo || "")}
         </div>
         <div class="invoice-number">
-          Factura electrónica de venta<br>
-          <strong>${esc(i.numeroFactura || `JM ${i.idFactura}`)}</strong><br>
-          <span class="status">GENERADA</span>
+          Factura de Venta<br>
+          <strong>${esc(i.numeroFactura || "Numeración pendiente")}</strong><br>
+          Prefijo: ${esc(i.prefijo || "—")}<br>Autorización: ${esc(i.numeroAutorizacion || "Pendiente")}<br>
+          Rango: ${esc(i.rangoDesde ?? "—")} a ${esc(i.rangoHasta ?? "—")}<br>
+          Vigencia: ${esc(dateCO(i.vigenciaDesde))} a ${esc(dateCO(i.vigenciaHasta))}<br>
+          <span class="status">${esc(i.estadoValidacionDian || "PENDIENTE_VALIDACION_DIAN")}</span>
         </div>
       </div>
       <div class="info">
         <div>
-          <p><b>Cliente:</b> ${esc(u.nombre || "—")}</p>
-          <p><b>Documento:</b> ${esc(u.numeroDoc || "—")}</p>
+          <p><b>Adquirente:</b> ${esc(u.razonSocial || "—")}</p>
+          <p><b>Documento:</b> ${esc(u.tipoDocumento || "")} ${esc(u.numeroDocumento || "—")}</p>
           <p><b>Teléfono:</b> ${esc(u.telefono || "—")}</p>
-          <p><b>Dirección:</b> ${esc(u.direccion || "No registrada")}</p>
+          <p><b>Dirección:</b> ${esc(u.direccion || "—")}</p>
+          <p><b>Ciudad:</b> ${esc(u.ciudad || "—")}</p>
         </div>
         <div>
           <p><b>Generación:</b> ${esc(dateCO(i.fechaGeneracion || i.fecha))}</p>
-          <p><b>Expedición:</b> ${esc(dateCO(i.fecha))}</p>
-          <p><b>Medio de pago:</b> ${esc(i.medioPago || "Pendiente")}</p>
-          <p><b>Vehículo:</b> ${esc(v.placa || "No registrado")}</p>
+          <p><b>Fecha de expedición:</b> ${esc(i.fechaExpedicion ? dateCO(i.fechaExpedicion) : "Pendiente de validación DIAN")}</p>
+          <p><b>Forma de pago:</b> ${esc(i.formaPago)} ${i.plazoDias ? `· Plazo ${esc(i.plazoDias)} días` : ""}</p>
+          <p><b>Medio de pago:</b> ${esc(i.medioPago || "—")}</p>
+          <p><b>Responsabilidades fiscales emisor:</b> ${esc(i.responsabilidadesFiscales || "Por configurar")}</p>
+          <p><b>Estado del pago:</b> ${esc(i.estadoPago || "PENDIENTE")}</p>
         </div>
       </div>
       <table class="invoice-table">
         <thead>
-          <tr><th>Ítem</th><th>Descripción</th><th>Cantidad</th><th>Vr. Total</th></tr>
+          <tr><th>Ítem</th><th>Descripción</th><th>Cant.</th><th>Vr. unitario</th><th>Base</th><th>IVA</th><th>Valor IVA</th><th>Total</th></tr>
         </thead>
         <tbody>${details}</tbody>
       </table>
       <div class="total-box">
         <div class="totals">
           <div><span>Total bruto</span><span class="right">${money(subtotal)}</span></div>
-          <div><span>IVA 19%</span><span class="right">${money(iva)}</span></div>
+          ${(i.ivaDiscriminado || []).map(t => `<div><span>IVA ${esc(t.tarifa)}% · base ${money(t.base)}</span><span class="right">${money(t.valor)}</span></div>`).join("")}
+          <div><span>Pagado</span><span class="right">${money(i.pagado)}</span></div>
+          <div><span>Saldo pendiente</span><span class="right">${money(i.saldoPendiente)}</span></div>
           <div><span>Total a pagar</span><span class="right">${money(total)}</span></div>
         </div>
       </div>
       <div class="notes">
-        <b>Forma de pago:</b> ${esc(i.formaPago || "Contado")} · <b>Medio:</b> ${esc(i.medioPago || "Pendiente")}<br>
-        <b>Observaciones:</b> Placa ${esc(v.placa || "No registrada")}<br><br>
-        Factura electrónica generada por Serviteca JM. Documento visual optimizado para impresión y PDF.
+        <b>Responsabilidades fiscales:</b> ${esc(i.responsabilidadesFiscales || "Por configurar")}<br>
+        <b>Software:</b> ${esc(i.software?.nombre || "Pendiente de configurar")} · ${esc(i.software?.fabricante || "")} · NIT ${esc(i.software?.nitFabricante || "—")}<br><br>
+        <strong>Representación informativa pendiente de validación DIAN.</strong> No constituye factura electrónica validada ni incluye CUFE o código QR DIAN.
       </div>`;
   }
 
@@ -152,8 +163,8 @@
       ["Factura", "Cliente", "Servicio", "Total", "Medio de pago", "Fecha"],
       ...invoices.map(i => [
         i.numeroFactura || `JM ${i.idFactura}`,
-        i.usuario?.nombre || "—",
-        i.detalles?.map(d => d.nombre).join(", ") || "Servicio automotriz",
+        i.adquirente?.razonSocial || "—",
+        i.detalles?.map(d => d.descripcion).join(", ") || "Servicio automotriz",
         Number(i.total || 0),
         i.medioPago || "Pendiente",
         i.fecha || ""
@@ -194,8 +205,6 @@
       if (!selected) return alert("No hay factura seleccionada.");
       window.print();
     });
-
-    $("hamburger")?.addEventListener("click", () => $("sidebar")?.classList.toggle("open"));
 
     $("export-excel")?.addEventListener("click", exportExcel);
 

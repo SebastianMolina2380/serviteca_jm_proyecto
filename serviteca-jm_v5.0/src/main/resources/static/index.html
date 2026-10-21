@@ -2,20 +2,23 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Serviteca JM — Inicio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Serviteca JM - Inicio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link
       href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     >
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="serviteca-theme.css">
+  <link rel="stylesheet" href="serviteca-premium.css">
 </head>
-  <body>
+  <body id="jm-home">
     <!-- ── NAVBAR ── -->
-    <nav>
+    <nav class="nav">
       <div style="display: flex; align-items: center; gap: 12px">
         <img
                 class="sb-logo"
@@ -30,10 +33,18 @@
         <a class="nl" href="#nosotros">Nosotros</a>
         <a class="nl" href="#testimonios">Clientes</a>
         <a class="nl" href="#contacto">Contacto</a>
+        <!-- Acceso a sesion dentro del desplegable movil: es el
+             ultimo item y solo se muestra por debajo de 900px,
+             donde el boton de texto de la barra se oculta. -->
+        <a class="nl nl-login" href="login.html"><i class="fas fa-user" aria-hidden="true"></i> Iniciar sesión</a>
       </div>
       <div style="display: flex; gap: 10px; align-items: center">
         <button type="button" id="hambtn" class="btn-g" aria-label="Menú">☰</button>
-        <a href="login.html" class="btn btn-g">Iniciar sesión</a>
+        <!-- Icono de acceso rapido: reemplaza al boton de texto en
+             pantalla estrecha para que iniciar sesion siga siendo
+             de un solo toque. -->
+        <a href="login.html" class="nav-login-icon" aria-label="Iniciar sesión" title="Iniciar sesión"><i class="fas fa-user" aria-hidden="true"></i></a>
+        <a href="login.html" class="btn btn-g nav-login-text">Iniciar sesión</a>
         <a href="login.html" class="btn btn-y">📅 Agendar Cita</a>
       </div>
     </nav>
@@ -43,7 +54,7 @@
         <div class="eye">
           <span class="eye-dot"></span> Taller Especializado · TUNJA
         </div>
-        <h1 class="h1 fu">Tu vehículo<br />merece lo<br /><em>mejor</em></h1>
+        <h1 class="h1 fu">Tu vehículo<br />en manos<br /><em>expertas.</em></h1>
         <p class="hero-p fu d1">
           Alineación, frenos, diagnóstico computarizado y más. Agenda en minutos
           y recibe confirmación instantánea.
@@ -67,6 +78,13 @@
           </div>
         </div>
       </div>
+      <figure class="hero-photo">
+        <img src="jm-fachada-serviteca.jpg" alt="Fachada exterior de Serviteca JM en Tunja, con el acceso al taller y vehículos en la entrada" decoding="async" fetchpriority="high">
+        <figcaption class="hero-photo-caption">
+          <span>Fachada del taller</span>
+          <span>Tunja · Boyacá</span>
+        </figcaption>
+      </figure>
       <div class="bg-tire">🔧</div>
     </section>
 
@@ -79,74 +97,175 @@
           Técnicos certificados con equipos de diagnóstico de última generación.
         </p>
       </div>
-      <div class="srv-grid">
-        <div class="srv">
-          <span class="srv-ico">🔧</span>
-          <div class="srv-name">Mantenimiento</div>
-          <div class="srv-desc">
-            Cambio de aceite, filtros, bujías y revisión general completa.
-          </div>
-          <div class="srv-price">Desde 5.000</div>
-          <button type="button" class="srv-btn" onclick="location.href = 'login.html'">
-            Solicitar
-          </button>
+      <!-- ══ CARRUSEL DE SERVICIOS ══
+           Pista deslizante con snap al centro y flechas flotantes.
+           Cada tarjeta declara en data-* lo que necesita el modal
+           de detalle (index.js): slug, titulo oficial, resumen,
+           precio, icono e imagen opcional. El contenido amplio
+           (descripcion larga, "que incluye", duracion y
+           especificaciones) vive en SERVICIOS_DETALLE, en index.js.
+           Tres disparadores abren el mismo modal: clic en la
+           tarjeta, Enter/Space sobre ella y el boton "Ver detalle".
+           "Solicitar" conserva su destino de siempre (login.html). -->
+      <div class="services-slider-container">
+        <div class="services-track" id="services-track">
+
+          <article class="srv" role="button" tabindex="0" aria-haspopup="dialog"
+               data-servicio="mantenimiento"
+               data-titulo="Mantenimiento preventivo de motor"
+               data-desc="Cambio de aceite, filtros, bujías y revisión general completa."
+               data-precio="Desde 5.000" data-ico="🔧">
+            <div class="srv-media">
+              <span class="srv-tag">Servicio</span>
+              <span class="srv-ico" aria-hidden="true">🔧</span>
+            </div>
+            <div class="srv-content">
+              <h3 class="srv-name">Mantenimiento</h3>
+              <p class="srv-desc">Cambio de aceite, filtros, bujías y revisión general completa.</p>
+              <div class="srv-price">Desde 5.000</div>
+              <div class="srv-foot">
+                <button type="button" class="srv-more">Ver detalle</button>
+                <button type="button" class="srv-btn" onclick="location.href = 'login.html'">Solicitar</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="srv" role="button" tabindex="0" aria-haspopup="dialog"
+               data-servicio="frenos"
+               data-titulo="Sistema de frenos"
+               data-desc="Revisión, cambio de pastillas, discos y calibración."
+               data-precio="Consultar" data-ico="🛑">
+            <div class="srv-media">
+              <span class="srv-tag">Seguridad</span>
+              <span class="srv-ico" aria-hidden="true">🛑</span>
+            </div>
+            <div class="srv-content">
+              <h3 class="srv-name">Frenos</h3>
+              <p class="srv-desc">Revisión, cambio de pastillas, discos y calibración.</p>
+              <div class="srv-price">Consultar</div>
+              <div class="srv-foot">
+                <button type="button" class="srv-more">Ver detalle</button>
+                <button type="button" class="srv-btn" onclick="location.href = 'login.html'">Solicitar</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Unico servicio con fotografia propia en /static. Si
+               data-img falta, el poster se genera con gradiente. -->
+          <article class="srv" role="button" tabindex="0" aria-haspopup="dialog"
+               data-servicio="alineacion"
+               data-titulo="Alineación y balanceo computarizado"
+               data-desc="Corrección de ángulos y balanceo con equipo digital."
+               data-precio="Desde 5.000" data-ico="⚙️"
+               data-img="jm-serviteca-alineacion.jpg">
+            <div class="srv-media">
+              <img class="srv-img" src="jm-serviteca-alineacion.jpg" alt="" loading="lazy" decoding="async">
+              <span class="srv-tag">Precisión</span>
+              <span class="srv-ico" aria-hidden="true">⚙️</span>
+            </div>
+            <div class="srv-content">
+              <h3 class="srv-name">Alineación</h3>
+              <p class="srv-desc">Corrección de ángulos y balanceo con equipo digital.</p>
+              <div class="srv-price">Desde 5.000</div>
+              <div class="srv-foot">
+                <button type="button" class="srv-more">Ver detalle</button>
+                <button type="button" class="srv-btn" onclick="location.href = 'login.html'">Solicitar</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="srv" role="button" tabindex="0" aria-haspopup="dialog"
+               data-servicio="diagnostico"
+               data-titulo="Diagnóstico electrónico computarizado"
+               data-desc="Lectura de códigos y solución de fallas electrónicas."
+               data-precio="Desde 5.000" data-ico="💻">
+            <div class="srv-media">
+              <span class="srv-tag">Electrónica</span>
+              <span class="srv-ico" aria-hidden="true">💻</span>
+            </div>
+            <div class="srv-content">
+              <h3 class="srv-name">Diagnóstico</h3>
+              <p class="srv-desc">Lectura de códigos y solución de fallas electrónicas.</p>
+              <div class="srv-price">Desde 5.000</div>
+              <div class="srv-foot">
+                <button type="button" class="srv-more">Ver detalle</button>
+                <button type="button" class="srv-btn" onclick="location.href = 'login.html'">Solicitar</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="srv" role="button" tabindex="0" aria-haspopup="dialog"
+               data-servicio="electrico"
+               data-titulo="Sistema eléctrico y de carga"
+               data-desc="Batería, alternador, arranque y cableado completo."
+               data-precio="Consultar" data-ico="🔋">
+            <div class="srv-media">
+              <span class="srv-tag">Carga</span>
+              <span class="srv-ico" aria-hidden="true">🔋</span>
+            </div>
+            <div class="srv-content">
+              <h3 class="srv-name">Eléctrico</h3>
+              <p class="srv-desc">Batería, alternador, arranque y cableado completo.</p>
+              <div class="srv-price">Consultar</div>
+              <div class="srv-foot">
+                <button type="button" class="srv-more">Ver detalle</button>
+                <button type="button" class="srv-btn" onclick="location.href = 'login.html'">Solicitar</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="srv" role="button" tabindex="0" aria-haspopup="dialog"
+               data-servicio="llantas"
+               data-titulo="Llantas y neumáticos"
+               data-desc="Montaje, parche, nitrógeno y presión de llantas."
+               data-precio="Desde 5.000" data-ico="🏎️">
+            <div class="srv-media">
+              <span class="srv-tag">Rodamiento</span>
+              <span class="srv-ico" aria-hidden="true">🏎️</span>
+            </div>
+            <div class="srv-content">
+              <h3 class="srv-name">Llantas</h3>
+              <p class="srv-desc">Montaje, parche, nitrógeno y presión de llantas.</p>
+              <div class="srv-price">Desde 5.000</div>
+              <div class="srv-foot">
+                <button type="button" class="srv-more">Ver detalle</button>
+                <button type="button" class="srv-btn" onclick="location.href='login.html'">Solicitar</button>
+              </div>
+            </div>
+          </article>
+
         </div>
-        <div class="srv">
-          <span class="srv-ico">🛑</span>
-          <div class="srv-name">Frenos</div>
-          <div class="srv-desc">
-            Revisión, cambio de pastillas, discos y calibración.
-          </div>
-          <div class="srv-price">Desde 0.000</div>
-          <button type="button" class="srv-btn" onclick="location.href = 'login.html'">
-            Solicitar
+
+        <!-- Flechas: flotan a los costados por encima de 600px y
+             pasan bajo la pista en móvil, donde no hay aire lateral
+             para no tapar la tarjeta. -->
+        <div class="slider-nav">
+          <button type="button" class="slider-btn slider-btn-prev" aria-label="Servicio anterior" aria-controls="services-track">
+            <i class="fas fa-chevron-left" aria-hidden="true"></i>
           </button>
-        </div>
-        <div class="srv">
-          <span class="srv-ico">⚙️</span>
-          <div class="srv-name">Alineación</div>
-          <div class="srv-desc">
-            Corrección de ángulos y balanceo con equipo digital.
-          </div>
-          <div class="srv-price">Desde 5.000</div>
-          <button type="button" class="srv-btn" onclick="location.href = 'login.html'">
-            Solicitar
-          </button>
-        </div>
-        <div class="srv">
-          <span class="srv-ico">💻</span>
-          <div class="srv-name">Diagnóstico</div>
-          <div class="srv-desc">
-            Lectura de códigos y solución de fallas electrónicas.
-          </div>
-          <div class="srv-price">Desde 5.000</div>
-          <button type="button" class="srv-btn" onclick="location.href = 'login.html'">
-            Solicitar
-          </button>
-        </div>
-        <div class="srv">
-          <span class="srv-ico">🔋</span>
-          <div class="srv-name">Eléctrico</div>
-          <div class="srv-desc">
-            Batería, alternador, arranque y cableado completo.
-          </div>
-          <div class="srv-price">Desde 0.000</div>
-          <button type="button" class="srv-btn" onclick="location.href = 'login.html'">
-            Solicitar
-          </button>
-        </div>
-        <div class="srv">
-          <span class="srv-ico">🏎️</span>
-          <div class="srv-name">Llantas</div>
-          <div class="srv-desc">
-            Montaje, parche, nitrógeno y presión de llantas.
-          </div>
-          <div class="srv-price">Desde 5.000</div>
-           <button type="button" class="srv-btn" onclick="location.href='Login.html'">
-            Solicitar
+          <button type="button" class="slider-btn slider-btn-next" aria-label="Servicio siguiente" aria-controls="services-track">
+            <i class="fas fa-chevron-right" aria-hidden="true"></i>
           </button>
         </div>
       </div>
+    </section>
+
+    <section class="premium-story" aria-labelledby="story-title">
+      <div class="story-copy">
+        <span class="story-eyebrow">Alineación y balanceo</span>
+        <h2 class="story-title" id="story-title">Precisión en cada ajuste. Confianza en cada trayecto.</h2>
+        <p class="story-body">Revisamos las ruedas con equipo especializado y te explicamos con claridad lo que encontramos antes de recomendar el siguiente paso.</p>
+        <div class="story-points">
+          <div class="story-point"><span class="story-point-mark" aria-hidden="true">01</span><span>Revisión cuidadosa del conjunto de rueda y suspensión.</span></div>
+          <div class="story-point"><span class="story-point-mark" aria-hidden="true">02</span><span>Atención cercana en nuestro taller de Tunja.</span></div>
+          <div class="story-point"><span class="story-point-mark" aria-hidden="true">03</span><span>Te explicamos el servicio antes de avanzar.</span></div>
+        </div>
+        <a class="story-cta" href="login.html">Conoce nuestros servicios <span aria-hidden="true">→</span></a>
+      </div>
+      <figure class="story-image-wrap">
+        <img class="story-image" src="jm-serviteca-alineacion.jpg" alt="Técnicos de Serviteca JM trabajando en la alineación de una rueda junto a un automóvil" loading="lazy" decoding="async">
+        <figcaption class="story-caption">Alineación y balanceo · Serviteca JM</figcaption>
+      </figure>
     </section>
 
     <!-- ── NOSOTROS ── -->
@@ -160,7 +279,7 @@
           <div class="why-ico">🏆</div>
           <h3 class="why-h3">12 Años de Experiencia</h3>
           <p class="why-p">
-            Más de una década atendiendo vehículos en Bogotá con calidad
+            Más de una década atendiendo vehículos con calidad
             garantizada.
           </p>
         </div>
@@ -311,8 +430,72 @@
       <i class="fa-brands fa-whatsapp"></i>
     </a>
 
+    <!-- ══ DETALLE DE SERVICIO ══
+         Modal accesible (role=dialog, aria-modal, foco atrapado,
+         Escape y clic en el fondo lo cierran). index.js lo rellena
+         con los data-* de la tarjeta clicada y con SERVICIOS_DETALLE.
+         Al abrirse sincroniza la URL con ?servicio=slug, de modo que
+         el detalle sea enlazable y "Agendar Cita" pueda arrastrar el
+         servicio elegido a nueva-cita.html. -->
+    <div class="sd" id="sd-modal" hidden>
+      <div class="sd-backdrop" data-sd-close></div>
+      <div class="sd-panel" role="dialog" aria-modal="true" aria-labelledby="sd-title">
+        <button type="button" class="sd-close" data-sd-close aria-label="Cerrar detalle del servicio">✕</button>
+
+        <div class="sd-media">
+          <!-- data-img -> foto real; sin data-img -> poster generado -->
+          <img class="sd-photo" id="sd-photo" alt="" hidden>
+          <span class="sd-glyph" id="sd-glyph" aria-hidden="true">🔧</span>
+          <span class="sd-media-tag">JM Serviteca · Tunja</span>
+        </div>
+
+        <div class="sd-body">
+          <p class="sd-kicker" id="sd-kicker">Servicio</p>
+          <h2 class="sd-title" id="sd-title"></h2>
+          <p class="sd-lead" id="sd-lead"></p>
+
+          <div class="sd-meta">
+            <div class="sd-fact">
+              <span class="sd-fact-k">Precio estimado</span>
+              <span class="sd-fact-v" id="sd-price">—</span>
+            </div>
+            <div class="sd-fact">
+              <span class="sd-fact-k">Duración</span>
+              <span class="sd-fact-v" id="sd-dur">—</span>
+            </div>
+            <div class="sd-fact">
+              <span class="sd-fact-k">Diagnóstico</span>
+              <span class="sd-fact-v">Incluido</span>
+            </div>
+          </div>
+          <p class="sd-note">Valor referencial · se confirma con el diagnóstico del vehículo al ingresar.</p>
+
+          <div class="sd-section">
+            <h3 class="sd-h3">Qué incluye</h3>
+            <ul class="sd-list" id="sd-list"></ul>
+          </div>
+
+          <div class="sd-section" id="sd-specs-wrap" hidden>
+            <h3 class="sd-h3">Especificaciones</h3>
+            <dl class="sd-specs" id="sd-specs"></dl>
+          </div>
+
+          <div class="sd-actions">
+            <a class="sd-btn sd-btn-y" id="sd-book" href="nueva-cita.html">📅 Agendar Cita</a>
+            <button type="button" class="sd-btn sd-btn-ghost" data-sd-close>Volver al inicio</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="index.js"></script>
     <script src="chatbot.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+      }
+    </script>
   </body>
 </html>
-

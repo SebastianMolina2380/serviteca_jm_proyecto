@@ -19,13 +19,6 @@
         --r: 10px;
         --shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
       }
-      *,
-      *::before,
-      *::after {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
       html {
         scroll-behavior: smooth;
       }
@@ -1316,11 +1309,18 @@
       }
       /* Responsive adjustments */
       @media (max-width: 900px) {
+          /* En escritorio .sb es sticky (dentro del flujo) y reserva
+             var(--sidebar) de ancho. Dentro de un bloque movil eso
+             empuja .main y deja el contenido con solo (ancho - 240px),
+             que es lo que provoca el recorte hacia la izquierda.
+             Se pasa a fixed: fuera del flujo, sin reservar ancho, con
+             el patron off-canvas de styles.css (translateX + la clase
+             .open que alterna sidebar.js). */
           .sb, .sidebar {
-              width: var(--sidebar, 240px) !important;
-              min-width: var(--sidebar, 240px) !important;
+              position: fixed !important;
+              width: 220px !important;
+              min-width: 220px !important;
               flex-shrink: 0 !important;
-              position: sticky !important;
               top: 0 !important;
               height: 100vh !important;
           }
@@ -1381,3 +1381,247 @@
       .sb.open + #sb-overlay {
         display: block;
       }
+
+/* ==========================================================
+   RESPONSIVO - INVENTARIO
+   ========================================================== */
+
+/* Acciones del encabezado: Exportar / Registrar entrada.
+   flex-wrap permite que pasen a varias lineas en vez de
+   desbordar el contenedor en moviles. */
+.inventario-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 100%;
+}
+
+/* La tabla puede ser mas ancha que la pantalla: el scroll
+   ocurre dentro del contenedor, nunca en el body. */
+.inventario-card .table-responsive {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.inventario-card table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+}
+
+@media (max-width: 900px) {
+  .pg-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .inventario-actions {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .inventario-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .inventario-actions .btn {
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+  }
+
+  .pg-head {
+    margin-bottom: 16px;
+  }
+}
+
+/* ============================================================
+   MODAL · REGISTRAR ENTRADA
+   ============================================================ */
+.inv-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 5000; /* por encima del sidebar (1000), bajo el chatbot */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* [hidden] debe ganar al display:flex del bloque superior. */
+.inv-modal[hidden] {
+  display: none;
+}
+
+.inv-bd {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 12, 8, 0.72);
+  backdrop-filter: blur(2px);
+}
+
+.inv-panel {
+  position: relative;
+  width: 100%;
+  max-width: 470px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  box-sizing: border-box;
+  background: var(--black2, #12171c);
+  border: 1px solid var(--black4, #26303a);
+  border-top: 3px solid #B3945D;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+}
+
+.inv-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.inv-head h4 {
+  margin: 0;
+  font-family: "Oswald", sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  color: #B3945D;
+}
+
+.inv-x {
+  background: transparent;
+  border: 1px solid var(--black4, #26303a);
+  color: var(--gray1, #8a94a0);
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  cursor: pointer;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.inv-x:hover {
+  color: #B3945D;
+  border-color: #B3945D;
+}
+
+.inv-fg {
+  margin-bottom: 14px;
+}
+
+/* ------------------------------------------------------------
+   Campos del modal: fondo claro legible.
+   serviteca-theme.css (L276) impone background:#141414 y
+   color:var(--white) con !important a TODOS los input/select.
+   El fondo es un literal que no sigue los tokens, pero el color
+   sí: serviteca-premium.css invierte --white a tinta oscura, así
+   que el resultado era texto oscuro sobre fondo oscuro.
+
+   Se anula con especificidad de id (1,0,1), que vence a cualquier
+   selector de theme (el más específico de allí es .field input,
+   0,1,1), y con !important para empatarle la prioridad.
+   ------------------------------------------------------------ */
+#inv-modal input,
+#inv-modal select,
+#inv-modal textarea {
+  background: #F9F6F0 !important;
+  border: 1px solid #D9D2C4 !important;
+  color: #1A1A1A !important;
+}
+
+#inv-modal input::placeholder,
+#inv-modal textarea::placeholder {
+  color: #77746C !important;
+}
+
+/* La opción vacía del select debe leerse como marcador. */
+#inv-modal select:invalid {
+  color: #77746C !important;
+}
+
+#inv-modal select option {
+  background: #F9F6F0;
+  color: #1A1A1A;
+}
+
+#inv-modal input:focus,
+#inv-modal select:focus,
+#inv-modal textarea:focus {
+  background: #FFFFFF !important;
+  border-color: #B3945D !important;
+  box-shadow: 0 0 0 3px rgba(179, 148, 93, 0.22) !important;
+  outline: none !important;
+}
+
+/* Spinners de los inputs numéricos sobre fondo claro. */
+#inv-modal input[type="number"]::-webkit-inner-spin-button,
+#inv-modal input[type="number"]::-webkit-outer-spin-button {
+  opacity: 0.55;
+}
+
+/* Dos columnas para los campos cortos (stock/precio/unidad). */
+.inv-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.inv-hint {
+  margin: 6px 0 0;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  color: var(--gray1, #8a94a0);
+}
+
+.inv-err {
+  margin: 5px 0 0;
+  min-height: 0;
+  font-size: 0.7rem;
+  color: var(--red, #ef4444);
+}
+
+.inv-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--black4, #26303a);
+}
+
+@media (max-width: 600px) {
+  .inv-modal {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .inv-panel {
+    max-width: 100%;
+    max-height: 88vh;
+    border-radius: 12px 12px 0 0;
+    padding: 18px 16px calc(18px + env(safe-area-inset-bottom));
+  }
+
+  /* En una sola columna el formulario respira mejor que 2x2. */
+  .inv-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .inv-foot .btn {
+    flex: 1;
+    justify-content: center;
+  }
+}

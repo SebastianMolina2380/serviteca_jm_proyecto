@@ -58,4 +58,13 @@ document.getElementById("vehicle-form")?.addEventListener("submit",async e=>{
  const msg=document.getElementById("vehicle-message");
  try{await api("/api/mi/vehiculos",{method:"POST",body:JSON.stringify(body)});e.currentTarget.reset();e.currentTarget.setAttribute("hidden","");if(msg)msg.textContent="Vehículo registrado.";await loadPortal();}
  catch(err){if(msg)msg.textContent=err.message;}
+
+});
+document.addEventListener("DOMContentLoaded", () => {
+ const nombreUsuario = localStorage.getItem("nombreUsuario");
+ const elementoNombre = document.getElementById("nombre-usuario");
+
+ if (elementoNombre && nombreUsuario) {
+  elementoNombre.textContent = nombreUsuario;
+ }
 });

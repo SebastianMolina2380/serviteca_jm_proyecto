@@ -62,6 +62,7 @@ public class SecurityConfig {
                                 "/*.gif",
                                 "/*.svg",
                                 "/*.ico",
+                                "/*.json",
 
                                 "/scripts/**"
                         ).permitAll()
@@ -98,6 +99,7 @@ public class SecurityConfig {
                         .requestMatchers("/facturacion.html").hasAnyRole(
                                 "ADMIN", "TECNICO", "CLIENTE"
                         )
+                        .requestMatchers("/registrar-pago.html").hasAnyRole("ADMIN", "TECNICO")
 
                         // ==============================
                         // ADMIN + TÉCNICO + CLIENTE
@@ -126,6 +128,19 @@ public class SecurityConfig {
                         // RESTO
                         // ==============================
                         .anyRequest().authenticated()
+                )
+
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint((request, response, exception) -> {
+                            response.setStatus(401);
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.getWriter().write("{\"status\":401,\"error\":\"Unauthorized\",\"message\":\"Autenticación requerida.\"}");
+                        })
+                        .accessDeniedHandler((request, response, exception) -> {
+                            response.setStatus(403);
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.getWriter().write("{\"status\":403,\"error\":\"Forbidden\",\"message\":\"No tiene permisos para esta operación.\"}");
+                        })
                 )
 
                 .formLogin(form -> form.disable())

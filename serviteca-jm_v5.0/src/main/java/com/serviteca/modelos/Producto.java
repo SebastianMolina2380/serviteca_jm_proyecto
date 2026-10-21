@@ -32,6 +32,8 @@ public class Producto {
     @Column(name = "descripcion_producto", length = 250)
     private String descripcionProducto;
 
+    @Column(name="tarifa_iva", precision=5, scale=2) private BigDecimal tarifaIva;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idservicio")
     @JsonIgnoreProperties({

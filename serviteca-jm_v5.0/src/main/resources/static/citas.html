@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Serviteca JM — Listado de Citas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Serviteca JM - Listado de Citas</title>
   <link
           href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
           rel="stylesheet"
@@ -12,6 +12,7 @@
   <script src="role-guard.js"></script>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="serviteca-theme.css">
+  <link rel="stylesheet" href="serviteca-premium.css">
 </head>
 <body>
 <div class="layout">
@@ -29,38 +30,16 @@
     </div>
     <nav class="sb-nav">
       <div class="sb-sec">Principal</div>
-      <a class="sb-link" href="dashboard.html"
-      ><span class="sb-ico">📊</span> Dashboard</a
-      >
-      <a class="sb-link active" href="citas.html"
-      ><span class="sb-ico">📅</span> Citas
-        <span class="sb-badge">4</span></a
-      >
-      <a class="sb-link" href="nueva-cita.html"
-      ><span class="sb-ico">➕</span> Nueva Cita</a
-      >
-      <a class="sb-link" href="clientes.html"
-      ><span class="sb-ico">👤</span> Clientes</a
-      >
-      <a class="sb-link" href="vehiculo.html"
-      ><span class="sb-ico">🚗</span> Vehículos</a
-      >
+      <a class="sb-link" href="dashboard.html"><span class="sb-ico">📊</span> Dashboard</a>
+      <a class="sb-link active" href="citas.html"><span class="sb-ico">📅</span> Citas <span class="sb-badge">4</span></a>
+      <a class="sb-link" href="nueva-cita.html"><span class="sb-ico">➕</span> Nueva Cita</a>
+      <a class="sb-link" href="clientes.html"><span class="sb-ico">👤</span> Clientes</a>
+      <a class="sb-link" href="vehiculo.html"><span class="sb-ico">🚗</span> Vehículos</a>
       <div class="sb-sec" style="margin-top: 8px">Administración</div>
-      <a class="sb-link" href="usuarios.html"
-      ><span class="sb-ico">👥</span> Usuarios</a
-      >
-      <a class="sb-link" href="inventario.html"
-      ><span class="sb-ico">🔩</span> Inventario
-        <span class="sb-badge" style="background: var(--red)">2</span></a
-      >
-      <a class="sb-link" href="facturacion.html"
-      ><span class="sb-ico">💵</span> Facturación</a
-      >
-      <a class="sb-link" href="reportes.html"
-      ><span class="sb-ico">📈</span> Reportes</a
-      >
-      <div class="sb-sec" style="margin-top: 8px">Portales</div>
-      <a class="sb-link" href="portal-cliente.html"><span class="sb-ico">👤</span> Portal Cliente</a>
+      <a class="sb-link" href="usuarios.html"><span class="sb-ico">👥</span> Usuarios</a>
+      <a class="sb-link" href="inventario.html"><span class="sb-ico">🔩</span> Inventario <span class="sb-badge" style="background: var(--red)">2</span></a>
+      <a class="sb-link" href="facturacion.html"><span class="sb-ico">💵</span> Facturación</a>
+      <a class="sb-link" href="reportes.html"><span class="sb-ico">📈</span> Reportes</a>
 
     </nav>
     <div class="sb-foot">
@@ -84,7 +63,7 @@
       <div class="tb-title">Listado de Citas</div>
       <button type="button" class="notif-btn">
         <span class="ndot" aria-hidden="true"></span>
-        🔔
+        
       </button>
       <span
               style="font-size: 0.74rem; color: var(--gray1)"
@@ -105,35 +84,38 @@
               align-items: center;
             "
       >
-        <button type="button" class="btn-sm" onclick="filterCitas('all', this)">
+        <!-- Los atributos data-filter son la fuente de verdad del
+             filtro; los listeners se registran en citas.js. -->
+        <button type="button" class="btn-sm-g is-active" data-filter="all">
           Todos
         </button>
-        <button type="button" class="btn-sm-g" onclick="filterCitas('Confirmada', this)">
+        <button type="button" class="btn-sm-g" data-filter="CONFIRMADA">
           Confirmada
         </button>
-        <button type="button" class="btn-sm-g" onclick="filterCitas('En proceso', this)">
+        <button type="button" class="btn-sm-g" data-filter="EN_PROCESO">
           En proceso
         </button>
-        <button type="button" class="btn-sm-g" onclick="filterCitas('Completada', this)">
+        <button type="button" class="btn-sm-g" data-filter="COMPLETADA">
           Completada
         </button>
-        <button type="button" class="btn-sm-g" onclick="filterCitas('Pendiente', this)">
+        <button type="button" class="btn-sm-g" data-filter="PENDIENTE">
           Pendiente
         </button>
-        <button type="button" class="btn-sm-g" onclick="filterCitas('Cancelada', this)">
+        <button type="button" class="btn-sm-g" data-filter="CANCELADA">
           Cancelada
         </button>
         <!-- ETIQUETA: Campo de búsqueda -->
         <input
+                id="citas-search"
                 class="fc"
+                type="search"
                 style="
                 max-width: 220px;
                 margin-left: auto;
                 padding: 7px 12px;
                 font-size: 0.78rem;
               "
-                placeholder="🔍 Buscar cliente, placa..."
-                oninput="searchCitas(this.value)"
+                placeholder="Buscar cliente, placa..."
         />
       </div>
 
@@ -161,5 +143,6 @@
   </main>
 </div>
 <script src="citas.js" defer></script>
+<script src="sidebar.js" defer></script>
 </body>
 </html>

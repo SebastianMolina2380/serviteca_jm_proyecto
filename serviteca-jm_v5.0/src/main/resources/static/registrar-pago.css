@@ -1,0 +1,123 @@
+/* ==========================================================================
+   SERVITECA JM — Registrar pago
+   Componentes locales del formulario. El diseño base (.layout, .sidebar/.sb,
+   .topbar, .page, .hero, .form-card, .btn*, tipografía y paleta) lo aportan
+   styles.css + serviteca-theme.css + serviteca-premium.css, que se cargan
+   después de este archivo.
+   ========================================================================== */
+
+.eyebrow {
+  color: var(--green, #22c55e);
+  font-weight: 700;
+  letter-spacing: 2px;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.field.full {
+  grid-column: 1 / -1;
+}
+
+.invoice-box {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 12px 13px;
+  border: 1px solid var(--black4, #2e2e2e);
+  border-radius: 7px;
+  background: var(--black3, #242424);
+  color: var(--white, #f8fafc);
+  font-size: 0.9rem;
+}
+
+.message {
+  min-height: 20px;
+  margin-top: 14px;
+  color: var(--red, #ef4444);
+  font-size: 0.82rem;
+}
+
+.message.ok,
+.message.success {
+  color: var(--green, #22c55e);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .actions .btn {
+    justify-content: center;
+  }
+}
+
+/* ==========================================================
+   MOVIL (320px - 600px) - REGISTRO DE PAGO
+   ========================================================== */
+@media (max-width: 600px) {
+  .form-card,
+  .card {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding: 14px;
+    box-sizing: border-box;
+  }
+
+  .fr,
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .fg input,
+  .fg select,
+  .fg textarea,
+  .fc {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .actions,
+  .btn-row {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .actions .btn,
+  .btn-row .btn {
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+  }
+
+  h1,
+  h2 {
+    overflow-wrap: anywhere;
+  }
+}

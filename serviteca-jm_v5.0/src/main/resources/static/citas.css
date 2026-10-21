@@ -16,13 +16,6 @@
   --sidebar: 240px;
   --topbar: 62px;
 }
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 body {
   font-family: "Exo 2", sans-serif;
   background: var(--black);
@@ -124,6 +117,29 @@ textarea:focus {
 .btn-sm-g:hover {
   color: var(--green);
   border-color: var(--green);
+}
+/* Filtro activo: verde oscuro institucional con acento dorado.
+   --green resuelve a #183D2D y --yellow a #B3945D porque
+   serviteca-premium.css carga después y redefine los tokens.
+   El texto en #F4F1E9 mantiene contraste AAA sobre ese verde
+   (≈13:1); sin esto, color:#000 caía sobre verde oscuro. */
+.btn-sm-g.is-active,
+.btn-sm-g.is-active:hover {
+  background: var(--green);
+  color: #F4F1E9;
+  border-color: var(--yellow);
+  font-weight: 700;
+  padding: 6px 14px;
+  font-size: 0.75rem;
+  border-radius: 6px;
+}
+/* Estado vacío del filtrado. */
+.citas-empty {
+  padding: 26px 12px;
+  text-align: center;
+  color: var(--gray1);
+  font-size: 0.85rem;
+  white-space: normal;
 }
 .badge {
   display: inline-block;

@@ -1,655 +1,366 @@
-/* ==========================================
-   1. VARIABLES GLOBALES Y RESET
-   ========================================== */
-:root {
-    --black: #0a0a0a;
-    --black2: #111111;
-    --black3: #1a1a1a;
-    --black4: #252525;
-    --green: #22c55e;
-    --green2: #16a34a;
-    --green3: #15803d;
-    --yellow: #facc15;
-    --yellow2: #eab308;
-    --white: #f1f5f9;
-    --gray1: #94a3b8;
-    --gray2: #64748b;
-    --gray3: #334155;
-    --red: #ef4444;
-    --orange: #f97316;
-    --sidebar: 240px;
-    --topbar: 62px;
-    --r: 10px;
-    --shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+/* ============================================
+   VEHICULOS - CSS de pagina
+   ============================================
+   Solo contenido especifico de la vista de vehiculos.
+   El layout (.layout/.main/.pg), el sidebar, la topbar,
+   la tipografia, los botones y la paleta beige/dorado/verde
+   institucional vienen de styles.css + serviteca-theme.css
+   + serviteca-premium.css (mismo sistema que clientes.html).
+   ============================================ */
+
+/* --- Encabezado de acciones --- */
+.vehiculos-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-*,
-*::before,
-*::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* --- Barra de busqueda y conteo --- */
+.vehiculos-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
 }
 
-html {
-    scroll-behavior: smooth;
+.vehiculos-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: min(520px, 100%);
+  background: var(--black2);
+  border: 1px solid var(--black4);
+  border-radius: 8px;
+  padding: 0 12px;
 }
 
-body {
-    font-family: "Exo 2", sans-serif;
-    background: var(--black);
-    color: var(--white);
-    min-height: 100vh;
+.vehiculos-search span {
+  color: var(--gray2);
+  font-size: 0.9rem;
 }
 
-h1, h2, h3, h4, h5 {
-    font-family: "Oswald", sans-serif;
-    font-weight: 600;
+.vehiculos-search input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--white);
+  padding: 11px 4px;
+  font-family: "Exo 2", sans-serif;
+  font-size: 0.82rem;
 }
 
-a {
-    text-decoration: none;
-    color: inherit;
+.vehiculos-search input::placeholder {
+  color: var(--gray2);
 }
 
-button {
-    cursor: pointer;
-    font-family: "Exo 2", sans-serif;
+.vehiculos-count {
+  color: var(--gray1);
+  font-size: 0.75rem;
+  white-space: nowrap;
 }
 
-input,
-select,
-textarea {
-    font-family: "Exo 2", sans-serif;
-    outline: none;
+/* --- Zona de contenido: tabla + ficha --- */
+.vehiculos-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+  gap: 20px;
+  align-items: start;
 }
 
-input:focus,
-select:focus,
-textarea:focus {
-    border-color: var(--green) !important;
-    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.15);
+.vehiculos-grid > * {
+  min-width: 0;
 }
 
-/* ==========================================
-   2. BOTONES Y COMPONENTES
-   ========================================== */
-.btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: all 0.2s;
-    white-space: nowrap;
-    cursor: pointer;
+/* --- Tarjeta con la tabla --- */
+.vehiculos-card {
+  padding: 0;
+  overflow: hidden;
 }
 
-.btn-primary, .btn-green, .btn-g {
-    background: var(--green);
-    color: #000;
-    padding: 11px 24px;
-    font-size: 0.88rem;
-    font-family: "Oswald", sans-serif;
-    letter-spacing: 1px;
+.vehiculos-card h2 {
+  padding: 16px 18px 0;
+  margin: 0;
 }
 
-.btn-primary:hover, .btn-green:hover {
-    background: var(--green2);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(34, 197, 94, 0.3);
+.vehiculos-card .tw {
+  overflow-x: auto;
+  max-width: 100%;
 }
 
-.btn-yellow, .btn-y {
-    background: var(--yellow);
-    color: #000;
-    padding: 11px 24px;
-    font-size: 0.88rem;
-    font-family: "Oswald", sans-serif;
-    letter-spacing: 1px;
+.vehiculos-card table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
 }
 
-.btn-yellow:hover, .btn-y:hover {
-    background: var(--yellow2);
-    transform: translateY(-1px);
+.vehiculos-card th {
+  padding: 12px;
+  background: var(--black3);
+  color: var(--gray1);
+  border-bottom: 1px solid var(--black4);
+  text-align: left;
+  font-size: 0.68rem;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
 }
 
-.btn-ghost, .btn-gh {
-    background: var(--black3);
-    color: var(--white);
-    padding: 9px 16px;
-    font-size: 0.82rem;
-    border: 1px solid var(--black4);
+.vehiculos-card td {
+  padding: 13px 12px;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.42);
+  color: var(--white);
+  font-size: 0.78rem;
+  vertical-align: middle;
 }
 
-.btn-ghost:hover, .btn-gh:hover {
-    border-color: var(--green);
-    color: var(--green);
+.vehiculos-card tbody tr {
+  transition: background 0.2s;
 }
 
-.btn-danger {
-    background: var(--red);
-    color: #fff;
-    padding: 11px 24px;
-    font-size: 0.88rem;
-    font-family: "Oswald", sans-serif;
-    letter-spacing: 1px;
-    border: none;
-    border-radius: 8px;
+.vehiculos-card tbody tr:hover {
+  background: var(--black3);
 }
 
-.btn.mini {
-    padding: 5px 10px;
-    font-size: 0.72rem;
-    border-radius: 6px;
+/* Fila activa: el vehículo cuya ficha se muestra a la derecha.
+   Se apoya en el filo dorado institucional para que la selección
+   se distinga del simple hover, que usa el mismo tono de fondo. */
+.vehiculos-card tbody tr.selected {
+  background: rgba(179, 148, 93, 0.14);
+  box-shadow: inset 3px 0 0 #B3945D;
 }
 
-/* Formularios */
-.form-group, .fg {
-    margin-bottom: 16px;
+.vehiculos-card tbody tr.selected td {
+  color: var(--white);
 }
 
-.form-label, .fl {
-    display: block;
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--gray1);
-    margin-bottom: 6px;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
+.vehiculos-card tbody tr:focus-visible {
+  outline: 2px solid #B3945D;
+  outline-offset: -2px;
 }
 
-.form-control, .fc, .input {
-    width: 100%;
-    background: var(--black3);
-    border: 1px solid var(--black4);
-    border-radius: 8px;
-    padding: 10px 14px;
-    color: var(--white);
-    font-size: 0.88rem;
-    transition: all 0.2s;
+.vehiculos-card tbody tr:last-child td {
+  border-bottom: 0;
 }
 
-.card {
-    background: var(--black2);
-    border: 1px solid var(--black4);
-    border-radius: var(--r);
-    padding: 20px;
+/* Placa estilo matricula dorada (paleta institucional) */
+.vehiculos-card td .plate,
+.stat .plate {
+  display: inline-block;
+  background: var(--jm-amarillo);
+  color: #23200A;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-family: "Oswald", sans-serif;
+  font-size: 0.76rem;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
 }
 
-.card-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-}
-
-/* Badges */
-.badge {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-}
-
-.sb-badge {
-    margin-left: auto;
-    background: var(--orange);
-    color: #fff;
-    font-size: 0.58rem;
-    padding: 2px 7px;
-    border-radius: 10px;
-    font-weight: 700;
-}
-
-/* ==========================================
-   3. LAYOUT Y NAVEGACIÓN (PANEL)
-   ========================================== */
-.panel-layout {
-    display: flex;
-    width: 100%;
-    min-height: 100vh;
-}
-
-.sb {
-    width: var(--sidebar);
-    background: var(--black2);
-    border-right: 1px solid var(--black4);
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    z-index: 100;
-    transition: transform 0.3s ease-in-out;
-}
-
-.sb-head {
-    padding: 16px;
-    border-bottom: 1px solid var(--black4);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.sb-brand {
-    font-family: "Oswald", sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--yellow);
-    line-height: 1.1;
-}
-
-.sb-brand small {
-    display: block;
-    font-size: 0.6rem;
-    color: var(--gray2);
-    font-family: "Exo 2", sans-serif;
-    font-weight: 400;
-}
-
-.sb-nav {
-    flex: 1;
-    padding: 10px 8px;
-    overflow-y: auto;
-}
-
-.sb-sec {
-    font-size: 0.58rem;
-    color: var(--gray2);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 8px 10px 4px;
-    font-weight: 700;
-}
-
-.sb-link {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 12px;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    color: var(--gray1);
-    cursor: pointer;
-    margin-bottom: 2px;
-    transition: all 0.2s;
-    text-decoration: none;
-}
-
-.sb-link:hover {
-    background: var(--black3);
-    color: #fff;
-}
-
-.sb-link.active {
-    background: linear-gradient(135deg, var(--green3), var(--green2));
-    color: #fff;
-}
-
-.sb-ico {
-    font-size: 1rem;
-    width: 20px;
-    text-align: center;
-    flex-shrink: 0;
-}
-
-.sb-foot {
-    padding: 14px 16px;
-    border-top: 1px solid var(--black4);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.sb-av {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: var(--green3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.72rem;
-    font-weight: 800;
-    color: #fff;
-    flex-shrink: 0;
-}
-
-.sb-uname {
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--white);
-    line-height: 1.2;
-}
-
-.sb-urole {
-    font-size: 0.62rem;
-    color: var(--green);
-}
-
-.sb-out {
-    margin-left: auto;
-    background: none;
-    border: none;
-    color: var(--gray2);
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.sb-out:hover {
-    color: var(--red);
-}
-
-.panel-main {
-    margin-left: var(--sidebar);
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    width: calc(100% - var(--sidebar));
-    min-height: 100vh;
-}
-
-.topbar {
-    height: var(--topbar);
-    background: var(--black2);
-    border-bottom: 2px solid var(--green3);
-    display: flex;
-    align-items: center;
-    padding: 0 24px;
-    gap: 16px;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-}
-
-.tb-title {
-    font-family: "Oswald", sans-serif;
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: #fff;
-    flex: 1;
-    letter-spacing: 0.5px;
-}
-
-.tb-notif {
-    position: relative;
-    background: none;
-    border: none;
-    color: var(--gray1);
-    font-size: 1.1rem;
-    cursor: pointer;
-    padding: 4px;
-}
-
-.ndot {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--orange);
-}
-
-.tb-av {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background: var(--green3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 800;
-    color: #fff;
-    cursor: pointer;
-    font-family: "Oswald", sans-serif;
-}
-
-.page {
-    padding: 24px;
-    flex: 1;
-}
-
-.hero {
-    margin-bottom: 20px;
-}
-
-.hero h1 {
-    font-size: 2rem;
-    color: #fff;
-    margin: 4px 0;
-}
-
-.muted {
-    color: var(--gray1);
-    font-size: 0.82rem;
-}
-
-.toolbar {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-top: 16px;
-}
-
-.toolbar .input {
-    max-width: 320px;
-}
-
-/* Grid Principal */
-.grid {
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 20px;
-}
-
-/* Tablas */
-.table-wrap {
-    overflow-x: auto;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.8rem;
-}
-
-th {
-    background: var(--black3);
-    color: var(--gray1);
-    padding: 10px 12px;
-    text-align: left;
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    white-space: nowrap;
-}
-
-td {
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--black3);
-    color: var(--white);
-    white-space: nowrap;
-}
-
-tr:hover td {
-    background: rgba(255, 255, 255, 0.025);
-}
-
-td .plate {
-    background: #facc15;
-    color: #000;
-    font-weight: 800;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-family: "Oswald", sans-serif;
-}
-
-.actions {
-    display: flex;
-    gap: 6px;
+/* Acciones de cada fila */
+.vehiculos-card .actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .empty {
-    text-align: center;
-    padding: 20px;
-    color: var(--gray1);
+  text-align: center !important;
+  padding: 28px !important;
+  color: var(--gray1) !important;
 }
 
-/* Ficha del Vehículo */
-.detail .vehicle-top {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 16px;
+/* Boton compacto para las acciones de la tabla */
+.btn.mini {
+  padding: 5px 11px;
+  font-size: 0.7rem;
+  border-radius: 6px;
+  letter-spacing: 0.4px;
+}
+
+/* --- Ficha del vehiculo --- */
+.vehiculo-detail-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid var(--line);
+}
+
+.vehiculo-detail-head h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.vehiculo-estado {
+  color: var(--gray1);
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.vehiculo-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
 .stat {
-    background: var(--black3);
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid var(--black4);
+  background: var(--black3);
+  border: 1px solid var(--black4);
+  border-radius: 8px;
+  padding: 10px;
+  min-width: 0;
 }
 
-.stat .label {
-    font-size: 0.65rem;
-    color: var(--gray1);
-    text-transform: uppercase;
+.stat .label,
+.service-box .label {
+  font-size: 0.63rem;
+  color: var(--gray1);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
 }
 
-.stat .value {
-    font-size: 0.9rem;
-    font-weight: 700;
-    margin-top: 4px;
+.stat .value,
+.service-box .value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
 }
 
 .service-box {
-    background: var(--black3);
-    border: 1px solid var(--black4);
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 16px;
+  background: var(--black3);
+  border: 1px solid var(--black4);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.service-box-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.vehiculo-nota {
+  color: var(--gray1);
+  font-size: 0.78rem;
 }
 
 .progress {
-    height: 8px;
-    background: var(--black4);
-    border-radius: 4px;
-    overflow: hidden;
-    margin: 8px 0;
+  height: 8px;
+  background: var(--black4);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 8px 0;
 }
 
 .progress > div {
-    height: 100%;
-    background: var(--green);
-    width: 0%;
-    transition: width 0.3s ease;
+  height: 100%;
+  width: 0%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--jm-verde), var(--jm-verde-light, #23A83A));
+  transition: width 0.3s ease;
 }
 
 .detail-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
 }
 
 .detail-actions .btn {
-    justify-content: center;
-    width: 100%;
+  justify-content: center;
+  width: 100%;
 }
 
-/* Toast */
+/* --- Aviso flotante --- */
 .toast {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: var(--green);
-    color: #000;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-weight: 700;
-    display: none;
-    z-index: 1000;
-    box-shadow: var(--shadow);
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  max-width: min(420px, calc(100vw - 40px));
+  background: var(--jm-verde);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  display: none;
+  z-index: 1000;
+  box-shadow: var(--shadow);
 }
 
-/* ==========================================
-   4. DISEÑO RESPONSIVO Y MENÚ LATERAL
-   ========================================== */
-#hambtn {
-    display: none;
-    background: var(--black3);
-    border: 1px solid var(--black4);
-    color: var(--white);
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 1.2rem;
-    cursor: pointer;
-}
+/* ============================================
+   RESPONSIVO - breakpoints unificados {600, 900, 1200}
+   ============================================ */
+@media (max-width: 1200px) {
+  .vehiculos-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 
-#hambtn:hover {
-    border-color: var(--green);
-    color: var(--green);
-}
-
-#sb-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 99;
+  .vehiculo-stats {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  }
 }
 
 @media (max-width: 900px) {
-    #hambtn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
+  .vehiculos-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
 
-    .sb {
-        transform: translateX(-100%);
-        width: 250px;
-        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.6);
-    }
+  .vehiculos-search {
+    width: 100%;
+  }
 
-    .sb.open {
-        transform: translateX(0);
-    }
+  .vehiculos-count {
+    align-self: flex-end;
+  }
 
-    .sb.open ~ #sb-overlay {
-        display: block;
-    }
+  .pg-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 
-    .panel-main {
-        margin-left: 0;
-        width: 100%;
-    }
-
-    .grid {
-        grid-template-columns: 1fr;
-    }
+  .detail-actions {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 600px) {
-    .page {
-        padding: 12px;
-    }
+  .vehiculos-search input {
+    padding: 9px 4px;
+  }
 
-    .toolbar {
-        flex-direction: column;
-        align-items: stretch;
-    }
+  .vehiculos-card h2 {
+    padding: 14px 14px 0;
+    font-size: 0.98rem;
+  }
 
-    .toolbar .input {
-        max-width: 100%;
-    }
+  .vehiculo-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .vehiculos-actions {
+    width: 100%;
+  }
+
+  .vehiculos-actions .btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .toast {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    max-width: none;
+  }
 }

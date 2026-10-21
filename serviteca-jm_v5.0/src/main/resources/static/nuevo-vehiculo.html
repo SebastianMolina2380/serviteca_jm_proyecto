@@ -1,26 +1,93 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Serviteca JM — Nuevo vehículo</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Exo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Serviteca JM - Nuevo vehículo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="nuevo-vehiculo.css">
+  <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="serviteca-theme.css">
-  <style>
-    body{margin:0;background:radial-gradient(circle at 80% 0,#153327 0,transparent 28%),linear-gradient(135deg,#0f172a,#0b1220);color:#f8fafc;font-family:'Exo 2',sans-serif;min-height:100vh}.wrap{max-width:760px;margin:50px auto;padding:20px}.card{background:linear-gradient(145deg,#141e2d,#101927);border:1px solid #2b3a4e;border-radius:16px;padding:25px;box-shadow:0 18px 45px rgba(0,0,0,.25)}h1,h2{font-family:Oswald,sans-serif}.muted{color:#94a3b8}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}label{font-size:13px;color:#cbd5e1}input{background:#0e1725;border:1px solid #2b3a4e;color:#f8fafc;border-radius:10px;padding:12px;outline:none;font:500 15px 'Exo 2'}input:focus{border-color:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.12)}.actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}.btn{border:1px solid transparent;border-radius:10px;padding:11px 15px;font:600 14px 'Exo 2';cursor:pointer;text-decoration:none}.green{background:#22c55e;color:#052e16}.ghost{background:#182437;border-color:#40516a;color:#f8fafc}@media(max-width:650px){.grid{grid-template-columns:1fr}.field.full{grid-column:auto}.wrap{margin:15px auto}}
-  </style>
+  <link rel="stylesheet" href="serviteca-premium.css">
 </head>
-<body><main class="wrap"><section class="card"><div class="muted">SERVITECA JM · VEHÍCULOS</div><h1 id="title">Registrar vehículo</h1><p class="muted">Los datos se guardan directamente mediante la API de Spring Boot.</p>
-<form id="form"><div class="grid">
-<div class="field"><label for="placa">Placa *</label><input id="placa" maxlength="10" required></div>
-<div class="field"><label for="marca">Marca *</label><input id="marca" maxlength="50" required></div>
-<div class="field"><label for="modelo">Modelo *</label><input id="modelo" maxlength="50" required></div>
-<div class="field"><label for="color">Color</label><input id="color" maxlength="30"></div>
-<div class="field"><label for="kilometraje">Kilometraje</label><input id="kilometraje" type="number" min="0" step="1" value="0"></div>
-</div><div class="actions"><a class="btn ghost" href="/vehiculo">Cancelar</a><button class="btn green" type="submit">Guardar vehículo</button></div></form><p id="msg" class="muted"></p></section></main>
+<body>
+<div class="layout">
+<aside class="sb" id="sidebar">
+    <div class="sb-head">
+      <img class="sb-logo" src="jm-logo.png" alt="JM" />
+      <div><div class="sb-brand">JM SERVITECA<small>PRODISJM v1.0</small></div></div>
+    </div>
+
+    <nav class="sb-nav">
+      <div class="sb-sec">Principal</div>
+      <a class="sb-link" href="dashboard.html"><span class="sb-ico">📊</span> Dashboard</a>
+      <a class="sb-link" href="citas.html"><span class="sb-ico">📅</span> Citas <span class="sb-badge">4</span></a>
+      <a class="sb-link" href="nueva-cita.html"><span class="sb-ico">➕</span> Nueva Cita</a>
+      <a class="sb-link" href="clientes.html"><span class="sb-ico">👤</span> Clientes</a>
+      <a class="sb-link active" href="vehiculo.html"><span class="sb-ico">🚗</span> Vehículos</a>
+      <div class="sb-sec" style="margin-top: 8px">Administración</div>
+      <a class="sb-link" href="usuarios.html"><span class="sb-ico">👥</span> Usuarios</a>
+      <a class="sb-link" href="inventario.html"><span class="sb-ico">🔩</span> Inventario <span class="sb-badge" style="background: var(--red)">2</span></a>
+      <a class="sb-link" href="facturacion.html"><span class="sb-ico">💵</span> Facturación</a>
+      <a class="sb-link" href="reportes.html"><span class="sb-ico">📈</span> Reportes</a>
+
+    </nav>
+
+    <div class="sb-foot">
+      <div class="sb-av" id="sbav">JM</div>
+      <div>
+        <div class="sb-uname" id="sbname">Admin</div>
+        <div class="sb-urole" id="sbrole">Administrador</div>
+      </div>
+      <a href="index.html" class="sb-out" title="Cerrar sesión" aria-label="Cerrar sesión">↪</a>
+    </div>
+  </aside>
+
+  <!-- OVERLAY PARA CERRAR MENÚ EN MÓVILES -->
+  <div id="sb-overlay"></div>
+
+  <div class="main">
+    <header class="topbar">
+      <button id="hambtn" type="button" aria-label="Abrir menú" title="Abrir menú">&#9776;</button>
+      <div class="tb-title">SERVITECA JM · VEHÍCULOS</div>
+      <span id="tbdate"></span>
+      <div class="av">JM</div>
+    </header>
+    <main class="pg">
+      <section class="form-card">
+        <div class="pg-title" id="title">Registrar vehículo</div>
+        <div class="pg-sub">Los datos se guardan directamente mediante la API de Spring Boot.</div>
+        <form id="form" class="user-form">
+          <div class="form-row">
+            <label>Placa *<input id="placa" maxlength="10" required autocomplete="off"></label>
+            <label>Marca *<input id="marca" maxlength="50" required></label>
+          </div>
+          <div class="form-row">
+            <label>Modelo *<input id="modelo" maxlength="50" required></label>
+            <label>Color<input id="color" maxlength="30"></label>
+          </div>
+          <div class="form-row">
+            <label>Kilometraje<input id="kilometraje" type="number" min="0" step="1" value="0"></label>
+          </div>
+          <div id="msg" class="form-message" role="alert"></div>
+          <div class="form-actions">
+            <a href="/vehiculo" class="btn btn-ghost">Cancelar</a>
+            <button class="btn btn-green" type="submit">Guardar vehículo</button>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+</div>
+<script src="role-guard.js"></script>
 <script>
 const id=new URLSearchParams(location.search).get('id');const $=x=>document.getElementById(x);const form=$('form');
-async function api(url,opt={}){const r=await fetch(url,{credentials:'same-origin',...opt,headers:{'Content-Type':'application/json',...(opt.headers||{})}});const t=await r.text();let d=null;try{d=t?JSON.parse(t):null}catch{d=t}if(!r.ok)throw new Error(d?.error||d?.message||`HTTP ${r.status}`);return d}
+async function api(url,opt={}){const r=await fetch(url,{credentials:'same-origin',...opt,headers:{'Content-Type':'application/json',...(opt.headers||{})}});const t=await r.text();let d=null;try{d=t?JSON.parse(t):null}catch{d=t}if(!r.ok)throw new Error(d?.error||d?.message||('HTTP '+r.status));return d}
 (async()=>{if(!id)return;try{const v=await api('/api/vehiculos/'+encodeURIComponent(id));$('title').textContent='Editar vehículo';$('placa').value=v.placa||'';$('marca').value=v.marca||'';$('modelo').value=v.modelo||'';$('color').value=v.color||'';$('kilometraje').value=v.kilometraje??0}catch(e){$('msg').textContent=e.message}})();
 form.addEventListener('submit',async e=>{e.preventDefault();$('msg').textContent='Guardando…';const payload={placa:$('placa').value.trim().toUpperCase(),marca:$('marca').value.trim(),modelo:$('modelo').value.trim(),color:$('color').value.trim()||null,kilometraje:Number($('kilometraje').value||0)};try{await api(id?'/api/vehiculos/'+encodeURIComponent(id):'/api/vehiculos',{method:id?'PUT':'POST',body:JSON.stringify(payload)});location.href='/vehiculo'}catch(err){$('msg').textContent=err.message}});
-</script></body></html>
+</script>
+<script src="sidebar.js" defer></script>
+</body>
+</html>

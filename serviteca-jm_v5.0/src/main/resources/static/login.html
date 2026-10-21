@@ -2,30 +2,30 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Serviteca JM — Login</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Serviteca JM - Login</title>
   <link
           href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
           rel="stylesheet"
   >
-  <!-- ETIQUETA P01: Login / Inicio de Sesión -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f172a">
   <link rel="stylesheet" href="login.css">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="serviteca-theme.css">
+  <link rel="stylesheet" href="serviteca-premium.css">
 </head>
 <body>
 <!-- PANTALLA P01: Login / Inicio de Sesión -->
 <div class="card">
   <!-- COMPONENTE: Logo y encabezado -->
   <div class="card-logo">
-    <div class="card-logo">
-      <img
-              class="sb-logo"
-              src="jm-logo.png"
-              alt="JM"
-      />
-    <h2>PRODISJM</h2>
+    <img
+            class="sb-logo"
+            src="jm-logo.png"
+            alt="JM"
+    />
+    <h2>PRODISSJM</h2>
     <p>Serviteca JM · Sistema de Gestión de Citas y Servicios</p>
   </div>
 
@@ -50,6 +50,7 @@
               id="email"
               name="email"
               placeholder="usuario@servitecajm.com"
+              autocomplete="email"
               required
       />
     </div>
@@ -64,6 +65,7 @@
                 id="pass"
                 name="password"
                 placeholder="••••••••"
+                autocomplete="current-password"
                 required
         >
         <button
@@ -89,7 +91,7 @@
   </form>
 
   <!-- COMPONENTE: Alerta de error -->
-  <div class="error" id="err">
+  <div class="error" id="err" role="alert" aria-live="assertive">
     ❌ Ingresa correo y contraseña para continuar.
   </div>
 
@@ -101,6 +103,12 @@
 </div>
 
 <script src="login.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+</script>
 </body>
 </html>

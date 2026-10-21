@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Serviteca JM",
+    "slug": "serviteca-jm",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "android": {
+      "package": "com.serviteca.jm",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#0F172A"
+      }
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.serviteca.jm"
+    },
+    "extra": {
+      "apiPort": 8082,
+      "eas": {
+        "projectId": "53e08aa1-6412-4a6e-b226-79e488441723"
+      }
+    },
+    "plugins": [
+      "expo-status-bar"
+    ]
+  }
+}

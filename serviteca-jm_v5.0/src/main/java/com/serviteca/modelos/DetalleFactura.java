@@ -40,6 +40,11 @@ public class DetalleFactura {
     @Column(name = "subtotal", nullable = false, precision = 12, scale = 2)
     private BigDecimal subtotal;
 
+    @Column(name="tarifa_iva", nullable=false, precision=5, scale=2) private BigDecimal tarifaIva;
+    @Column(name="iva_valor", nullable=false, precision=12, scale=2) private BigDecimal ivaValor=BigDecimal.ZERO;
+    @Column(name="codigo_item", length=40) private String codigoItem;
+    @Column(name="unidad_medida", nullable=false, length=20) private String unidadMedida="UND";
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
             name = "idfactura",

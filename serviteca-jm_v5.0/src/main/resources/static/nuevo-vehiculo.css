@@ -1,0 +1,44 @@
+/* ==========================================================================
+   SERVITECA JM — Nuevo / Editar vehículo
+   Componentes de formulario locales. El diseño base (paleta, tipografía,
+   .form-card, .pg-title, .btn*) lo aportan styles.css + serviteca-theme.css
+   + serviteca-premium.css, que se cargan después de este archivo.
+   ========================================================================== */
+
+.user-form {
+  display: grid;
+  gap: 18px;
+  margin-top: 26px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.form-message {
+  min-height: 20px;
+  color: var(--red, #ef4444);
+  font-size: 0.82rem;
+}
+
+.form-message.success {
+  color: var(--green, #22c55e);
+}
+
+@media (max-width: 600px) {
+  .form-card {
+    margin: 16px 0;
+    padding: 20px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-actions .btn {
+    justify-content: center;
+  }
+}

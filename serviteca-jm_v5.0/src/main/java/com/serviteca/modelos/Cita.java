@@ -1,6 +1,7 @@
 package com.serviteca.modelos;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
@@ -72,6 +73,7 @@ public class Cita {
 
     @OneToOne(mappedBy = "cita", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
+    @JsonIgnore // La API de citas no necesita cargar la factura inversa al serializar.
     @JsonIgnoreProperties({
             "cita",
             "hibernateLazyInitializer",

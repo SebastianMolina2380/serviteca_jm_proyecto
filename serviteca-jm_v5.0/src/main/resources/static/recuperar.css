@@ -12,13 +12,6 @@
         --gray2: #64748b;
         --red: #ef4444;
       }
-      *,
-      *::before,
-      *::after {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
       body {
         font-family: "Exo 2", sans-serif;
         background:
@@ -189,7 +182,7 @@
         letter-spacing: 0.5px;
       }
       /* Responsive para recuperar contraseña */
-      @media (max-width: 480px) {
+      @media (max-width: 600px) {
         body {padding:12px}
         .card {padding:20px;max-width:360px;border-radius:12px}
         .logo-area img {width:56px}
@@ -198,3 +191,41 @@
         .fc {padding:10px 12px;font-size:.86rem}
         .btn-send {padding:12px;font-size:.9rem}
       }
+
+/* ==========================================================
+   MOVIL (320px - 600px) - TARJETA DE ACCESO CENTRADA
+   ----------------------------------------------------------
+   width 90% + max-width 400px + margin auto evitan que la
+   tarjeta se desplace o se corte hacia la derecha en
+   viewports estrechos (320px - 430px).
+   ========================================================== */
+@media (max-width: 600px) {
+  .card {
+    width: 90% !important;
+    max-width: 400px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  .card,
+  .card * {
+    min-width: 0;
+  }
+
+  .card-logo h2 {
+    font-size: clamp(1.5rem, 6vw, 1.8rem);
+    overflow-wrap: anywhere;
+  }
+
+  .fg {
+    width: 100%;
+  }
+
+  .fg input,
+  .fg select {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}

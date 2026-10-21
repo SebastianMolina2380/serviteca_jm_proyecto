@@ -1,13 +1,11 @@
 package com.serviteca.controladores;
 
-import com.serviteca.modelos.Cita;
-import com.serviteca.modelos.DetalleFactura;
-import com.serviteca.modelos.Factura;
-import com.serviteca.modelos.Usuario;
-import com.serviteca.modelos.Vehiculo;
-import com.serviteca.repository.CitaRepository;
-import com.serviteca.repository.FacturaRepository;
-import com.serviteca.repository.UsuarioRepository;
+import com.serviteca.DTOs.CrearFacturaRequest;
+import com.serviteca.DTOs.FacturaResponse;
+import com.serviteca.configuracion.DatosFiscalesProperties;
+import com.serviteca.modelos.*;
+import com.serviteca.repository.*;
+import com.serviteca.servicios.FacturacionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,9 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.*;
 
 @RestController
@@ -25,168 +23,85 @@ import java.util.*;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class FacturaController {
-
     private final FacturaRepository facturaRepository;
     private final UsuarioRepository usuarioRepository;
-    private final CitaRepository citaRepository;
+    private final PagoFacturaRepository pagoRepository;
+    private final FacturacionService facturacionService;
+    private final DatosFiscalesProperties fiscales;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','TECNICO','CLIENTE')")
-    public ResponseEntity<List<Map<String, Object>>> listarTodas(Authentication authentication) {
+    public ResponseEntity<List<FacturaResponse>> listarTodas(Authentication authentication) {
         List<Factura> facturas;
         if (isCliente(authentication)) {
-            Usuario usuario = currentUser(authentication);
-            if (usuario == null) return ResponseEntity.status(401).build();
+            Usuario usuario = usuarioRepository.findByCorreo(authentication.getName()).orElse(null);
+            if (usuario == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             facturas = facturaRepository.findByUsuarioIdUsuario(usuario.getIdUsuario());
         } else {
             facturas = facturaRepository.findAll();
-            // La colección se puede volver a cargar con un EntityGraph por factura al construir el DTO.
-            // Para evitar depender de lazy loading, cada factura se transforma dentro de la sesión JPA.
         }
         return ResponseEntity.ok(facturas.stream().map(this::toView).toList());
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','TECNICO','CLIENTE')")
-    public ResponseEntity<?> obtenerPorId(@PathVariable Integer id, Authentication authentication) {
-        return facturaRepository.findById(id).map(f -> {
-            if (isCliente(authentication) && !belongsToCurrentUser(f, authentication)) {
-                return ResponseEntity.status(403).body(Map.of("error", "No puede consultar esta factura."));
-            }
-            return ResponseEntity.ok(toView(f));
-        }).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<FacturaResponse> obtenerPorId(@PathVariable Integer id, Authentication authentication) {
+        Factura factura = facturaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Factura no encontrada."));
+        if (isCliente(authentication) && !belongsToCurrentUser(factura, authentication)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No puede consultar esta factura.");
+        }
+        return ResponseEntity.ok(toView(factura));
     }
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','TECNICO')")
-    public ResponseEntity<?> crear(@Valid @RequestBody Factura factura) {
-        if (factura.getUsuario() == null || factura.getUsuario().getIdUsuario() == null)
-            return ResponseEntity.badRequest().body(Map.of("error", "El usuario es obligatorio."));
-        if (factura.getCita() == null || factura.getCita().getIdCita() == null)
-            return ResponseEntity.badRequest().body(Map.of("error", "La cita es obligatoria."));
-
-        Usuario usuario = usuarioRepository.findById(factura.getUsuario().getIdUsuario()).orElse(null);
-        Cita cita = citaRepository.findById(factura.getCita().getIdCita()).orElse(null);
-        if (usuario == null) return ResponseEntity.badRequest().body(Map.of("error", "Usuario no encontrado."));
-        if (cita == null) return ResponseEntity.badRequest().body(Map.of("error", "Cita no encontrada."));
-        if (facturaRepository.existsByCitaIdCita(cita.getIdCita()))
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "La cita ya tiene una factura."));
-
-        factura.setUsuario(usuario);
-        factura.setCita(cita);
-        if (factura.getFormaPago() == null || factura.getFormaPago().isBlank()) factura.setFormaPago("Contado");
-        if (factura.getMedioPago() == null || factura.getMedioPago().isBlank()) factura.setMedioPago("Efectivo");
-        return ResponseEntity.status(HttpStatus.CREATED).body(toView(facturaRepository.save(factura)));
+    public ResponseEntity<FacturaResponse> crear(@Valid @RequestBody CrearFacturaRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(toView(facturacionService.emitir(request)));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','TECNICO')")
-    public ResponseEntity<?> actualizar(@PathVariable Integer id, @Valid @RequestBody Factura datos) {
-        return facturaRepository.findById(id).map(factura -> {
-            if (datos.getUsuario() == null || datos.getUsuario().getIdUsuario() == null)
-                return ResponseEntity.badRequest().body(Map.of("error", "El usuario es obligatorio."));
-            if (datos.getCita() == null || datos.getCita().getIdCita() == null)
-                return ResponseEntity.badRequest().body(Map.of("error", "La cita es obligatoria."));
-
-            Usuario usuario = usuarioRepository.findById(datos.getUsuario().getIdUsuario()).orElse(null);
-            Cita cita = citaRepository.findById(datos.getCita().getIdCita()).orElse(null);
-            if (usuario == null) return ResponseEntity.badRequest().body(Map.of("error", "Usuario no encontrado."));
-            if (cita == null) return ResponseEntity.badRequest().body(Map.of("error", "Cita no encontrada."));
-
-            factura.setSubtotal(datos.getSubtotal());
-            factura.setUsuario(usuario);
-            factura.setCita(cita);
-            factura.setFormaPago(datos.getFormaPago());
-            factura.setMedioPago(datos.getMedioPago());
-            return ResponseEntity.ok(toView(facturaRepository.save(factura)));
-        }).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> actualizar(@PathVariable Integer id) {
+        if (!facturaRepository.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Factura no encontrada.");
+        throw new ResponseStatusException(HttpStatus.CONFLICT, "Las facturas emitidas son inmutables. Registre abonos en /api/facturas/{id}/pagos.");
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
-        if (!facturaRepository.existsById(id)) return ResponseEntity.notFound().build();
-        facturaRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> eliminar(@PathVariable Integer id) {
+        if (!facturaRepository.existsById(id)) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Factura no encontrada.");
+        throw new ResponseStatusException(HttpStatus.CONFLICT, "No se puede eliminar una factura emitida; conserve su historial contable.");
     }
 
-    private boolean isCliente(Authentication a) {
-        return a != null && a.getAuthorities().stream().anyMatch(x -> "ROLE_CLIENTE".equals(x.getAuthority()));
+    private boolean isCliente(Authentication authentication) {
+        return authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(a -> "ROLE_CLIENTE".equals(a.getAuthority()));
     }
 
-    private Usuario currentUser(Authentication a) {
-        return a == null ? null : usuarioRepository.findByCorreo(a.getName()).orElse(null);
+    private boolean belongsToCurrentUser(Factura factura, Authentication authentication) {
+        Usuario usuario = usuarioRepository.findByCorreo(authentication.getName()).orElse(null);
+        return usuario != null && factura.getUsuario() != null
+                && Objects.equals(usuario.getIdUsuario(), factura.getUsuario().getIdUsuario());
     }
 
-    private boolean belongsToCurrentUser(Factura f, Authentication a) {
-        Usuario u = currentUser(a);
-        return u != null && f.getUsuario() != null && Objects.equals(u.getIdUsuario(), f.getUsuario().getIdUsuario());
+    private FacturaResponse toView(Factura factura) {
+        BigDecimal pagado = pagoRepository.totalPagado(factura.getIdFactura());
+        BigDecimal total = money(factura.getTotal());
+        List<PagoFactura> pagos = pagoRepository.findByFacturaIdFacturaOrderByFechaAscIdPagoAsc(factura.getIdFactura());
+        String estadoPago = pagado.signum() == 0 ? "PENDIENTE" : pagado.compareTo(total) >= 0 ? "PAGADA" : "ABONADA";
+        Usuario usuario = factura.getUsuario();
+        Cita cita = factura.getCita();
+        var emisor = new FacturaResponse.ParteFiscal(factura.getRazonSocialEmisor(), "NIT", factura.getNitEmisor(), factura.getDireccionEmisor(), factura.getCiudadEmisor(), factura.getTelefonoEmisor(), factura.getCorreoEmisor());
+        var adquirente = new FacturaResponse.ParteFiscal(factura.getNombreAdquirente(), factura.getTipoDocAdquirente(), factura.getNumeroDocAdquirente(), factura.getDireccionAdquirente(), factura.getCiudadAdquirente(), factura.getTelefonoAdquirente(), factura.getCorreoAdquirente());
+        var detalles = factura.getDetalles() == null ? List.<FacturaResponse.Detalle>of() : factura.getDetalles().stream().map(d -> new FacturaResponse.Detalle(
+                factura.getDetalles().indexOf(d)+1, d.getCodigoItem(), d.getUnidadMedida(), d.getNombre(), d.getCantidad(), money(d.getValor()), money(d.getSubtotal()), d.getTarifaIva(), money(d.getIvaValor()), money(d.getSubtotal()).add(money(d.getIvaValor())))).toList();
+        var iva = factura.getDetalles() == null ? List.<FacturaResponse.Iva>of() : factura.getDetalles().stream().collect(java.util.stream.Collectors.groupingBy(DetalleFactura::getTarifaIva, java.util.TreeMap::new, java.util.stream.Collectors.toList())).entrySet().stream().map(e -> new FacturaResponse.Iva(e.getKey(), e.getValue().stream().map(DetalleFactura::getSubtotal).reduce(BigDecimal.ZERO, BigDecimal::add), e.getValue().stream().map(DetalleFactura::getIvaValor).reduce(BigDecimal.ZERO, BigDecimal::add))).toList();
+        var cfg = fiscales.software();
+        var software = cfg == null ? null : new FacturaResponse.DatosSoftware(cfg.nombre(), cfg.fabricante(), cfg.nitFabricante(), cfg.proveedorTecnologico(), cfg.nitProveedorTecnologico());
+        String placa = cita != null && cita.getVehiculo()!=null ? cita.getVehiculo().getPlaca() : null;
+        return new FacturaResponse(factura.getIdFactura(), factura.getNumeroFactura(), factura.getPrefijo(), factura.getNumeroAutorizacion(), factura.getRangoDesde(), factura.getRangoHasta(), factura.getVigenciaDesde(), factura.getVigenciaHasta(), emisor, adquirente, factura.getFechaGeneracion(), factura.getFechaExpedicion(), factura.getEstadoValidacionDian(), detalles, money(factura.getSubtotal()), money(factura.getIvaTotal()), iva, total, factura.getFormaPago(), pagos.isEmpty()?factura.getMedioPago():pagos.get(pagos.size()-1).getMetodo(), factura.getPlazoDias(), pagado, total.subtract(pagado).max(BigDecimal.ZERO), estadoPago, pagos.stream().map(p -> new FacturaResponse.Pago(p.getIdPago(), p.getMonto(), p.getMetodo(), p.getRegistradoEn())).toList(), factura.getResponsabilidadesFiscales(), software, placa);
     }
 
-    private Map<String, Object> toView(Factura f) {
-        Map<String, Object> m = new LinkedHashMap<>();
-        m.put("idFactura", f.getIdFactura());
-        m.put("numeroFactura", "JM " + (f.getIdFactura() == null ? "" : f.getIdFactura()));
-        m.put("fecha", f.getFecha());
-        m.put("fechaGeneracion", f.getFechaGeneracion());
-        m.put("subtotal", money(f.getSubtotal()));
-        m.put("total", money(f.getTotal()));
-        m.put("formaPago", f.getFormaPago());
-        m.put("medioPago", f.getMedioPago());
-
-        Usuario u = f.getUsuario();
-        if (u != null) {
-            Map<String, Object> um = new LinkedHashMap<>();
-            um.put("idUsuario", u.getIdUsuario());
-            um.put("nombre", u.getNombre());
-            um.put("numeroDoc", u.getNumeroDoc());
-            um.put("tipoDocumento", u.getTipoDocumento());
-            um.put("correo", u.getCorreo());
-            um.put("direccion", u.getDireccion());
-            um.put("telefono", u.getTelefono());
-            um.put("ciudad", u.getCiudad());
-            m.put("usuario", um);
-        }
-
-        Cita c = f.getCita();
-        if (c != null) {
-            Map<String, Object> cm = new LinkedHashMap<>();
-            cm.put("idCita", c.getIdCita());
-            cm.put("fecha", c.getFecha());
-            cm.put("hora", c.getHora());
-            cm.put("estado", c.getEstado() == null ? null : c.getEstado().name());
-            Vehiculo v = c.getVehiculo();
-            if (v != null) {
-                Map<String, Object> vm = new LinkedHashMap<>();
-                vm.put("idVehiculo", v.getIdvehiculo());
-                vm.put("placa", v.getPlaca());
-                vm.put("marca", v.getMarca());
-                vm.put("modelo", v.getModelo());
-                vm.put("color", v.getColor());
-                cm.put("vehiculo", vm);
-            }
-            m.put("cita", cm);
-        }
-
-        List<Map<String, Object>> detalles = new ArrayList<>();
-        if (f.getDetalles() != null) {
-            int i = 1;
-            for (DetalleFactura d : f.getDetalles()) {
-                Map<String, Object> dm = new LinkedHashMap<>();
-                dm.put("item", i++);
-                dm.put("idDetalleFactura", d.getIdDetalleFactura());
-                dm.put("nombre", d.getNombre());
-                dm.put("cantidad", d.getCantidad());
-                dm.put("valor", money(d.getValor()));
-                dm.put("subtotal", money(d.getSubtotal()));
-                detalles.add(dm);
-            }
-        }
-        m.put("detalles", detalles);
-        return m;
-    }
-
-    private BigDecimal money(BigDecimal value) {
-        return value == null ? BigDecimal.ZERO : value;
-    }
+    private BigDecimal money(BigDecimal amount) { return amount == null ? BigDecimal.ZERO : amount; }
 }

@@ -95,7 +95,9 @@ input:focus, select:focus, textarea:focus {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 100;
+  /* 1000 y no 100: por encima del topbar (50), del overlay de
+     movil (90) y del drawer, pero por debajo del chatbot (10000). */
+  z-index: 1000;
   flex-shrink: 0;
 }
 

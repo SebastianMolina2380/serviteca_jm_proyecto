@@ -113,7 +113,7 @@
   color: var(--red) !important;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 900px) {
   .clientes-toolbar {
     align-items: stretch;
     flex-direction: column;
@@ -131,4 +131,42 @@
     align-items: flex-start;
     flex-direction: column;
   }
+}
+
+/* ==========================================================
+   MOVIL (320px - 600px) - CLIENTES
+   ========================================================== */
+@media (max-width: 600px) {
+  .clientes-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .clientes-actions .btn {
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+  }
+
+  .clientes-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .clientes-search {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+/* Tabla con scroll propio: la hoja puede ser mas ancha que la
+   pantalla, pero el scroll vive dentro del contenedor. */
+.clientes-card .tw,
+.clientes-card .table-responsive {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
 }

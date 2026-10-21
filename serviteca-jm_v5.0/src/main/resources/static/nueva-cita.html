@@ -2,13 +2,14 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Serviteca JM — Nueva Cita</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Serviteca JM - Nueva Cita</title>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="nueva-cita.css">
   <script src="role-guard.js"></script>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="serviteca-theme.css">
+  <link rel="stylesheet" href="serviteca-premium.css">
 </head>
 <body>
 <div class="layout">
@@ -31,8 +32,7 @@
       <a class="sb-link" href="inventario.html"><span class="sb-ico">🔩</span> Inventario <span class="sb-badge" style="background: var(--red)">2</span></a>
       <a class="sb-link" href="facturacion.html"><span class="sb-ico">💵</span> Facturación</a>
       <a class="sb-link" href="reportes.html"><span class="sb-ico">📈</span> Reportes</a>
-      <div class="sb-sec" style="margin-top: 8px">Portales</div>
-      <a class="sb-link" href="portal-cliente.html"><span class="sb-ico">👤</span> Portal Cliente</a>
+
     </nav>
     <div class="sb-foot">
       <div class="sb-av" id="sbav">JM</div>
@@ -89,7 +89,7 @@
       <!-- Paso 1 -->
       <div id="p1" class="card" style="display: none">
         <h4 style="font-family: 'Oswald', sans-serif; color: var(--yellow); font-size: 1rem; letter-spacing: 0.5px; margin-bottom: 18px;">
-          PASO 1 — DATOS DEL CLIENTE
+          PASO 1 - DATOS DEL CLIENTE
         </h4>
         <div class="fr">
           <div class="fg">
@@ -138,8 +138,62 @@
       <!-- Paso 2 -->
       <div id="p2" class="card">
         <h4 style="font-family: 'Oswald', sans-serif; color: var(--yellow); font-size: 1rem; letter-spacing: 0.5px; margin-bottom: 18px;">
-          PASO 2 — DATOS DEL VEHÍCULO
+          PASO 2 - DATOS DEL VEHÍCULO
         </h4>
+
+        <!-- Selector de modo: vehículo ya registrado o alta nueva.
+             Antes solo existía el formulario de alta, con lo que no
+             había forma de elegir uno de los 32 vehículos reales. -->
+        <div class="vh-tabs" role="tablist" aria-label="Origen del vehículo">
+          <button
+                  type="button"
+                  class="vh-tab is-active"
+                  id="vh-tab-existente"
+                  role="tab"
+                  aria-selected="true"
+                  aria-controls="veh-existente"
+                  data-vh-modo="existente"
+          >
+            🚗 Usar vehículo registrado
+          </button>
+          <button
+                  type="button"
+                  class="vh-tab"
+                  id="vh-tab-nuevo"
+                  role="tab"
+                  aria-selected="false"
+                  aria-controls="veh-nuevo"
+                  data-vh-modo="nuevo"
+          >
+            ➕ Registrar uno nuevo
+          </button>
+        </div>
+
+        <!-- MODO A: vehículo existente, buscable por placa -->
+        <div id="veh-existente" role="tabpanel" aria-labelledby="vh-tab-existente">
+          <div class="fr">
+            <div class="fg">
+              <label class="fl" for="veh-placa">Placa</label>
+              <select class="fc" id="veh-placa" aria-describedby="veh-placa-ayuda">
+                <option value="">Cargando vehículos…</option>
+              </select>
+              <div id="veh-placa-ayuda" style="font-size: 0.7rem; color: var(--gray1); margin-top: 5px;">
+                Escribe parte de la placa para filtrar rápidamente.
+              </div>
+            </div>
+            <div class="fg">
+              <label class="fl">Vehículo seleccionado</label>
+              <div id="veh-resumen" class="veh-resumen">—</div>
+            </div>
+          </div>
+          <p id="veh-vacio" style="display: none; font-size: 0.8rem; color: var(--gray1); margin: 4px 0 0;">
+            No hay vehículos registrados todavía. Cambia a
+            <strong>“Registrar uno nuevo”</strong> para continuar.
+          </p>
+        </div>
+
+        <!-- MODO B: registrar un vehículo nuevo -->
+        <div id="veh-nuevo" role="tabpanel" aria-labelledby="vh-tab-nuevo" hidden>
         <div class="fr">
           <div class="fg">
             <label class="fl" for="placa-vehiculo">Placa</label>
@@ -148,7 +202,7 @@
           <div class="fg">
             <label class="fl" for="tipo-vehiculo">Tipo</label>
             <select class="fc" id="tipo-vehiculo" name="vehicle_type" required>
-              <option value="">— Seleccione tipo —</option>
+              <option value="">- Seleccione tipo -</option>
               <option>Automóvil</option>
               <option>Camioneta</option>
               <option>Moto</option>
@@ -159,7 +213,7 @@
           <div class="fg">
             <label class="fl" for="marca-vehiculo">Marca</label>
             <select class="fc" id="marca-vehiculo" name="brand" required>
-              <option value="">— Seleccione marca —</option>
+              <option value="">- Seleccione marca -</option>
               <option>Toyota</option>
               <option>Renault</option>
               <option>Chevrolet</option>
@@ -188,6 +242,12 @@
             <input class="fc" id="color-vehiculo" name="color" placeholder="Blanco" required>
           </div>
         </div>
+        <p style="font-size: 0.7rem; color: var(--gray1); margin: 2px 0 0;">
+          El alta definitiva se hace desde <em>Vehículos → Nuevo vehículo</em>;
+          aquí se toman los datos para la cita.
+        </p>
+        </div>
+
         <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px;">
           <button type="button" class="btn btn-ghost" onclick="goStep(1)">← Anterior</button>
           <button type="button" class="btn btn-yellow" onclick="goStep(3)">Continuar →</button>
@@ -197,20 +257,20 @@
       <!-- Paso 3 -->
       <div id="p3" class="card" style="display: none">
         <h4 style="font-family: 'Oswald', sans-serif; color: var(--yellow); font-size: 1rem; letter-spacing: 0.5px; margin-bottom: 18px;">
-          PASO 3 — SERVICIO Y FECHA
+          PASO 3 - SERVICIO Y FECHA
         </h4>
         <div style="font-size: 0.72rem; color: var(--gray1); margin-bottom: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px;">
           Selecciona el servicio
         </div>
         <div class="svc-grid" style="margin-bottom: 20px">
-          <div class="svc sel" onclick="selSvc(this)"><span class="svc-i">🛑</span><div class="svc-n">Frenos</div></div>
+          <div class="svc sel" onclick="selSvc(this)"><span class="svc-i"></span><div class="svc-n">Frenos</div></div>
           <div class="svc" onclick="selSvc(this)"><span class="svc-i">⚙️</span><div class="svc-n">Alineación</div></div>
-          <div class="svc" onclick="selSvc(this)"><span class="svc-i">🔧</span><div class="svc-n">Mantenimiento</div></div>
-          <div class="svc" onclick="selSvc(this)"><span class="svc-i">💻</span><div class="svc-n">Diagnóstico</div></div>
-          <div class="svc" onclick="selSvc(this)"><span class="svc-i">🔋</span><div class="svc-n">Eléctrico</div></div>
-          <div class="svc" onclick="selSvc(this)"><span class="svc-i">🏎️</span><div class="svc-n">Llantas</div></div>
-          <div class="svc" onclick="selSvc(this)"><span class="svc-i">🌡️</span><div class="svc-n">A/C</div></div>
-          <div class="svc" onclick="selSvc(this)"><span class="svc-i">🔩</span><div class="svc-n">Suspensión</div></div>
+          <div class="svc" onclick="selSvc(this)"><span class="svc-i"></span><div class="svc-n">Mantenimiento</div></div>
+          <div class="svc" onclick="selSvc(this)"><span class="svc-i"></span><div class="svc-n">Diagnóstico</div></div>
+          <div class="svc" onclick="selSvc(this)"><span class="svc-i"></span><div class="svc-n">Eléctrico</div></div>
+          <div class="svc" onclick="selSvc(this)"><span class="svc-i"></span><div class="svc-n">Llantas</div></div>
+          <div class="svc" onclick="selSvc(this)"><span class="svc-i"></span><div class="svc-n">A/C</div></div>
+          <div class="svc" onclick="selSvc(this)"><span class="svc-i"></span><div class="svc-n">Suspensión</div></div>
         </div>
         <div class="fr">
           <div class="fg">
@@ -220,11 +280,11 @@
           <div class="fg">
             <label class="fl" for="hora-disponible">Hora disponible</label>
             <select class="fc" id="hora-disponible" name="time_slot" required>
-              <option value="">— Seleccione hora —</option>
+              <option value="">- Seleccione hora -</option>
               <option>07:00 AM</option>
               <option>08:00 AM</option>
               <option selected>09:00 AM</option>
-              <option disabled>10:00 AM — Ocupado</option>
+              <option disabled>10:00 AM - Ocupado</option>
               <option>11:00 AM</option>
             </select>
           </div>
@@ -232,9 +292,9 @@
         <div class="fg">
           <label class="fl" for="tecnico-asignado">Técnico asignado</label>
           <select class="fc" id="tecnico-asignado" name="technician" required>
-            <option value="">— Seleccione técnico —</option>
-            <option>Juan Gómez — Disponible</option>
-            <option>Andrés López — Disponible</option>
+            <option value="">- Seleccione técnico -</option>
+            <option>Juan Gómez - Disponible</option>
+            <option>Andrés López - Disponible</option>
           </select>
         </div>
         <div class="fg">
@@ -250,7 +310,7 @@
       <!-- Paso 4 -->
       <div id="p4" class="card" style="display: none">
         <h4 style="font-family: 'Oswald', sans-serif; color: var(--yellow); font-size: 1rem; letter-spacing: 0.5px; margin-bottom: 18px;">
-          PASO 4 — CONFIRMACIÓN
+          PASO 4 - CONFIRMACIÓN
         </h4>
         <div style="background: var(--black3); border-radius: 10px; padding: 20px; margin-bottom: 18px; border: 1px solid var(--black4);">
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px">
@@ -276,7 +336,7 @@
             </div>
             <div>
               <div style="font-size: 0.62rem; color: var(--gray1); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;">Notificación</div>
-              <div style="font-size: 0.88rem; color: var(--green); font-weight: 600;">📲 WhatsApp + ✉️ Correo</div>
+              <div style="font-size: 0.88rem; color: var(--green); font-weight: 600;"> WhatsApp + ✉️ Correo</div>
             </div>
           </div>
         </div>
@@ -301,5 +361,6 @@
   </main>
 </div>
 <script src="nueva-cita.js"></script>
+<script src="sidebar.js" defer></script>
 </body>
 </html>

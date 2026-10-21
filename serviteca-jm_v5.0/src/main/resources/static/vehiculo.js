@@ -95,7 +95,8 @@
 
     tbody.innerHTML = rows.map(v => {
       const id = vehicleId(v);
-      return `<tr>
+      const activa = !!state.selected && String(vehicleId(state.selected)) === String(id);
+      return `<tr data-row="${esc(id)}" class="${activa ? 'selected' : ''}" tabindex="0" aria-selected="${activa ? 'true' : 'false'}">
         <td><span class="plate">${esc(v.placa)}</span></td>
         <td>${esc(v.marca || '—')}</td>
         <td>${esc(v.modelo || '—')}</td>
@@ -108,6 +109,26 @@
         </div></td>
       </tr>`;
     }).join('');
+
+    /* La plantilla ya marca la fila activa, pero se refuerza aquí:
+       renderTable se dispara también desde el filtro de búsqueda y
+       así la clase no depende de que el innerHTML conserve el
+       atributo. */
+    marcarFilaActiva();
+  }
+
+  /* Resalta la fila del vehículo seleccionado. Se recalcula desde
+     state.selected y no desde el evento, para que sirva igual al
+     cargar por URL, al pulsar "Ver" y al rehacer la tabla al
+     filtrar (renderTable reconstruye el innerHTML y pierde las
+     clases si no se vuelven a aplicar). */
+  function marcarFilaActiva() {
+    const activa = state.selected ? String(vehicleId(state.selected)) : null;
+    document.querySelectorAll('#tbody-vehiculos tr[data-row]').forEach(tr => {
+      const on = activa !== null && String(tr.dataset.row) === activa;
+      tr.classList.toggle('selected', on);
+      tr.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
   }
 
   function clearFicha() {
@@ -119,6 +140,7 @@
     if ($('ficha-estado'))$('ficha-estado').textContent = 'Sin seleccionar';
     state.selected = null;
     state.service = null;
+    marcarFilaActiva();
   }
 
   async function selectVehicle(vehicle) {
@@ -140,6 +162,7 @@
       state.service = null;
     }
     renderService();
+    marcarFilaActiva();
 
     const url = new URL(location.href);
     url.searchParams.set('id', id);
@@ -222,7 +245,30 @@
       const edit = event.target.closest('[data-edit]');
       if (edit) { location.href = `/nuevo-vehiculo.html?id=${encodeURIComponent(edit.dataset.edit)}`; return; }
       const del = event.target.closest('[data-delete]');
-      if (del) { await deleteVehicle(del.dataset.delete); }
+      if (del) { await deleteVehicle(del.dataset.delete); return; }
+
+      /* Clic en cualquier punto de la fila: selecciona ese vehículo
+         y actualiza la ficha. Va DESPUÉS de los botones para que
+         "Ver", "Editar" y "Eliminar" sigan teniendo prioridad y no
+         se dispare además la selección. */
+      const fila = event.target.closest('tr[data-row]');
+      if (fila) {
+        const v = state.vehicles.find(x => String(vehicleId(x)) === String(fila.dataset.row));
+        if (v) await selectVehicle(v);
+      }
+    });
+
+    /* Las filas llevan tabindex=0, así que Enter o Espacio deben
+       hacer lo mismo que el clic: sin esto el foco entraba en la
+       fila pero no ocurría nada. */
+    document.addEventListener('keydown', async event => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      const fila = event.target.closest?.('tr[data-row]');
+      if (!fila) return;
+      const v = state.vehicles.find(x => String(vehicleId(x)) === String(fila.dataset.row));
+      if (!v) return;
+      event.preventDefault();
+      await selectVehicle(v);
     });
 
     // Filtro de búsqueda y botones laterales
@@ -235,15 +281,10 @@
       if (confirm('¿Cancelar el servicio actual de este vehículo?')) updateCurrentService('CANCELADO', 0);
     });
 
-    // Menú hamburguesa
-    const hamBtn = $('hambtn');
-    const sidebar = $('sidebar');
-    const overlay = $('sb-overlay');
-
-    if (hamBtn && sidebar) {
-      hamBtn.addEventListener('click', () => sidebar.classList.toggle('open'));
-      if (overlay) overlay.addEventListener('click', () => sidebar.classList.remove('open'));
-    }
+    // El menú hamburguesa lo gestiona exclusivamente sidebar.js
+    // (con Escape, aria-expanded y cierre automático al volver a
+    // escritorio). Cablearlo también aquí lo abría y lo cerraba a
+    // la vez: el menú nunca llegaba a desplegarse.
   }
 
   function init() {

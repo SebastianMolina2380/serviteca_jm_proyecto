@@ -2,21 +2,20 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Serviteca JM — Reportes</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Serviteca JM - Reportes</title>
   <!-- Fuentes Google -->
   <link
           href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
           rel="stylesheet"
   >
   <!-- Hojas de Estilo -->
-  <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="reportes.css">
+  <link rel="stylesheet" href="styles.css">
   <!-- Scripts de Protección/Roles -->
   <script src="role-guard.js"></script>
   <link rel="stylesheet" href="serviteca-theme.css">
+  <link rel="stylesheet" href="serviteca-premium.css">
 </head>
 <body>
 <div class="layout">
@@ -68,7 +67,7 @@
           <div class="pg-title">Reportes</div>
           <div class="pg-sub">Métricas y análisis de desempeño</div>
         </div>
-        <div style="display: flex; gap: 8px">
+        <div class="pg-actions">
           <button type="button" class="btn btn-ghost btn-sm">📄 Exportar PDF</button>
           <button type="button" class="btn btn-primary btn-sm">📊 Exportar Excel</button>
         </div>
@@ -82,25 +81,43 @@
             Ingresos por Semana — Marzo 2026
           </h4>
           <div class="bar-chart">
+            <!--
+              Alturas proporcionales al valor real de cada semana,
+              tomando $1.7M (Sem 3) como máximo de la serie:
+                Sem 1  $1.1M / $1.7M = 64,7%  ->  65%
+                Sem 2  $1.4M / $1.7M = 82,4%  ->  82%
+                Sem 3  $1.7M / $1.7M = 100%
+                Sem 4  proyección (sin dato cerrado)
+              .btrack fija la altura de trazado; el % de .bf se
+              resuelve contra esa pista, no contra la columna.
+            -->
             <div class="bc">
-              <div class="bf" style="height: 50px"></div>
+              <div class="btrack">
+                <div class="bf" style="height: 65%"></div>
+              </div>
               <div class="bl">Sem 1</div>
               <div class="bv">$1.1M</div>
             </div>
             <div class="bc">
-              <div class="bf" style="height: 65px"></div>
+              <div class="btrack">
+                <div class="bf" style="height: 82%"></div>
+              </div>
               <div class="bl">Sem 2</div>
               <div class="bv">$1.4M</div>
             </div>
             <div class="bc">
-              <div class="bf" style="height: 78px; background: var(--yellow); box-shadow: 0 0 12px rgba(250, 204, 21, 0.4);"></div>
+              <div class="btrack">
+                <div class="bf is-max" style="height: 100%"></div>
+              </div>
               <div class="bl">Sem 3</div>
-              <div class="bv" style="color: var(--yellow); font-weight: 800">$1.7M</div>
+              <div class="bv is-max">$1.7M</div>
             </div>
             <div class="bc">
-              <div class="bf" style="height: 28px; background: var(--black4); border: 1px dashed var(--black3);"></div>
+              <div class="btrack">
+                <div class="bf is-proy" style="height: 40%"></div>
+              </div>
               <div class="bl">Sem 4</div>
-              <div class="bv" style="color: var(--gray2)">Proy.</div>
+              <div class="bv is-proy">Proy.</div>
             </div>
           </div>
         </div>
@@ -108,7 +125,7 @@
         <!-- BARRAS DE SERVICIOS MÁS SOLICITADOS -->
         <div class="card">
           <h4 style="font-size: 0.95rem; letter-spacing: 0.3px; margin-bottom: 14px;">
-            Servicios más Solicitados
+            Servicios Mas Solicitados
           </h4>
           <div style="display: flex; flex-direction: column; gap: 10px">
             <div>
@@ -137,7 +154,7 @@
             </div>
             <div>
               <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.78rem;">
-                <span>Diagnóstico</span><span style="color: var(--green)">14%</span>
+                <span>Diagnostico</span><span style="color: var(--green)">14%</span>
               </div>
               <div class="prog-w">
                 <div class="prog-f" style="width: 14%"></div>
@@ -159,14 +176,14 @@
       <div class="card" style="padding: 0; overflow: hidden">
         <div style="padding: 14px 20px 10px">
           <h4 style="font-size: 0.95rem; letter-spacing: 0.3px;">
-            Desempeño por Técnico — Marzo 2026
+            Desempeño por Tecnico- Marzo 2026
           </h4>
         </div>
         <div class="tw">
           <table>
             <thead>
             <tr>
-              <th>Técnico</th>
+              <th>Tecnico</th>
               <th>Servicios</th>
               <th>Completados</th>
               <th>Cancelados</th>
@@ -192,7 +209,7 @@
               <td style="color: var(--yellow)">★ 4.8</td>
             </tr>
             <tr>
-              <td>Juan Gómez</td>
+              <td>Juan Gomez</td>
               <td>12</td>
               <td><span class="badge bg">12</span></td>
               <td><span class="badge bgr">0</span></td>
@@ -200,7 +217,7 @@
               <td style="color: var(--yellow)">★ 5.0</td>
             </tr>
             <tr>
-              <td>Andrés López</td>
+              <td>Andres Lopez</td>
               <td>10</td>
               <td><span class="badge bg">9</span></td>
               <td><span class="badge br">1</span></td>
@@ -224,6 +241,6 @@
   }
 </script>
 <script src="reportes.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script src="sidebar.js" defer></script>
 </body>
 </html>

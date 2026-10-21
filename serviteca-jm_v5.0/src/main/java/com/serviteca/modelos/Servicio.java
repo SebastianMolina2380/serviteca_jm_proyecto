@@ -30,6 +30,8 @@ public class Servicio {
     @DecimalMin("0.0")
     @Column(name="precio",nullable=false,precision=12,scale=2) private BigDecimal precio;
 
+    @Column(name="tarifa_iva", precision=5, scale=2) private BigDecimal tarifaIva;
+
     @Column(name="activo",nullable=false) private Boolean activo=true;
 
     @Enumerated(EnumType.STRING)
