@@ -27,6 +27,11 @@ target/
 *.pem
 *.keystore
 
+# Overrides locales de Spring Boot (nunca se publican)
+# Uso: spring.profiles.active=local
+application-local.properties
+application-local.yml
+
 # --- IDE ---
 .idea/
 *.iml
