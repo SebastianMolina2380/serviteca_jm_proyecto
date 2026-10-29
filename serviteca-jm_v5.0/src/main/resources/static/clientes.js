@@ -43,13 +43,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     });
 
-  const btnMenu = document.getElementById("hambtn");
-  if (btnMenu) {
-    btnMenu.addEventListener("click", () => {
-      document.querySelector(".sb")?.classList.toggle("open");
-      document.getElementById("sb-overlay")?.classList.toggle("show");
-    });
-  }
+  /* El menú lateral lo gestiona sidebar.js (único dueño del
+     toggle). Este listener duplicado abría y cerraba el sidebar
+     en el mismo clic y usaba la clase .show, que sidebar.js no
+     controla. */
 
   await loadSessionUser();
   await loadClientes();
@@ -255,7 +252,3 @@ document.addEventListener("click", async e => {
   }
 });
 
-function closeSb() {
-  document.querySelector(".sb")?.classList.remove("open");
-  document.getElementById("sb-overlay")?.classList.remove("show");
-}

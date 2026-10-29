@@ -67,28 +67,17 @@ document.addEventListener("DOMContentLoaded", function () {
     /* sin cadena de consulta: nada que preseleccionar */
   }
 
-  const sb = document.querySelector(".sb");
-  const hamb = document.getElementById("hambtn");
-  const overlay = document.getElementById("sb-overlay");
-
-  function closeSb() {
-    if (sb) sb.classList.remove("open");
-  }
-
-  if (hamb) {
-    hamb.addEventListener("click", () => {
-      if (sb) sb.classList.toggle("open");
-    });
-  }
-
-  if (overlay) {
-    overlay.addEventListener("click", closeSb);
-  }
-
-  window.closeSb = closeSb;
-  window.addEventListener("resize", () => {
-    if (window.innerWidth > 900) closeSb();
-  });
+  /* --------------------------------------------------------
+     El menú lateral NO se maneja aquí.
+     --------------------------------------------------------
+     Antes este archivo registraba su propio listener sobre
+     #hambtn que hacía classList.toggle('open'). Como sidebar.js
+     también lo registra (y es el dueño del overlay, de
+     aria-expanded y del cierre con Escape), cada clic ejecutaba
+     DOS toggle seguidos: abrir + cerrar en el mismo instante.
+     El resultado era que el sidebar no se abría en móvil y el
+     contenido no quedaba detrás del overlay.
+     ------------------------------------------------------ */
 
   /* --------------------------------------------------------
      PASO 2 · selector de vehículo

@@ -91,6 +91,67 @@
     cliente: 'Cliente'
   };
 
+  /* ------------------------------------------------------------
+     MENÚ LATERAL ÚNICO
+     ------------------------------------------------------------
+     El menú se genera desde esta única fuente de verdad para que
+     todas las páginas tengan exactamente los mismos enlaces, iconos
+     y secciones. El HTML de cada vista conserva una copia estática
+     equivalente como respaldo, pero en tiempo de ejecución manda
+     esta definición (y los permisos del rol).
+     ------------------------------------------------------------ */
+  const ICONO_MENU = {
+    dashboard: '📊',
+    citas: '📅',
+    'nueva-cita': '➕',
+    clientes: '👥',
+    vehiculo: '🚗',
+    usuarios: '👤',
+    inventario: '📦',
+    facturacion: '💲',
+    reportes: '📈',
+    'portal-cliente': '🏠'
+  };
+
+  const TEXTO_MENU = {
+    dashboard: 'Dashboard',
+    citas: 'Citas',
+    'nueva-cita': 'Nueva Cita',
+    clientes: 'Clientes',
+    vehiculo: 'Vehículos',
+    usuarios: 'Usuarios',
+    inventario: 'Inventario',
+    facturacion: 'Facturación',
+    reportes: 'Reportes',
+    'portal-cliente': 'Portal Cliente'
+  };
+
+  const SECCIONES_MENU = [
+    {
+      titulo: 'Principal',
+      items: ['dashboard', 'citas', 'nueva-cita', 'clientes', 'vehiculo']
+    },
+    {
+      titulo: 'Administración',
+      items: ['usuarios', 'inventario', 'facturacion', 'reportes']
+    },
+    {
+      titulo: 'Portales',
+      items: ['portal-cliente']
+    }
+  ];
+
+  const TITULO_SECCION_POR_ROL = {
+    cliente: { 'Administración': 'Mi cuenta' }
+  };
+
+  /* Subpáginas que deben marcar como activo su enlace padre. */
+  const MENU_ACTIVO_POR_PAGINA = {
+    'nuevo-usuario': 'usuarios',
+    'nuevo-vehiculo': 'vehiculo',
+    'registrar-pago': 'facturacion'
+  };
+
   /* Las páginas públicas no se guardan ni se ocultan. */
   if (PAGINAS_PUBLICAS.has(PAGE)) return;
 
@@ -331,43 +392,51 @@
     });
   }
 
-  function aplicarRol(datosUsuario, rolActual) {
+  /**
+   * Reconstruye el menú lateral con los enlaces que corresponden al rol.
+   * Es la fuente de verdad: aunque el HTML estático de una vista esté
+   * desactualizado, el menú final siempre es el mismo.
+   */
+  function renderNav(rolActual) {
+    const nav = document.querySelector('.sb-nav');
+    if (!nav) return;
+
     const permitidos = NAVEGACION_POR_ROL[rolActual] || [];
+    const paginaReal = PAGE.replace(/\.html$/, '');
+    const paginaActual = MENU_ACTIVO_POR_PAGINA[paginaReal] || paginaReal;
+    const titulosEspeciales = TITULO_SECCION_POR_ROL[rolActual] || {};
 
-    /* 1. Enlaces del sidebar */
-    document.querySelectorAll('.sb-link[href]').forEach((enlace) => {
-      const destino = enlace.getAttribute('href')
-        .replace(/^\//, '')
-        .replace(/\.html$/, '')
-        .split('?')[0]
-        .toLowerCase();
+    nav.innerHTML = SECCIONES_MENU.map(({ titulo, items }) => {
+      const visibles = items.filter((item) => permitidos.includes(item));
+      if (!visibles.length) return '';
 
-      const visible = permitidos.includes(destino);
-      enlace.hidden = !visible;
-      enlace.style.display = visible ? 'flex' : 'none';
-      if (visible) enlace.removeAttribute('aria-hidden');
-      else enlace.setAttribute('aria-hidden', 'true');
-    });
+      const estilo = titulo === 'Principal' ? '' : ' style="margin-top: 8px"';
+      const rotulo = titulosEspeciales[titulo] || titulo;
 
-    /* 2. Separadores de sección que quedaron sin enlaces visibles */
-    document.querySelectorAll('.sb-sec').forEach((seccion) => {
-      let hermano = seccion.nextElementSibling;
-      let hayVisibles = false;
-      while (hermano && !hermano.classList.contains('sb-sec')) {
-        if (
-          hermano.classList.contains('sb-link') &&
-          hermano.style.display !== 'none' &&
-          !hermano.hidden
-        ) {
-          hayVisibles = true;
-          break;
-        }
-        hermano = hermano.nextElementSibling;
-      }
-      seccion.style.display = hayVisibles ? '' : 'none';
-    });
+      const enlaces = visibles.map((item) => {
+        const activo = item === paginaActual;
+        return (
+          '<a class="sb-link' + (activo ? ' active' : '') + '"' +
+          ' href="' + item + '.html"' +
+          (activo ? ' aria-current="page"' : '') + '>' +
+          '<span class="sb-ico" aria-hidden="true">' + (ICONO_MENU[item] || '•') + '</span> ' +
+          (TEXTO_MENU[item] || item) +
+          '</a>'
+        );
+      }).join('');
 
-    /* 3. Bloques restringidos por atributos data-* */
+      return '<div class="sb-sec"' + estilo + '>' + rotulo + '</div>' + enlaces;
+    }).join('');
+
+    nav.setAttribute('aria-label', 'Navegación principal');
+  }
+
+  function aplicarRol(datosUsuario, rolActual) {
+    /* 1. Menú lateral: se reconstruye completo desde la definición
+       única (mismos enlaces, iconos y secciones en todas las vistas). */
+    renderNav(rolActual);
+
+    /* 2. Bloques restringidos por atributos data-* */
     document.querySelectorAll('[data-admin-only]').forEach((el) => {
       if (rolActual !== 'admin') el.remove();
     });
@@ -378,7 +447,7 @@
       if (rolActual !== 'cliente') el.remove();
     });
 
-    /* 4. Datos del usuario en el sidebar */
+    /* 3. Datos del usuario en el sidebar */
     const nombre = String(datosUsuario?.nombre || 'Usuario').trim();
     const iniciales = nombre
       .split(/\s+/)

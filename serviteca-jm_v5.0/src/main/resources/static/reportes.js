@@ -10,26 +10,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  const hamb = document.getElementById("hambtn");
-  const sb = document.querySelector(".sb");
-  const overlay = document.getElementById("sb-overlay");
-
-  function closeSb() {
-    if (sb) sb.classList.remove("open");
-  }
-
-  if (hamb) {
-    hamb.addEventListener("click", () => {
-      if (sb) sb.classList.toggle("open");
-    });
-  }
-  if (overlay) {
-    overlay.addEventListener("click", closeSb);
-  }
-  window.closeSb = closeSb;
-  window.addEventListener("resize", () => {
-    if (window.innerWidth > 900) closeSb();
-  });
+  /* El menú lateral lo gestiona sidebar.js (único dueño del
+     toggle). Registrarlo también aquí duplicaba el listener y
+     cada clic abría y cerraba el sidebar en el mismo instante. */
 
   /* ── Reportes ── */
   const $ = (id) => document.getElementById(id);
