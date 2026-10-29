@@ -1,6 +1,6 @@
 :root {
   --black: #0a0a0a;
-  --black2: #ffffff;
+  --black2: #111111;
   --black3: #1a1a1a;
   --black4: #252525;
   --green: #22c55e;
@@ -34,6 +34,13 @@ body {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin-bottom: 14px;
+}
+
+/* El atributo hidden del formulario no basta: la regla de clase
+   (.vehicle-form { display:grid }) gana al estilo del navegador.
+   Sin esto el formulario "oculto" se pinta siempre. */
+.vehicle-form[hidden] {
+  display: none;
 }
 
 .vehicle-form input {
@@ -1401,4 +1408,14 @@ tr:hover td {
   border: 1px solid var(--black4);
   border-radius: 10px;
   padding: 20px;
+}
+/* ---------------------------------------------------------
+   AJUSTES DEL PORTAL DEL CLIENTE
+   --------------------------------------------------------- */
+/* En movil (390px) el texto del vehiculo/cita y el boton "Ver"
+   conviven en la misma fila: se permite encoger y partir el
+   texto para que una marca o modelo largo no desborde la card. */
+.ti > div:nth-child(2) {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }

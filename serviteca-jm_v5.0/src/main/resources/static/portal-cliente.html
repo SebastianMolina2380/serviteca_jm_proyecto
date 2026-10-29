@@ -1,218 +1,243 @@
 <!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Serviteca JM - Portal del Cliente</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    >
-    <link rel="stylesheet" href="portal-cliente.css">
-      <script src="role-guard.js"></script>
-    <link rel="stylesheet" href="styles.css">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Serviteca JM - Portal del Cliente</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="portal-cliente.css">
+  <!-- Arranque fail-closed: oculta el body y valida el rol antes de pintar. -->
+  <script src="role-guard.js"></script>
+  <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="serviteca-theme.css">
   <link rel="stylesheet" href="serviteca-premium.css">
   <link rel="stylesheet" href="accesibilidad.css">
 </head>
-  <body>
-    <div class="layout">
-      <aside class="sb">
-        <div class="sb-head">
-          <img
-                  class="sb-logo"
-                  src="jm-logo.png"
-                  alt="JM"
-          />
-          <div>
-            <div class="sb-brand">JM SERVITECA<small>PRODISJM v1.0</small></div>
-          </div>
-        </div>
-        <nav class="sb-nav" aria-label="Navegación principal">
-          <div class="sb-sec">Principal</div>
-          <a class="sb-link" href="dashboard.html"><span class="sb-ico" aria-hidden="true">📊</span> Dashboard</a>
-          <a class="sb-link" href="citas.html"><span class="sb-ico" aria-hidden="true">📅</span> Citas</a>
-          <a class="sb-link" href="nueva-cita.html"><span class="sb-ico" aria-hidden="true">➕</span> Nueva Cita</a>
-          <a class="sb-link" href="clientes.html"><span class="sb-ico" aria-hidden="true">👥</span> Clientes</a>
-          <a class="sb-link" href="vehiculo.html"><span class="sb-ico" aria-hidden="true">🚗</span> Vehículos</a>
-          <div class="sb-sec" style="margin-top: 8px">Administración</div>
-          <a class="sb-link" href="usuarios.html"><span class="sb-ico" aria-hidden="true">👤</span> Usuarios</a>
-          <a class="sb-link" href="inventario.html"><span class="sb-ico" aria-hidden="true">📦</span> Inventario</a>
-          <a class="sb-link" href="facturacion.html"><span class="sb-ico" aria-hidden="true">💲</span> Facturación</a>
-          <a class="sb-link" href="reportes.html"><span class="sb-ico" aria-hidden="true">📈</span> Reportes</a>
-          <div class="sb-sec" style="margin-top: 8px">Portales</div>
-          <a class="sb-link active" href="portal-cliente.html" aria-current="page"><span class="sb-ico" aria-hidden="true">🏠</span> Portal Cliente</a>
-        </nav>
-        <div class="sb-foot">
-          <div class="sb-av" id="sbav">JM</div>
-          <div>
-            <div class="sb-uname" id="sbname">Usuario</div>
-            <div class="sb-urole" id="sbrole">Usuario</div>
-          </div>
-          <a href="index.html" class="sb-out" title="Cerrar sesión" aria-label="Cerrar sesión">⏻</a>
-        </div>
-      </aside>
+<body>
+<div class="layout">
+  <!-- SIDEBAR LATERAL -->
+  <aside class="sb">
+    <div class="sb-head">
+      <img
+        class="sb-logo"
+        src="jm-logo.png"
+        alt="JM"
+      />
+      <div>
+        <div class="sb-brand">JM SERVITECA<small>PRODISJM v1.0</small></div>
+      </div>
+    </div>
+    <nav class="sb-nav" aria-label="Navegación principal">
+      <div class="sb-sec">Principal</div>
+      <a class="sb-link" href="dashboard.html"><span class="sb-ico" aria-hidden="true">📊</span> Dashboard</a>
+      <a class="sb-link" href="citas.html"><span class="sb-ico" aria-hidden="true">📅</span> Citas</a>
+      <a class="sb-link" href="nueva-cita.html"><span class="sb-ico" aria-hidden="true">➕</span> Nueva Cita</a>
+      <a class="sb-link" href="clientes.html"><span class="sb-ico" aria-hidden="true">👥</span> Clientes</a>
+      <a class="sb-link" href="vehiculo.html"><span class="sb-ico" aria-hidden="true">🚗</span> Vehículos</a>
+      <div class="sb-sec" style="margin-top: 8px">Administración</div>
+      <a class="sb-link" href="usuarios.html"><span class="sb-ico" aria-hidden="true">👤</span> Usuarios</a>
+      <a class="sb-link" href="inventario.html"><span class="sb-ico" aria-hidden="true">📦</span> Inventario</a>
+      <a class="sb-link" href="facturacion.html"><span class="sb-ico" aria-hidden="true">💲</span> Facturación</a>
+      <a class="sb-link" href="reportes.html"><span class="sb-ico" aria-hidden="true">📈</span> Reportes</a>
+      <div class="sb-sec" style="margin-top: 8px">Portales</div>
+      <a class="sb-link active" href="portal-cliente.html" aria-current="page"><span class="sb-ico" aria-hidden="true">🏠</span> Portal Cliente</a>
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-av" id="sbav">JM</div>
+      <div>
+        <div class="sb-uname" id="sbname">Usuario</div>
+        <div class="sb-urole" id="sbrole">Usuario</div>
+      </div>
+      <a href="index.html" class="sb-out" title="Cerrar sesión" aria-label="Cerrar sesión">⏻</a>
+    </div>
+  </aside>
 
-        <div class="topbar">
-          <button type="button"
-            id="hambtn"
-            class="btn-ghost btn btn-primary"
-            aria-label="Abrir menú"
-            title="Abrir menú"
+  <!-- OVERLAY NAVEGACIÓN MÓVIL -->
+  <div id="sb-overlay"></div>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="main">
+    <!-- BARRA SUPERIOR -->
+    <div class="topbar">
+      <button type="button" id="hambtn" class="btn-gh" aria-label="Abrir menú" title="Abrir menú">☰</button>
+      <div class="tb-title">Portal del Cliente</div>
+      <span
+        style="font-size: 0.74rem; color: var(--gray1)"
+        id="tbdate"
+      ></span>
+      <div class="av">JM</div>
+    </div>
+
+    <!-- CONTENIDO DE LA PÁGINA -->
+    <div class="pg">
+      <!-- Errores de carga visibles fuera del formulario (que nace oculto) -->
+      <div id="portal-error" class="card" role="alert" hidden
+           style="border-color: var(--red); color: var(--red); margin-bottom: 16px"></div>
+
+      <!-- PANTALLA P08: Portal del Cliente -->
+      <!-- ETIQUETA: Bienvenida personalizada al cliente -->
+      <div
+        style="
+          background: linear-gradient(
+            135deg,
+            rgba(34, 197, 94, 0.1) 0%,
+            transparent 60%
+          );
+          border: 1px solid rgba(34, 197, 94, 0.1);
+          border-radius: 10px;
+          padding: 22px;
+          margin-bottom: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+          flex-wrap: wrap;
+        "
+      >
+        <div>
+          <h2 class="pg-title" id="saludo-usuario">
+            Hola, <span id="nombre-usuario">Usuario</span>
+          </h2>
+          <p
+            id="resumen-cliente"
+            style="font-size: 0.8rem; color: var(--gray1); margin-top: 3px"
           >
-            ☰
-          </button>
-          <div class="tb-title">Portal del Cliente</div>
-          <span
-            style="font-size: 0.74rem; color: var(--gray1)"
-            id="tbdate"
-          ></span>
-          <div class="av">JM</div>
+            Resumen de tu actividad en JM Serviteca.
+          </p>
         </div>
-        <div class="pg">
-          <!-- PANTALLA P08: Portal del Cliente -->
-          <!-- ETIQUETA: Bienvenida personalizada al cliente -->
+        <a href="nueva-cita.html" class="btn btn-primary">Solicitar Cita</a>
+      </div>
+
+      <!-- ETIQUETA: KPIs del portal del cliente -->
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="kpi-lbl">Mis Vehículos</div>
+          <div class="kpi-val">0</div>
+          <div class="kpi-sub">Registrados</div>
+        </div>
+        <div class="kpi ko">
+          <div class="kpi-lbl">Citas Activas</div>
+          <div class="kpi-val">0</div>
+          <div class="kpi-sub">Próximas</div>
+        </div>
+        <div class="kpi kb">
+          <div class="kpi-lbl">Historial</div>
+          <div class="kpi-val">0</div>
+          <div class="kpi-sub">Servicios totales</div>
+        </div>
+      </div>
+
+      <div class="two">
+        <!-- ETIQUETA: Lista de vehículos del cliente -->
+        <div class="card">
           <div
             style="
-              background: linear-gradient(
-                135deg,
-                rgba(34, 197, 94, 0.1) 0%,
-                transparent 60%
-              );
-              border: 1px solid rgba(34, 197, 94, 0.1);
-              border-radius: 10px;
-              padding: 22px;
-              margin-bottom: 18px;
               display: flex;
-              align-items: center;
               justify-content: space-between;
+              margin-bottom: 14px;
+              align-items: center;
             "
           >
-            <div>
-
-              <h2 style="..." id="saludo-usuario">
-                Bienvenida, <span id="nombre-usuario">Usuario</span> 
-              </h2>
-
-              <p
-                style="font-size: 0.8rem; color: var(--gray1); margin-top: 3px"
-              >
-                Tienes 1 servicio en progreso y 1 cita próxima.
-              </p>
-            </div>
-            <a href="nueva-cita.html" class="btn btn-y btn btn-primary"> Solicitar Cita</a>
-          </div>
-          <!-- ETIQUETA: KPIs del portal del cliente -->
-          <div class="kpi-grid" style="grid-template-columns: repeat(3, 1fr)">
-            <div class="kpi">
-              <div class="kpi-lbl">Mis Vehículos</div>
-              <div class="kpi-val">2</div>
-              <div class="kpi-sub">Registrados</div>
-            </div>
-            <div class="kpi ko">
-              <div class="kpi-lbl">Citas Activas</div>
-              <div class="kpi-val">1</div>
-              <div class="kpi-sub">En proceso hoy</div>
-            </div>
-            <div class="kpi kb">
-              <div class="kpi-lbl">Historial</div>
-              <div class="kpi-val">8</div>
-              <div class="kpi-sub">Servicios totales</div>
-            </div>
-          </div>
-          <div class="two">
-            <!-- ETIQUETA: Lista de vehículos del cliente -->
-            <div class="card">
-              <div
-                style="
-                  display: flex;
-                  justify-content: space-between;
-                  margin-bottom: 14px;
-                  align-items: center;
-                "
-              >
-                <h3
-                  style="
-                    font-family: &quot;Oswald&quot;, sans-serif;
-                    font-size: 0.95rem;
-                  "
-                >
-                  Mis Vehículos
-                </h3>
-                <button type="button" class="btn-sm btn btn-primary" id="add-vehicle-button">+ Agregar</button>
-              </div>
-              <form id="vehicle-form" class="vehicle-form" hidden>
-                <input name="placa" placeholder="Placa" required maxlength="10" autocomplete="off">
-                <input name="marca" placeholder="Marca" required maxlength="80">
-                <input name="modelo" placeholder="Modelo" required maxlength="80">
-                <input name="anio" type="number" placeholder="Año" min="1900" max="2100">
-                <input name="color" placeholder="Color" maxlength="50">
-                <button type="submit" class="btn btn-y btn-primary">Guardar vehículo</button>
-                <button type="button" class="btn-sm-g btn btn-primary" id="cancel-vehicle-button">Cancelar</button>
-                <div id="vehicle-message" role="alert"></div>
-              </form>
-              <div id="portal-vehicles"></div>
-            <!-- ETIQUETA: Próximas citas del cliente -->
-            <div class="card">
-              <h3
-                style="
-                  font-family: &quot;Oswald&quot;, sans-serif;
-                  font-size: 0.95rem;
-                  margin-bottom: 14px;
-                "
-              >
-                Próximas Citas
-              </h3>
-              <div id="portal-citas">Cargando citas...</div>
-              <!-- ETIQUETA: Botón solicitar nueva cita -->
-              <a
-                href="nueva-cita.html"
-                class="btn btn-y btn btn-primary"
-                style="width: 100%; justify-content: center; display: flex"
-                > Solicitar nueva cita</a
-              >
-            </div>
-          </div>
-          <div class="card" style="margin-top:16px">
-            <h3 style="font-family: &quot;Oswald&quot;,sans-serif;font-size:.95rem;margin-bottom:14px">Servicios Activos</h3>
-            <div id="portal-servicios">Cargando servicios...</div>
-          </div>
-          <!-- ETIQUETA: Historial de servicios del cliente -->
-          <div class="card" style="margin-top: 16px">
-            <h3
-              style="
-                font-family: &quot;Oswald&quot;, sans-serif;
-                font-size: 0.95rem;
-                letter-spacing: 0.3px;
-                margin-bottom: 14px;
-              "
-            >
-              Historial de Servicios
+            <h3 style="font-family: 'Oswald', sans-serif; font-size: 0.95rem">
+              Mis Vehículos
             </h3>
-            <div class="tw">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Fecha</th>
-                    <th>Vehículo</th>
-                    <th>Servicio</th>
-                    <th>Estado</th>
-                    <th>Costo</th>
-                  </tr>
-                </thead>
-                <tbody id="portal-historial"><tr><td colspan="5">Cargando...</td></tr></tbody>
-              </table>
-            </div>
+            <button type="button" class="btn-sm" id="add-vehicle-button">+ Agregar</button>
           </div>
+          <form id="vehicle-form" class="vehicle-form" hidden>
+            <label class="sr-only" for="vehicle-placa">Placa</label>
+            <input id="vehicle-placa" name="placa" placeholder="Placa" required maxlength="10" autocomplete="off">
+            <label class="sr-only" for="vehicle-marca">Marca</label>
+            <input id="vehicle-marca" name="marca" placeholder="Marca" required maxlength="50">
+            <label class="sr-only" for="vehicle-modelo">Modelo</label>
+            <input id="vehicle-modelo" name="modelo" placeholder="Modelo" required maxlength="50">
+            <label class="sr-only" for="vehicle-color">Color</label>
+            <input id="vehicle-color" name="color" placeholder="Color" maxlength="30">
+            <button type="submit" class="btn btn-primary">Guardar vehículo</button>
+            <button type="button" class="btn-sm-g" id="cancel-vehicle-button">Cancelar</button>
+            <div id="vehicle-message" role="alert"></div>
+          </form>
+          <div id="portal-vehicles" aria-live="polite">Cargando vehículos...</div>
         </div>
-        <div class="card" style="margin-top:16px">
-          <h3 style="font-family:&quot;Oswald&quot;,sans-serif;font-size:.95rem;margin-bottom:14px">Mis Facturas</h3>
-          <div class="tw"><table><thead><tr><th>Factura</th><th>Fecha</th><th>Placa</th><th>Total</th><th>Comprobante</th></tr></thead><tbody id="portal-facturas"><tr><td colspan="5">Cargando...</td></tr></tbody></table></div>
+
+        <!-- ETIQUETA: Próximas citas del cliente -->
+        <div class="card">
+          <h3
+            style="
+              font-family: 'Oswald', sans-serif;
+              font-size: 0.95rem;
+              margin-bottom: 14px;
+            "
+          >
+            Próximas Citas
+          </h3>
+          <div id="portal-citas" aria-live="polite">Cargando citas...</div>
+          <!-- ETIQUETA: Botón solicitar nueva cita -->
+          <a
+            href="nueva-cita.html"
+            class="btn btn-primary"
+            style="width: 100%; justify-content: center; display: flex; margin-top: 12px"
+          >Solicitar nueva cita</a>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 16px">
+        <h3 style="font-family: 'Oswald', sans-serif; font-size: 0.95rem; margin-bottom: 14px">Servicios Activos</h3>
+        <div id="portal-servicios" aria-live="polite">Cargando servicios...</div>
+      </div>
+
+      <!-- ETIQUETA: Historial de servicios del cliente -->
+      <div class="card" style="margin-top: 16px">
+        <h3
+          style="
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.95rem;
+            letter-spacing: 0.3px;
+            margin-bottom: 14px;
+          "
+        >
+          Historial de Servicios
+        </h3>
+        <div class="tw">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Fecha</th>
+                <th scope="col">Vehículo</th>
+                <th scope="col">Servicio</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Costo</th>
+              </tr>
+            </thead>
+            <tbody id="portal-historial"><tr><td colspan="5">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ETIQUETA: Facturas del cliente -->
+      <div class="card" style="margin-top: 16px">
+        <h3 style="font-family: 'Oswald', sans-serif; font-size: 0.95rem; margin-bottom: 14px">Mis Facturas</h3>
+        <div class="tw">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Factura</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Placa</th>
+                <th scope="col">Total</th>
+                <th scope="col">Comprobante</th>
+              </tr>
+            </thead>
+            <tbody id="portal-facturas"><tr><td colspan="5">Cargando...</td></tr></tbody>
+          </table>
         </div>
       </div>
     </div>
-    <script src="portal-cliente.js"></script>
+  </main>
+</div>
+<script src="portal-cliente.js" defer></script>
 <script src="sidebar.js" defer></script>
 </body>
 </html>
-

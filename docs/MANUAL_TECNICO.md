@@ -290,6 +290,19 @@ menú de Administrador ni siquiera un instante. Expone `window.JM.ready`, una
 promesa que resuelve con `{ usuario, rol }`, para que cada vista espere antes de
 pedir datos y no decida por su cuenta a partir de `localStorage`.
 
+El menú lateral tiene una **única fuente de verdad**: `renderNav()` en
+`role-guard.js`. A partir de `SECCIONES_MENU`, `ICONO_MENU` y `TEXTO_MENU`
+reconstruye el `.sb-nav` de la página en curso con los enlaces que permite el rol,
+de modo que todas las vistas muestran los mismos grupos (Principal, Mi cuenta /
+Administración, Portales), los mismos iconos y el mismo elemento activo. Las 13
+vistas conservan una copia estática equivalente como respaldo si JavaScript no
+llega a ejecutarse; esa copia se mantiene sincronizada con la definición.
+
+El **comportamiento móvil del menú** (abrir/cerrar, overlay y `aria-expanded`)
+tiene un solo dueño: `sidebar.js`. Ninguna vista debe registrar su propio
+`click` sobre `#hambtn`: hacerlo duplica el toggle y el panel se abre y se cierra
+en el mismo clic, de modo que nunca llega a verse.
+
 La autorización real la aplica Spring Security: si un cliente abre una página de
 staff, el backend responde `302` hacia `portal-cliente.html`; si no hay sesión,
 `302` hacia `login.html?next=...`. Las llamadas de API (`fetch`) siguen
