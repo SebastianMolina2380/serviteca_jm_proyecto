@@ -199,6 +199,21 @@
    tarjeta se desplace o se corte hacia la derecha en
    viewports estrechos (320px - 430px).
    ========================================================== */
+/* ==========================================================
+   FASE 2 · PASO DE NUEVA CONTRASEÑA
+   ========================================================== */
+.is-hidden {
+  display: none !important;
+}
+
+.reset-aviso {
+  font-size: 0.76rem;
+  color: var(--gray1);
+  line-height: 1.5;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
 @media (max-width: 600px) {
   .card {
     width: 90% !important;

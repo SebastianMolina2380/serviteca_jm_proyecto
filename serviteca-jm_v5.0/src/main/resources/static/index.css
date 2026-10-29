@@ -70,7 +70,7 @@ textarea {
 
 input:focus,
 textarea:focus {
-    border-color: var(--green) !important;
+    border-color: var(--green);
 }
 
 /* NAV */

@@ -559,3 +559,142 @@ a[href*="whatsapp"] {
     min-width: 640px;
   }
 }
+
+/* ==========================================================
+   FASE 2 · FILTROS, KPIs Y GRÁFICAS DINÁMICAS
+   ========================================================== */
+.rep-filtros {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.rep-filtros label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.7rem;
+  color: var(--gray1);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  font-weight: 700;
+}
+
+.rep-filtros input[type="date"] {
+  background: var(--black3);
+  border: 1px solid var(--black4);
+  color: var(--white);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: "Exo 2", sans-serif;
+  color-scheme: dark;
+}
+
+.rep-rango {
+  margin-left: auto;
+  font-size: 0.76rem;
+  color: var(--gray1);
+}
+
+.rep-mensaje {
+  min-height: 18px;
+  margin-bottom: 12px;
+  font-size: 0.8rem;
+  color: var(--gray1);
+}
+
+.rep-mensaje.is-error {
+  color: var(--red);
+}
+
+.rep-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.rep-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+}
+
+.rep-kpi span {
+  font-size: 0.68rem;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--gray1);
+  font-weight: 700;
+}
+
+.rep-kpi strong {
+  font-family: "Oswald", sans-serif;
+  font-size: 1.5rem;
+  color: var(--white);
+}
+
+.rep-top {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rep-top-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 5px;
+  font-size: 0.78rem;
+}
+
+.rep-top-item .prog-w {
+  height: 8px;
+}
+
+.rep-estados {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.rep-estado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.78rem;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: var(--black3);
+  color: var(--gray1);
+}
+
+.rep-estado strong {
+  color: var(--white);
+}
+
+.rep-vacio {
+  font-size: 0.8rem;
+  color: var(--gray1);
+  padding: 8px 0;
+}
+
+@media (max-width: 900px) {
+  .rep-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .rep-rango {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .rep-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}

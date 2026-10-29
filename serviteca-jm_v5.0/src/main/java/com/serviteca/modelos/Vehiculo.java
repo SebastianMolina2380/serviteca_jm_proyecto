@@ -12,6 +12,8 @@ import java.util.List;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Vehiculo {
 
+    public enum Estado { ACTIVO, INACTIVO }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idvehiculo")
@@ -39,15 +41,19 @@ public class Vehiculo {
     @Column(name = "kilometraje")
     private Integer kilometraje;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado", nullable = false, length = 20)
+    private Estado estado = Estado.ACTIVO;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idusuario", referencedColumnName = "idusuario", nullable = false)
     private Usuario usuario;
 
-    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "vehiculo", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Servicio> servicios;
 
-    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "vehiculo", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Cita> citas;
 
@@ -110,6 +116,14 @@ public class Vehiculo {
 
     public void setKilometraje(Integer kilometraje) {
         this.kilometraje = kilometraje;
+    }
+
+    public Estado getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Estado estado) {
+        this.estado = estado;
     }
 
     public Usuario getUsuario() {

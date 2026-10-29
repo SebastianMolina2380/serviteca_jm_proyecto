@@ -215,6 +215,64 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   /* ==========================================================
+     FORMULARIO DE CONTACTO · POST /api/contacto
+     ========================================================== */
+  const contactForm = document.getElementById("contact-form");
+  if (contactForm) {
+    const contactStatus = document.getElementById("contact-status");
+    const contactSubmit = document.getElementById("contact-submit");
+
+    function estadoContacto(texto, exito) {
+      if (!contactStatus) return;
+      contactStatus.textContent = texto;
+      contactStatus.style.color = exito ? "#22c55e" : "#ef4444";
+    }
+
+    contactForm.addEventListener("submit", async function (evento) {
+      evento.preventDefault();
+
+      const nombre = (document.getElementById("contact-name")?.value || "").trim();
+      const correo = (document.getElementById("contact-email")?.value || "").trim();
+      const telefono = (document.getElementById("contact-phone")?.value || "").trim();
+      const mensaje = (document.getElementById("contact-message")?.value || "").trim();
+
+      if (!nombre || !correo || !mensaje) {
+        estadoContacto("Completa tu nombre, correo y mensaje.", false);
+        return;
+      }
+
+      const textoOriginal = contactSubmit ? contactSubmit.textContent : "";
+      if (contactSubmit) {
+        contactSubmit.disabled = true;
+        contactSubmit.textContent = "Enviando…";
+      }
+      estadoContacto("Enviando mensaje…", true);
+
+      try {
+        const respuesta = await fetch("/api/contacto", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({ nombre, correo, telefono, mensaje }),
+        });
+        const data = await respuesta.json().catch(() => ({}));
+        if (!respuesta.ok) {
+          throw new Error(data?.message || data?.error || "No se pudo enviar el mensaje.");
+        }
+        estadoContacto(data?.mensaje || "Mensaje recibido. Te contactaremos pronto.", true);
+        contactForm.reset();
+      } catch (e) {
+        estadoContacto(e.message || "No se pudo enviar el mensaje. Intenta de nuevo.", false);
+      } finally {
+        if (contactSubmit) {
+          contactSubmit.disabled = false;
+          contactSubmit.textContent = textoOriginal || "Enviar mensaje";
+        }
+      }
+    });
+  }
+
+  /* ==========================================================
      DETALLE DE SERVICIO · modal
      ========================================================== */
 

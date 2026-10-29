@@ -2,7 +2,7 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Serviteca JM - Recuperar Contraseña</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
@@ -11,9 +11,10 @@
     <!-- ETIQUETA P12: Recuperar Contraseña -->
     <link rel="stylesheet" href="recuperar.css">
     <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="serviteca-theme.css">
-  <link rel="stylesheet" href="serviteca-premium.css">
-</head>
+    <link rel="stylesheet" href="serviteca-theme.css">
+    <link rel="stylesheet" href="serviteca-premium.css">
+  <link rel="stylesheet" href="accesibilidad.css">
+  </head>
   <body>
 
     <!-- PANTALLA P12: Recuperar Contraseña -->
@@ -27,7 +28,7 @@
         /><br />
         <div class="icon-big" style="font-size: 2rem">🔑</div>
         <h2>RECUPERAR ACCESO</h2>
-        <p>
+        <p id="intro">
           Ingresa tu correo registrado y te enviaremos un enlace para
           restablecer tu contraseña.
         </p>
@@ -36,52 +37,84 @@
       <!-- COMPONENTE: Pasos del proceso de recuperación -->
       <div class="steps">
         <div class="step-item">
-          <div class="step-num act">1</div>
+          <div class="step-num act" id="step-1">1</div>
           <div class="step-txt">Ingresa correo</div>
         </div>
         <div class="step-item">
-          <div class="step-num">2</div>
+          <div class="step-num" id="step-2">2</div>
           <div class="step-txt">Revisa email</div>
         </div>
         <div class="step-item">
-          <div class="step-num">3</div>
+          <div class="step-num" id="step-3">3</div>
           <div class="step-txt">Nueva clave</div>
         </div>
       </div>
 
-      <!-- COMPONENTE: Campo correo -->
-      <div class="fg">
-        <label class="fl" for="rec-email">Correo electrónico registrado</label>
-        <input
-          class="fc"
-          type="email"
-          id="rec-email"
-          name="email"
-          placeholder="correo@servitecajm.com"
-          required
-        />
-      </div>
+      <!-- PASO 1: solicitar enlace -->
+      <form id="recover-form" novalidate>
+        <div class="fg">
+          <label class="fl" for="rec-email">Correo electrónico registrado</label>
+          <input
+            class="fc"
+            type="email"
+            id="rec-email"
+            name="email"
+            placeholder="correo@servitecajm.com"
+            autocomplete="email"
+            required
+          />
+        </div>
 
-      <!-- COMPONENTE: Botón enviar -->
-      <button type="button" class="btn-send btn btn-primary" onclick="doRecover()">
-        ENVIAR ENLACE DE RECUPERACIÓN
-      </button>
+        <button type="submit" class="btn-send btn btn-primary" id="btn-recover">
+          ENVIAR ENLACE DE RECUPERACIÓN
+        </button>
+      </form>
+
+      <!-- PASO 3: nueva contraseña (se muestra al abrir el enlace del correo) -->
+      <form id="reset-form" class="is-hidden" novalidate>
+        <p class="reset-aviso">
+          Elige una nueva contraseña de al menos 8 caracteres. El enlace es de
+          un solo uso y deja de funcionar al guardar el cambio.
+        </p>
+        <div class="fg">
+          <label class="fl" for="new-password">Nueva contraseña</label>
+          <input
+            class="fc"
+            type="password"
+            id="new-password"
+            name="contrasena"
+            minlength="8"
+            autocomplete="new-password"
+            required
+          />
+        </div>
+        <div class="fg">
+          <label class="fl" for="confirm-password">Confirmar contraseña</label>
+          <input
+            class="fc"
+            type="password"
+            id="confirm-password"
+            name="confirmacion"
+            minlength="8"
+            autocomplete="new-password"
+            required
+          />
+        </div>
+        <button type="submit" class="btn-send btn btn-primary" id="btn-reset">
+          GUARDAR NUEVA CONTRASEÑA
+        </button>
+      </form>
 
       <!-- COMPONENTE: Mensaje de éxito -->
-      <div class="success" id="ok">
-        ✅ <strong>Enlace enviado.</strong><br />
-        Revisa tu bandeja de entrada. Si el correo está registrado, recibirás
-        las instrucciones en los próximos minutos.
-      </div>
+      <div class="success" id="ok" role="status"></div>
 
       <!-- COMPONENTE: Mensaje de error -->
-      <div class="error" id="err">⚠️ Ingresa un correo electrónico válido.</div>
+      <div class="error" id="err" role="alert"></div>
 
       <!-- COMPONENTE: Link volver al login -->
       <a href="login.html" class="back">← Volver al inicio de sesión</a>
     </div>
 
     <script src="recuperar.js"></script>
-</body>
+  </body>
 </html>
-

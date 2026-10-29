@@ -27,14 +27,26 @@ public class MiController {
     @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<List<Vehiculo>> misVehiculos(Authentication a){
         Usuario u=me(a); return u==null?ResponseEntity.status(401).build():
-            ResponseEntity.ok(vehiculoRepository.findByUsuarioIdUsuario(u.getIdUsuario()));
+            ResponseEntity.ok(vehiculoRepository.findByUsuarioIdUsuarioAndEstado(
+                    u.getIdUsuario(), Vehiculo.Estado.ACTIVO));
     }
 
     @PostMapping("/vehiculos")
     @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<?> crearVehiculo(@Valid @RequestBody Vehiculo v,Authentication a){
         Usuario u=me(a); if(u==null)return ResponseEntity.status(401).build();
-        v.setUsuario(u); return ResponseEntity.status(201).body(vehiculoRepository.save(v));
+        String placa = com.serviteca.util.PlacaUtil.normalizar(v.getPlaca());
+        if (placa == null || placa.isBlank()) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("error", "La placa es obligatoria."));
+        }
+        if (vehiculoRepository.existsByPlaca(placa)) {
+            return ResponseEntity.status(409).body(java.util.Map.of(
+                    "error", "Ya existe un vehículo registrado con la placa: " + placa));
+        }
+        v.setPlaca(placa);
+        if (v.getEstado() == null) v.setEstado(Vehiculo.Estado.ACTIVO);
+        v.setUsuario(u);
+        return ResponseEntity.status(201).body(vehiculoRepository.save(v));
     }
 
     @GetMapping("/citas")

@@ -425,21 +425,21 @@ img[src$="jm-logo.png"] {
   font-size: 1.6rem;
   font-weight: 400;
 }
-#jm-home .cform .fl { color: #D4D8CE !important; }
+#jm-home .cform .fl { color: #D4D8CE; }
 #jm-home .cform .fc {
   min-height: 46px;
-  border: 1px solid #48584B !important;
-  border-radius: 7px !important;
-  background: #111C15 !important;
-  color: #F6F3EC !important;
-  font-family: 'DM Sans', sans-serif !important;
+  border: 1px solid #48584B;
+  border-radius: 7px;
+  background: #111C15;
+  color: #F6F3EC;
+  font-family: 'DM Sans', sans-serif;
   font-size: 0.9rem;
 }
 #jm-home .cform textarea.fc { min-height: 105px; }
-#jm-home .cform .fc::placeholder { color: #AAB4A8 !important; }
+#jm-home .cform .fc::placeholder { color: #AAB4A8; opacity: 1; }
 #jm-home .cform .fc:focus {
-  border-color: #D1B77D !important;
-  box-shadow: 0 0 0 3px rgba(209, 183, 125, 0.18) !important;
+  border-color: #D1B77D;
+  box-shadow: 0 0 0 3px rgba(209, 183, 125, 0.18);
 }
 #jm-home .footer {
   padding: 21px clamp(22px, 8vw, 120px);
@@ -695,7 +695,7 @@ img[src$="jm-logo.png"] {
 .layout label, .layout .fl, .layout .form-label, .layout .field label {
   display: block;
   margin-bottom: 6px;
-  color: #425248 !important;
+  color: #425248;
   font-size: 0.83rem;
   font-weight: 700;
   letter-spacing: 0.005em;
@@ -705,11 +705,11 @@ img[src$="jm-logo.png"] {
 .layout .form-control, .layout .fc, .layout .field input,
 .layout .field select, .layout .field textarea {
   min-height: 44px;
-  border: 1px solid #D7D1C4 !important;
-  border-radius: 7px !important;
-  background: #FFFFFF !important;
-  color: #26352B !important;
-  font-family: 'DM Sans', sans-serif !important;
+  border: 1px solid #D7D1C4;
+  border-radius: 7px;
+  background: #FFFFFF;
+  color: #26352B;
+  font-family: 'DM Sans', sans-serif;
   font-size: 0.91rem;
   line-height: 1.45;
   box-shadow: inset 0 1px 2px rgba(31, 42, 35, 0.025);
@@ -718,14 +718,13 @@ img[src$="jm-logo.png"] {
 .layout .field textarea { min-height: 98px; resize: vertical; }
 .layout input::placeholder, .layout textarea::placeholder,
 .layout .form-control::placeholder, .layout .fc::placeholder {
-  color: #68766C !important;
+  color: #5A6A5F;
   opacity: 1;
 }
 .layout input:focus, .layout select:focus, .layout textarea:focus,
 .layout .form-control:focus, .layout .fc:focus {
-  border-color: #8C9F7E !important;
-  box-shadow: 0 0 0 3px rgba(86, 120, 83, 0.15) !important;
-  outline: none;
+  border-color: #1B4A34;
+  box-shadow: 0 0 0 3px rgba(27, 74, 52, 0.24);
 }
 .layout input[type='checkbox'], .layout input[type='radio'] {
   width: 17px;
@@ -845,16 +844,16 @@ body:has(#loginForm) .card-logo p, body:has(.logo-area) .logo-area p {
 body:has(#loginForm) .roles { background: #ECE9E0 !important; }
 body:has(#loginForm) .role { color: #58665A !important; }
 body:has(#loginForm) .role.active { background: #1F5239 !important; color: #FFF !important; }
-body:has(#loginForm) .fl, body:has(.logo-area) .fl { color: #435348 !important; text-transform: none; }
+body:has(#loginForm) .fl, body:has(.logo-area) .fl { color: #435348; text-transform: none; }
 body:has(#loginForm) .fc, body:has(.logo-area) .fc {
   min-height: 46px;
-  border-color: #D6D0C3 !important;
-  background: #FFFFFF !important;
-  color: #27362B !important;
-  font-family: 'DM Sans', sans-serif !important;
+  border-color: var(--jm-field-border);
+  background: var(--jm-field-bg);
+  color: var(--jm-field-fg);
+  font-family: 'DM Sans', sans-serif;
 }
-body:has(#loginForm) .fc::placeholder, body:has(.logo-area) .fc::placeholder { color: #68766C !important; }
-body:has(#loginForm) .remember label { color: #506054 !important; }
+body:has(#loginForm) .fc::placeholder, body:has(.logo-area) .fc::placeholder { color: var(--jm-field-placeholder); }
+body:has(#loginForm) .remember label { color: #506054; }
 body:has(#loginForm) .btn-login, body:has(.logo-area) .btn-send {
   min-height: 48px;
   border: 1px solid #1B4A34 !important;
@@ -881,11 +880,17 @@ body:has(.wrap) .wrap > .card {
 }
 body:has(.wrap) .wrap h1, body:has(.wrap) .wrap label { color: #24372B !important; }
 body:has(.wrap) .wrap .muted { color: #68756A !important; }
-body:has(.wrap) .wrap input { min-height: 44px; background: #FFF !important; color: #26352B !important; }
+body:has(.wrap) .wrap input {
+  min-height: 44px;
+  background: var(--jm-field-bg);
+  color: var(--jm-field-fg);
+}
 body:has(.wrap) .wrap .green { background: #1B4A34 !important; color: #FFF !important; }
 
-/* Navegación por teclado y controles compactos */
-:focus-visible { outline: 3px solid #B3945D !important; outline-offset: 3px; }
+/* Navegación por teclado y controles compactos.
+   El anillo de foco se define en accesibilidad.css con un
+   token único para toda la aplicación. */
+:focus-visible { outline: 3px solid var(--jm-focus-outline); outline-offset: 3px; }
 .layout a, .layout button, #jm-home a, #jm-home button { -webkit-tap-highlight-color: transparent; }
 
 @media (max-width: 1000px) {

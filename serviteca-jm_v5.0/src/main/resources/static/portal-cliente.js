@@ -8,9 +8,14 @@ async function api(url,opts={}){
 document.addEventListener("DOMContentLoaded",async()=>{
  const msg=document.getElementById("vehicle-message");
  try{
-   const me=await api("/api/auth/me");
-   if(String(me.rol||"").toUpperCase()!=="CLIENTE"){location.href="login.html";return;}
-   const name=document.getElementById("portal-user-name");if(name)name.textContent=me.nombre||"Cliente";
+   /* JM.ready espera a que /api/auth/me confirme el rol y aplica el
+      menú correcto antes de que la página se muestre. */
+   const sesion = window.JM ? await window.JM.ready : null;
+   if(!sesion || !sesion.usuario) return;
+   if(window.JM && !window.JM.requireRole("cliente")) return;
+
+   const name=document.getElementById("portal-user-name");
+   if(name)name.textContent=sesion.usuario.nombre||"Cliente";
    await loadPortal();
  }catch(e){if(msg)msg.textContent=e.message;else alert(e.message);}
 });
@@ -51,10 +56,18 @@ document.addEventListener("click",e=>{
 
 document.getElementById("add-vehicle-button")?.addEventListener("click",()=>{document.getElementById("vehicle-form")?.removeAttribute("hidden");});
 document.getElementById("cancel-vehicle-button")?.addEventListener("click",()=>{document.getElementById("vehicle-form")?.setAttribute("hidden","");});
+/* Normaliza igual que PlacaUtil: mayúsculas, sin espacios y con guiones. */
+function normalizarPlaca(valor){return String(valor||"").trim().toUpperCase().replace(/\s+/g,"");}
+
+document.querySelector('#vehicle-form [name="placa"]')?.addEventListener("input",e=>{
+ const normalizada=normalizarPlaca(e.currentTarget.value);
+ if(e.currentTarget.value!==normalizada)e.currentTarget.value=normalizada;
+});
+
 document.getElementById("vehicle-form")?.addEventListener("submit",async e=>{
  e.preventDefault();
  const f=new FormData(e.currentTarget);
- const body={placa:f.get("placa"),marca:f.get("marca"),modelo:f.get("modelo"),color:f.get("color")};
+ const body={placa:normalizarPlaca(f.get("placa")),marca:f.get("marca"),modelo:f.get("modelo"),color:f.get("color")};
  const msg=document.getElementById("vehicle-message");
  try{await api("/api/mi/vehiculos",{method:"POST",body:JSON.stringify(body)});e.currentTarget.reset();e.currentTarget.setAttribute("hidden","");if(msg)msg.textContent="Vehículo registrado.";await loadPortal();}
  catch(err){if(msg)msg.textContent=err.message;}

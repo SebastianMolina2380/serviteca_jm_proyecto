@@ -12,7 +12,9 @@ public interface VehiculoRepository extends JpaRepository<Vehiculo, Integer> {
 
     Optional<Vehiculo> findByPlaca(String placa);
 
-    List<Vehiculo> findByUsuarioIdUsuario(Integer idUsuario);
+    List<Vehiculo> findByUsuarioIdUsuarioAndEstado(Integer idUsuario, Vehiculo.Estado estado);
+
+    List<Vehiculo> findByEstado(Vehiculo.Estado estado);
 
     List<Vehiculo> findByMarcaContainingIgnoreCase(String marca);
 

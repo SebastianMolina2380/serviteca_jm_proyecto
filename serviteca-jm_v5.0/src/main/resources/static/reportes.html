@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Serviteca JM - Reportes</title>
   <!-- Fuentes Google -->
   <link
@@ -16,6 +16,7 @@
   <script src="role-guard.js"></script>
   <link rel="stylesheet" href="serviteca-theme.css">
   <link rel="stylesheet" href="serviteca-premium.css">
+  <link rel="stylesheet" href="accesibilidad.css">
 </head>
 <body>
 <div class="layout">
@@ -30,16 +31,15 @@
     <nav class="sb-nav">
       <div class="sb-sec">Principal</div>
       <a class="sb-link" href="dashboard.html"><span class="sb-ico">📊</span> Dashboard</a>
-      <a class="sb-link" href="citas.html"><span class="sb-ico">📅</span> Citas <span class="sb-badge">4</span></a>
+      <a class="sb-link" href="citas.html"><span class="sb-ico">📅</span> Citas</a>
       <a class="sb-link" href="nueva-cita.html"><span class="sb-ico">➕</span> Nueva Cita</a>
       <a class="sb-link" href="clientes.html"><span class="sb-ico">👤</span> Clientes</a>
       <a class="sb-link" href="vehiculo.html"><span class="sb-ico">🚗</span> Vehículos</a>
       <div class="sb-sec" style="margin-top: 8px">Administración</div>
       <a class="sb-link" href="usuarios.html"><span class="sb-ico">👥</span> Usuarios</a>
-      <a class="sb-link" href="inventario.html"><span class="sb-ico">🔩</span> Inventario <span class="sb-badge" style="background: var(--red)">2</span></a>
+      <a class="sb-link" href="inventario.html"><span class="sb-ico">🔩</span> Inventario</a>
       <a class="sb-link" href="facturacion.html"><span class="sb-ico">💵</span> Facturación</a>
       <a class="sb-link active" href="reportes.html"><span class="sb-ico">📈</span> Reportes</a>
-
     </nav>
     <div class="sb-foot">
       <div class="sb-av" id="sbav">JM</div>
@@ -65,170 +65,88 @@
       <div class="pg-head">
         <div>
           <div class="pg-title">Reportes</div>
-          <div class="pg-sub">Métricas y análisis de desempeño</div>
+          <div class="pg-sub">Métricas calculadas con citas, servicios y facturas reales</div>
         </div>
         <div class="pg-actions">
-          <button type="button" class="btn btn-ghost btn-sm">📄 Exportar PDF</button>
-          <button type="button" class="btn btn-primary btn-sm">📊 Exportar Excel</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-csv">⬇ CSV</button>
+          <button type="button" class="btn btn-primary btn-sm" id="btn-excel">📊 Excel</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-pdf">📄 PDF</button>
         </div>
       </div>
 
-      <!-- FILA DE MÉTRICAS / GRÁFICAS -->
+      <!-- FILTRO DE FECHAS -->
+      <div class="card rep-filtros">
+        <label>Desde <input type="date" id="rep-desde"></label>
+        <label>Hasta <input type="date" id="rep-hasta"></label>
+        <button type="button" class="btn btn-primary btn-sm" id="btn-aplicar">Aplicar</button>
+        <span class="rep-rango" id="rep-rango"></span>
+      </div>
+
+      <!-- MENSAJE DE ESTADO -->
+      <div class="rep-mensaje" id="rep-mensaje" role="status"></div>
+
+      <!-- MÉTRICAS PRINCIPALES -->
+      <div class="rep-kpi-grid" id="rep-kpis">
+        <div class="card rep-kpi"><span>Citas del periodo</span><strong id="kpi-citas">0</strong></div>
+        <div class="card rep-kpi"><span>Servicios del periodo</span><strong id="kpi-servicios">0</strong></div>
+        <div class="card rep-kpi"><span>Ingresos facturados</span><strong id="kpi-facturado">$0</strong></div>
+        <div class="card rep-kpi"><span>Servicios completados</span><strong id="kpi-servicios-ingreso">$0</strong></div>
+      </div>
+
+      <!-- GRÁFICAS -->
       <div class="two" style="margin-bottom: 16px">
-        <!-- GRÁFICA DE INGRESOS POR SEMANA (CORREGIDA) -->
         <div class="card">
           <h4 style="font-size: 0.95rem; letter-spacing: 0.3px; margin-bottom: 14px;">
-            Ingresos por Semana — Marzo 2026
+            Ingresos por periodo
           </h4>
-          <div class="bar-chart">
-            <!--
-              Alturas proporcionales al valor real de cada semana,
-              tomando $1.7M (Sem 3) como máximo de la serie:
-                Sem 1  $1.1M / $1.7M = 64,7%  ->  65%
-                Sem 2  $1.4M / $1.7M = 82,4%  ->  82%
-                Sem 3  $1.7M / $1.7M = 100%
-                Sem 4  proyección (sin dato cerrado)
-              .btrack fija la altura de trazado; el % de .bf se
-              resuelve contra esa pista, no contra la columna.
-            -->
-            <div class="bc">
-              <div class="btrack">
-                <div class="bf" style="height: 65%"></div>
-              </div>
-              <div class="bl">Sem 1</div>
-              <div class="bv">$1.1M</div>
-            </div>
-            <div class="bc">
-              <div class="btrack">
-                <div class="bf" style="height: 82%"></div>
-              </div>
-              <div class="bl">Sem 2</div>
-              <div class="bv">$1.4M</div>
-            </div>
-            <div class="bc">
-              <div class="btrack">
-                <div class="bf is-max" style="height: 100%"></div>
-              </div>
-              <div class="bl">Sem 3</div>
-              <div class="bv is-max">$1.7M</div>
-            </div>
-            <div class="bc">
-              <div class="btrack">
-                <div class="bf is-proy" style="height: 40%"></div>
-              </div>
-              <div class="bl">Sem 4</div>
-              <div class="bv is-proy">Proy.</div>
-            </div>
-          </div>
+          <div class="bar-chart" id="rep-chart"></div>
+          <div class="rep-vacio" id="rep-chart-vacio" hidden>Sin facturas registradas en el periodo.</div>
         </div>
 
-        <!-- BARRAS DE SERVICIOS MÁS SOLICITADOS -->
         <div class="card">
           <h4 style="font-size: 0.95rem; letter-spacing: 0.3px; margin-bottom: 14px;">
-            Servicios Mas Solicitados
+            Servicios más solicitados
           </h4>
-          <div style="display: flex; flex-direction: column; gap: 10px">
-            <div>
-              <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.78rem;">
-                <span>Mantenimiento</span><span style="color: var(--yellow)">38%</span>
-              </div>
-              <div class="prog-w">
-                <div class="prog-f" style="width: 38%; background: var(--yellow)"></div>
-              </div>
-            </div>
-            <div>
-              <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.78rem;">
-                <span>Frenos</span><span style="color: var(--green)">24%</span>
-              </div>
-              <div class="prog-w">
-                <div class="prog-f" style="width: 24%"></div>
-              </div>
-            </div>
-            <div>
-              <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.78rem;">
-                <span>Alineación</span><span style="color: var(--green)">18%</span>
-              </div>
-              <div class="prog-w">
-                <div class="prog-f" style="width: 18%"></div>
-              </div>
-            </div>
-            <div>
-              <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.78rem;">
-                <span>Diagnostico</span><span style="color: var(--green)">14%</span>
-              </div>
-              <div class="prog-w">
-                <div class="prog-f" style="width: 14%"></div>
-              </div>
-            </div>
-            <div>
-              <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.78rem;">
-                <span>Otros</span><span style="color: var(--green)">6%</span>
-              </div>
-              <div class="prog-w">
-                <div class="prog-f" style="width: 6%"></div>
-              </div>
-            </div>
-          </div>
+          <div class="rep-top" id="rep-top"></div>
+          <div class="rep-vacio" id="rep-top-vacio" hidden>Sin servicios registrados en el periodo.</div>
         </div>
       </div>
 
-      <!-- TABLA DE DESEMPEÑO POR TÉCNICO -->
+      <!-- ESTADOS -->
+      <div class="two" style="margin-bottom: 16px">
+        <div class="card">
+          <h4 style="font-size: 0.95rem; letter-spacing: 0.3px; margin-bottom: 14px;">Citas por estado</h4>
+          <div class="rep-estados" id="rep-citas-estado"></div>
+        </div>
+        <div class="card">
+          <h4 style="font-size: 0.95rem; letter-spacing: 0.3px; margin-bottom: 14px;">Servicios por estado</h4>
+          <div class="rep-estados" id="rep-servicios-estado"></div>
+        </div>
+      </div>
+
+      <!-- DETALLE DE SERVICIOS -->
       <div class="card" style="padding: 0; overflow: hidden">
         <div style="padding: 14px 20px 10px">
-          <h4 style="font-size: 0.95rem; letter-spacing: 0.3px;">
-            Desempeño por Tecnico- Marzo 2026
-          </h4>
+          <h4 style="font-size: 0.95rem; letter-spacing: 0.3px;">Detalle de servicios del periodo</h4>
         </div>
         <div class="tw">
           <table>
             <thead>
             <tr>
-              <th>Tecnico</th>
-              <th>Servicios</th>
-              <th>Completados</th>
-              <th>Cancelados</th>
-              <th>Tiempo Prom.</th>
-              <th>Calificación</th>
+              <th>Fecha</th>
+              <th>Servicio</th>
+              <th>Placa</th>
+              <th>Cliente</th>
+              <th>Estado</th>
+              <th>Precio</th>
             </tr>
             </thead>
-            <tbody>
-            <tr>
-              <td>Carlos Ruiz</td>
-              <td>18</td>
-              <td><span class="badge bg">17</span></td>
-              <td><span class="badge br">1</span></td>
-              <td>2.3 hrs</td>
-              <td style="color: var(--yellow)">★ 4.9</td>
-            </tr>
-            <tr>
-              <td>Miguel Pérez</td>
-              <td>15</td>
-              <td><span class="badge bg">14</span></td>
-              <td><span class="badge br">1</span></td>
-              <td>2.1 hrs</td>
-              <td style="color: var(--yellow)">★ 4.8</td>
-            </tr>
-            <tr>
-              <td>Juan Gomez</td>
-              <td>12</td>
-              <td><span class="badge bg">12</span></td>
-              <td><span class="badge bgr">0</span></td>
-              <td>1.9 hrs</td>
-              <td style="color: var(--yellow)">★ 5.0</td>
-            </tr>
-            <tr>
-              <td>Andres Lopez</td>
-              <td>10</td>
-              <td><span class="badge bg">9</span></td>
-              <td><span class="badge br">1</span></td>
-              <td>2.5 hrs</td>
-              <td style="color: var(--yellow)">★ 4.7</td>
-            </tr>
+            <tbody id="rep-detalle">
+            <tr><td colspan="6">Cargando reporte…</td></tr>
             </tbody>
           </table>
         </div>
       </div>
-
     </div>
   </div>
   <div id="sb-overlay" onclick="toggleSb()"></div>

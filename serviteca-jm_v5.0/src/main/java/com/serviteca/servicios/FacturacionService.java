@@ -35,7 +35,7 @@ public class FacturacionService {
         if (forma.equals("CONTADO") && medio.isBlank()) bad("El medio de pago es obligatorio para ventas de contado.");
 
         NumeracionFactura numeracion = numeracionRepository.bloquearConfiguracion()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT, "Configure la autorización y el rango de numeración DIAN antes de emitir."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT, "Configure la numeración del documento de venta antes de emitir."));
         LocalDate hoy = LocalDate.now();
         if (hoy.isBefore(numeracion.getVigenteDesde()) || hoy.isAfter(numeracion.getVigenteHasta())
                 || numeracion.getSiguienteNumero() < numeracion.getRangoDesde()

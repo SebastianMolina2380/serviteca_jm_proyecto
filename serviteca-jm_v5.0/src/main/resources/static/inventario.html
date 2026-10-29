@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Serviteca JM - Inventario de Repuestos</title>
   <link
           href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="serviteca-theme.css">
   <link rel="stylesheet" href="serviteca-premium.css">
+  <link rel="stylesheet" href="accesibilidad.css">
 </head>
 <body>
 
@@ -32,13 +33,13 @@
     <nav class="sb-nav">
       <div class="sb-sec">Principal</div>
       <a class="sb-link" href="dashboard.html"><span class="sb-ico">📊</span> Dashboard</a>
-      <a class="sb-link" href="citas.html"><span class="sb-ico">📅</span> Citas <span class="sb-badge">4</span></a>
+      <a class="sb-link" href="citas.html"><span class="sb-ico">📅</span> Citas</a>
       <a class="sb-link" href="nueva-cita.html"><span class="sb-ico">➕</span> Nueva Cita</a>
       <a class="sb-link" href="clientes.html"><span class="sb-ico">👤</span> Clientes</a>
       <a class="sb-link" href="vehiculo.html"><span class="sb-ico">🚗</span> Vehículos</a>
       <div class="sb-sec" style="margin-top: 8px">Administración</div>
       <a class="sb-link" href="usuarios.html"><span class="sb-ico">👥</span> Usuarios</a>
-      <a class="sb-link active" href="inventario.html"><span class="sb-ico">🔩</span> Inventario <span class="sb-badge" style="background: var(--red)">2</span></a>
+      <a class="sb-link active" href="inventario.html"><span class="sb-ico">🔩</span> Inventario</a>
       <a class="sb-link" href="facturacion.html"><span class="sb-ico">💵</span> Facturación</a>
       <a class="sb-link" href="reportes.html"><span class="sb-ico">📈</span> Reportes</a>
 
@@ -252,7 +253,7 @@
         <p class="inv-err" data-err-for="inv-nombre"></p>
       </div>
 
-      <!-- Categoría: opciones reales de /api/productos -->
+      <!-- Categoría: opciones reales de /api/productos/catalogo -->
       <div class="inv-fg">
         <label class="fl" for="inv-cat">Categoría</label>
         <select class="fc" id="inv-cat" name="categoria" required>

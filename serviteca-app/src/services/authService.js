@@ -1,7 +1,7 @@
 // ============================================================
 // SERVITECA JM - SERVICIO DE AUTENTICACIÓN
 // ============================================================
-// POST /api/auth/login  -> crea la sesión (cookie JSESSIONID)
+// POST /api/auth/login  -> crea la sesión (cookie SERVITECASESSION)
 // GET  /api/auth/me     -> usuario de la sesión actual
 // POST /api/auth/logout -> cierra la sesión
 // ============================================================
@@ -11,6 +11,9 @@ import api, { clearSession } from './api';
 // Roles disponibles en el sistema (coinciden con el backend):
 // CLIENTE, TECNICO, ADMIN
 export async function login(correo, contrasena, rol) {
+  // Evita reutilizar una cookie de una sesión anterior.
+  await clearSession();
+
   const usuario = await api.post('/auth/login', {
     correo: correo.trim(),
     contrasena,

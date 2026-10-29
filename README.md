@@ -1,259 +1,183 @@
-PRODIS JM — Sistema de Gestión Serviteca JM
+# Serviteca JM — PRODISJM
 
-Sistema web de gestión operativa para "Serviteca JM", taller automotriz ubicado en la vía Bypass Tunja-Sogamoso, Tunja, Boyacá, Colombia.
+Sistema de gestión para **Serviteca JM**, taller automotriz en la vía Bypass
+Tunja–Sogamoso, Tunja, Boyacá, Colombia.
 
- Descripción
+Integra un backend **Spring Boot 3.3.5 / Java 17**, un frontend web estático
+servido por el mismo backend y una **app móvil React Native + Expo** para
+clientes y empleados.
 
-El PRODISJM es una aplicación web desarrollada para automatizar y centralizar los procesos críticos de Serviteca JM. Reemplaza los registros manuales por una solución tecnológica robusta que garantiza trazabilidad completa de cada servicio prestado, desde el agendamiento de la cita hasta la emisión de la factura.
+Proyecto académico del programa **Tecnología en Análisis y Desarrollo de
+Software (ADSO)** del SENA, ficha 3171149-B.
 
-Este proyecto fue desarrollado en el marco del programa **Tecnología en Análisis y Desarrollo de Software (ADSO)** del SENA — Ficha 3171149-B.
+---
 
- Objetivo
+## Documentación
 
-Optimizar los procesos operativos de Serviteca JM mediante la implementación de un sistema de gestión digital que centralice el agendamiento, inventario y facturación, reduciendo tiempos de respuesta y eliminando registros manuales.
+| Documento | Contenido |
+|---|---|
+| [`docs/MANUAL_TECNICO.md`](docs/MANUAL_TECNICO.md) | Arquitectura, modelo de datos, API, seguridad, accesibilidad y app móvil. |
+| [`docs/MANUAL_USUARIO.md`](docs/MANUAL_USUARIO.md) | Uso del sistema por rol, app móvil y preguntas frecuentes. |
+| [`docs/GUIA_DESPLIEGUE.md`](docs/GUIA_DESPLIEGUE.md) | Instalación, variables de entorno, Docker, producción y APK. |
 
- Funcionalidades principales
+---
+
+## Módulos
 
 | Módulo | Descripción |
 |---|---|
-| Gestión de usuarios| Registro, autenticación y control de roles |
-| Agendamiento de citas| Creación, consulta y detección de conflictos de horario |
-| Gestión de vehículos | Registro y seguimiento del historial por vehículo |
-| Catálogo de servicios | Administración de servicios disponibles en el taller |
-| Control de inventario | Gestión de productos y stock con alertas |
-| Gestión de proveedores | Registro y vinculación de proveedores a productos |
-| Facturación| Generación de facturas vinculadas a citas y servicios |
-| Detalle de factura | Desglose de productos y servicios por factura |
-| Seguimiento de servicios| Trazabilidad en tiempo real del estado de cada cita |
-| Portal de cliente | Registro de el cliente en donde se muestran su historial de citas y los vehículos afiliados al usuario. |
-| Reportes | Reportes de ventas , facturas y citas |
-
- Tecnologías utilizadas
-
- Backend
-- Java 17
-- Spring Boot 3.x
-  - Spring Data JPA
-  - Spring Security (BCrypt, autenticación)
-  - Spring Web (REST)
-- Hibernate (ORM)
-- Lombok
-
- Base de datos
-- PostgreSQL 15+
-
- Frontend
-- HTML5 / CSS3 / JavaScript
-- VS Code** como entorno de desarrollo frontend
-
- Herramientas
-- IntelliJ IDEA — desarrollo backend
-- Postman — pruebas de API
-- Figma — diseño y prototipado
-- Maven — gestión de dependencias
-
- Requisitos previos
-
-Antes de instalar el proyecto, asegúrate de tener instalado:
-
-- [ ] Java JDK 17 o superior
-- [ ] Maven 3.8+
-- [ ] PostgreSQL 15+
-- [ ] Git
-- [ ] IntelliJ IDEA (recomendado) o cualquier IDE compatible con Spring Boot
-- [ ] Postman (opcional, para pruebas de API)
-
- Instalación y configuración
-
-1. Clonar el repositorio
-
-```bash
-git clone [pendiente de completar — URL del repositorio GitHub]
-cd sgcsj
-```
-
- 2. Crear la base de datos en PostgreSQL
-
-```sql
-CREATE DATABASE servitecajm;
-```
-
- 3. Ejecutar el esquema SQL
-
-```bash
-psql -U postgres -d servitecajm -f schema.sql
-```
-
-> El archivo `schema.sql` se encuentra en la raíz del proyecto e incluye todas las tablas, restricciones, índices y condiciones CHECK del modelo relacional.
-
- 4. Configurar las variables de entorno
-
-Crea un archivo `.env` en la raíz del proyecto o configura las variables directamente en `application.properties`:
-
-```properties
-# Base de datos
-spring.datasource.url=jdbc:postgresql://localhost:5432/servitecajm
-spring.datasource.username=TU_USUARIO
-spring.datasource.password=TU_CONTRASEÑA
-
-# JPA / Hibernate
-spring.jpa.hibernate.ddl-auto=validate
-spring.jpa.show-sql=false
-
-# Seguridad
-spring.security.user.name=[pendiente de completar]
-spring.security.user.password=[pendiente de completar]
-
-# Puerto
-server.port=8082
-```
-
-> Nunca subas el archivo `application.properties` con credenciales reales al repositorio.** Usa `.gitignore` para excluirlo.
+| Usuarios y autenticación | Login por sesión HTTP, roles `ADMIN`, `TECNICO`, `CLIENTE` y contraseñas BCrypt |
+| Clientes | Consulta y administración de clientes con baja lógica |
+| Vehículos | Registro, edición, historial y placa única normalizada |
+| Citas | Agendamiento, control de conflictos y estados |
+| Servicios | Catálogo y seguimiento por vehículo |
+| Inventario y proveedores | Productos, stock, alertas y proveedores |
+| Facturación | Documentos de venta, IVA y datos del emisor |
+| Pagos | Registro idempotente de pagos |
+| Seguimiento | Trazabilidad de estados y mensajes |
+| Reportes | Ventas, facturas y citas con exportación CSV/Excel/PDF |
+| Portal del cliente | Historial de citas, vehículos y documentos propios |
+| App móvil | Estado del vehículo, solicitud de citas y registro de vehículos |
 
 ---
- Ejecución del proyecto
 
- Entorno de desarrollo
+## Tecnologías
 
-```bash
-mvn spring-boot:run
-```
+- **Backend:** Java 17, Spring Boot 3.3.5, Spring Web, Spring Data JPA, Spring
+  Security, Bean Validation, Lombok, Maven Wrapper, Flyway y Actuator.
+- **Base de datos:** PostgreSQL 15+ (validado con 17).
+- **API:** SpringDoc OpenAPI / Swagger UI.
+- **Despliegue:** Docker multietapa y Docker Compose (PostgreSQL 17 + app).
+- **Calidad:** JUnit 5, MockMvc, Spring Security Test y GitHub Actions.
+- **Frontend web:** HTML5, CSS3 y JavaScript sin framework.
+- **App móvil:** React Native 0.86 + Expo SDK 57, `expo-secure-store` y
+  `@react-native-community/datetimepicker`.
 
-La API estará disponible en: `http://localhost:8080`
+---
 
- Compilar el proyecto
+## Estructura
 
-```bash
-mvn clean install
-```
-
- Generar el JAR para producción
-
-```bash
-mvn clean package -DskipTests
-java -jar target/sgcsj-0.0.1-SNAPSHOT.jar
+```text
+serviteca_jm_proyecto/
+├── README.md
+├── docs/                              # Manual técnico, de usuario y despliegue
+├── docker-compose.yml
+├── .env.example
+├── .github/workflows/ci.yml
+├── serviteca-jm_v5.0/                 # Backend + frontend web
+│   ├── Dockerfile
+│   ├── pom.xml
+│   ├── mvnw / mvnw.cmd
+│   └── src/main/resources/
+│       ├── application*.properties
+│       ├── db/                        # schema.sql + migraciones Flyway V1–V3
+│       └── static/                    # HTML, CSS, JS e imágenes
+└── serviteca-app/                     # App móvil
+    ├── app.json / app.config.js / eas.json
+    ├── assets/                        # Icono, splash y favicon
+    └── src/                           # Pantallas, componentes y servicios
 ```
 
 ---
 
- Estructura del proyecto
+## Inicio rápido
 
+### Backend en desarrollo
+
+Requisitos: JDK 17, PostgreSQL y la variable de contraseña.
+
+```powershell
+cd serviteca-jm_v5.0
+$env:SERVITECA_DB_PASSWORD = "tu_contraseña_segura"
+.\mvnw.cmd spring-boot:run
 ```
-sgcsj/
-├── src/
-│   └── main/
-│       ├── java/com/servitecajm/api/
-│       │   ├── controller/        # Controladores REST
-│       │   ├── dto/               # Objetos de transferencia de datos
-│       │   ├── entity/            # Entidades JPA
-│       │   ├── mapper/            # Conversores entidad ↔ DTO
-│       │   ├── repository/        # Repositorios Spring Data
-│       │   └── service/           # Lógica de negocio
-│       └── resources/
-│           ├── application.properties
-│           └── schema.sql
-├── frontend/                      # HTML, CSS, JS
-│   ├── index.html
-│   ├── css/
-│   ├── js/
-│   │   └── api.js                 # Capa centralizada de fetch al backend
-│   └── pages/
-├── pom.xml
-└── README.md
+
+- Web: `http://localhost:8082`
+- Login: `http://localhost:8082/login.html`
+- Swagger: `http://localhost:8082/swagger-ui.html`
+- Salud: `http://localhost:8082/actuator/health`
+
+Flyway crea el esquema automáticamente. La base `DB_PRODISJM` debe existir.
+
+### App móvil
+
+```powershell
+cd serviteca-app
+npm install
+Copy-Item .env.example .env
+# Edita EXPO_PUBLIC_API_URL con la IP o el dominio del backend
+npx expo start
 ```
+
+Escanea el QR con Expo Go. PC y celular deben estar en la misma red Wi-Fi.
+
+### Docker
+
+```powershell
+Copy-Item .env.example .env
+# Edita POSTGRES_PASSWORD e INITIAL_ADMIN_PASSWORD
+docker compose up -d --build
+docker compose ps
+```
+
+- Aplicación: `http://localhost:8082`
+- Base: `127.0.0.1:5433`
+- Salud: `http://localhost:8082/actuator/health`
 
 ---
 
- Modelo de base de datos
+## Roles
 
-El sistema cuenta con **10 tablas** relacionales:
-
-| Tabla | Descripción |
+| Rol | Acceso principal |
 |---|---|
-| `usuario` | Clientes y operarios del sistema |
-| `vehiculo` | Vehículos registrados por usuario |
-| `cita` | Agendamiento de servicios |
-| `servicio` | Catálogo de servicios disponibles |
-| `cita_servicio` | Tabla pivote M:N entre cita, servicio y producto |
-| `proveedor` | Proveedores de insumos y productos |
-| `producto` | Inventario de productos vinculados a proveedor |
-| `factura` | Facturas generadas por cita o venta directa |
-| `detalle_factura` | Desglose de productos y servicios por factura |
-| `seguimiento` | Historial de mensajes y estado por cita |
+| `ADMIN` | Todos los módulos, usuarios, clientes, citas, inventario, documentos de venta y reportes |
+| `TECNICO` | Dashboard, citas globales, vehículos, clientes (lectura y creación), seguimientos, inventario, documentos de venta y reportes |
+| `CLIENTE` | Solo sus citas, vehículos, historial y documentos de venta |
+
+La autorización real la aplica Spring Security. `role-guard.js` solo oculta
+módulos en el frontend.
 
 ---
 
- Ejemplos de endpoints REST
+## Estado de la entrega
 
-```http
-# Obtener todas las citas
-GET /api/citas
+| Fase | Alcance | Estado |
+|---|---|---|
+| 0 | Contratos de vehículos, limpieza, `schema.sql`, contraseña obligatoria | Completada |
+| 1 | IDOR, permisos, baja lógica, FKs fiscales, rotación de sesión, rate limiting | Completada |
+| 2 | Reportes reales, recuperación de contraseña, contacto, dashboard, paginación | Completada |
+| 3 | Flyway V1–V3, perfiles `dev`/`prod`, Docker, 31 pruebas, CI, OpenAPI, Actuator | Completada |
+| 4 | Accesibilidad web, app móvil endurecida, assets, migración `V4` y documentación final | Completada |
 
-# Crear una nueva cita
-POST /api/citas
-Content-Type: application/json
+**Validación:** `mvnw clean verify` con 31 pruebas, arranque `prod` con base
+limpia, Docker Compose healthy, bundle Android de Expo sin errores.
 
-{
-  "idVehiculo": 1,
-  "fecha": "2026-10-01T10:00:00",
-  "estado": "PENDIENTE"
-}
-
-# Ajuste de stock de un producto
-PATCH /api/productos/{id}/stock
-
-# Historial cronológico de seguimiento por cita
-GET /api/seguimientos/cita/{idCita}
-```
+**Pendientes fuera de alcance:** CSRF, HTTPS obligatorio, revocación inmediata
+de sesiones, pruebas de carga, facturación electrónica DIAN completa y rotación
+de credenciales históricas.
 
 ---
 
- Pruebas
+## Seguridad y alcance fiscal
 
-Las pruebas de los endpoints REST se realizan con **Postman**.
+- Contraseñas BCrypt, sesión `SERVITECASESSION` con `HttpOnly`, `SameSite=Lax`
+  y `Secure` configurable.
+- Rate limiting en login, mensajes genéricos, autorización por método y ruta.
+- Baja lógica, facturas inmutables y pagos idempotentes.
+- El sistema emite un **documento de venta comercial interno**. **No** genera
+  XML, firma electrónica, CUFE, QR ni transmisión a la DIAN, y no debe
+  presentarse como factura electrónica validada.
 
-```bash
-# Ejecutar pruebas unitarias
-mvn test
-```
-
-> [pendiente de completar — colección Postman exportada y pruebas unitarias con JUnit]
+Las condiciones de producción y los riesgos pendientes están detallados en la
+[guía de despliegue](docs/GUIA_DESPLIEGUE.md#6-producción).
 
 ---
 
- Seguridad
+## Contacto
 
-- Contraseñas encriptadas con **BCrypt**
-- Flag `debeCambiarPassword` para migración de contraseñas débiles o en texto plano
-- Endpoint dedicado para cambio de contraseña obligatorio
-- Autenticación: [pendiente de completar — definir JWT vs. sesiones]
-
- Guía de contribución
-
-1. Haz un fork del repositorio
-2. Crea una rama para tu funcionalidad: `git checkout -b feature/nombre-funcionalidad`
-3. Realiza tus cambios y haz commit: `git commit -m "feat: descripción del cambio"`
-4. Sube la rama: `git push origin feature/nombre-funcionalidad`
-5. Abre un Pull Request hacia la rama `main`
-
- Por favor, revisa que el código compila y pasa las pruebas antes de abrir un PR.
-
-
-
-  Licencia
-
-[pendiente de completar — definir tipo de licencia: MIT, Apache 2.0, propietaria, etc.]
-
-
-
-## 📬 Contacto y soporte
-
-Desarrollador: Sergio Aguilar - Sebastian Molina
-Programa:Tecnología en Análisis y Desarrollo de Software — SENA  
-Ficha:3171149-B  
-Correo: sebastiandavidmolinarivera2380@gmail.com
-        Sergioaguilartibata@gmail.com
+Desarrolladores: Sergio Aguilar y Sebastián Molina  
+Programa: Tecnología en Análisis y Desarrollo de Software — SENA  
+Ficha: 3171149-B  
+Correo: sebastiandavidmolinarivera2380@gmail.com ·
+sergioaguilartibata@gmail.com  
 Repositorio: https://github.com/SebastianMolina2380/serviteca_jm_proyecto
-
-
-Proyecto desarrollado como solución real para Serviteca JM, Tunja, Boyacá, Colombia.

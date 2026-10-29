@@ -68,7 +68,7 @@
           </div>
           <button type="button" data-id="${esc(i.idFactura)}">Ver</button>
         </article>`).join("")
-        : `<div class="empty">No hay facturas registradas.</div>`;
+        : `<div class="empty">No hay documentos registrados.</div>`;
   }
 
   function renderInvoice(i) {
@@ -76,7 +76,7 @@
     if (!preview) return;
 
     if (!i) {
-      preview.innerHTML = '<div class="empty">No se encontró la factura solicitada.</div>';
+      preview.innerHTML = '<div class="empty">No se encontró el documento solicitado.</div>';
       return;
     }
 
@@ -111,12 +111,10 @@
           ${esc(emisor.correo || "")}
         </div>
         <div class="invoice-number">
-          Factura de Venta<br>
-          <strong>${esc(i.numeroFactura || "Numeración pendiente")}</strong><br>
-          Prefijo: ${esc(i.prefijo || "—")}<br>Autorización: ${esc(i.numeroAutorizacion || "Pendiente")}<br>
-          Rango: ${esc(i.rangoDesde ?? "—")} a ${esc(i.rangoHasta ?? "—")}<br>
-          Vigencia: ${esc(dateCO(i.vigenciaDesde))} a ${esc(dateCO(i.vigenciaHasta))}<br>
-          <span class="status">${esc(i.estadoValidacionDian || "PENDIENTE_VALIDACION_DIAN")}</span>
+          Documento de venta<br>
+          <strong>${esc(i.numeroFactura || "Sin numerar")}</strong><br>
+          Prefijo: ${esc(i.prefijo || "—")}<br>
+          <span class="status">Documento comercial</span>
         </div>
       </div>
       <div class="info">
@@ -129,7 +127,7 @@
         </div>
         <div>
           <p><b>Generación:</b> ${esc(dateCO(i.fechaGeneracion || i.fecha))}</p>
-          <p><b>Fecha de expedición:</b> ${esc(i.fechaExpedicion ? dateCO(i.fechaExpedicion) : "Pendiente de validación DIAN")}</p>
+          <p><b>Fecha de expedición:</b> ${esc(i.fechaExpedicion ? dateCO(i.fechaExpedicion) : dateCO(i.fechaGeneracion || i.fecha))}</p>
           <p><b>Forma de pago:</b> ${esc(i.formaPago)} ${i.plazoDias ? `· Plazo ${esc(i.plazoDias)} días` : ""}</p>
           <p><b>Medio de pago:</b> ${esc(i.medioPago || "—")}</p>
           <p><b>Responsabilidades fiscales emisor:</b> ${esc(i.responsabilidadesFiscales || "Por configurar")}</p>
@@ -153,14 +151,15 @@
       </div>
       <div class="notes">
         <b>Responsabilidades fiscales:</b> ${esc(i.responsabilidadesFiscales || "Por configurar")}<br>
-        <b>Software:</b> ${esc(i.software?.nombre || "Pendiente de configurar")} · ${esc(i.software?.fabricante || "")} · NIT ${esc(i.software?.nitFabricante || "—")}<br><br>
-        <strong>Representación informativa pendiente de validación DIAN.</strong> No constituye factura electrónica validada ni incluye CUFE o código QR DIAN.
+        <b>Software:</b> ${esc(i.software?.nombre || "Serviteca JM")} · ${esc(i.software?.fabricante || "")} · NIT ${esc(i.software?.nitFabricante || "—")}<br><br>
+        <strong>Documento de venta comercial.</strong> Comprobante interno de Serviteca JM.
+        No constituye factura electrónica ni un documento fiscal validado por la DIAN.
       </div>`;
   }
 
   function exportExcel() {
     const rows = [
-      ["Factura", "Cliente", "Servicio", "Total", "Medio de pago", "Fecha"],
+      ["Documento", "Cliente", "Servicio", "Total", "Medio de pago", "Fecha"],
       ...invoices.map(i => [
         i.numeroFactura || `JM ${i.idFactura}`,
         i.adquirente?.razonSocial || "—",
@@ -175,7 +174,7 @@
     const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "facturas_serviteca_jm.csv";
+    link.download = "documentos_venta_serviteca_jm.csv";
     link.click();
     URL.revokeObjectURL(link.href);
   }
@@ -202,7 +201,7 @@
     });
 
     $("print")?.addEventListener("click", () => {
-      if (!selected) return alert("No hay factura seleccionada.");
+      if (!selected) return alert("No hay documento seleccionado.");
       window.print();
     });
 

@@ -1,0 +1,188 @@
+/* =========================================================
+   JM SERVITECA — ACCESIBILIDAD Y FORMULARIOS
+   ---------------------------------------------------------
+   Capa final de estilos, cargada después de serviteca-theme.css
+   y serviteca-premium.css.
+
+   Objetivos:
+     · WCAG 1.4.4: el usuario puede ampliar la página (zoom).
+     · WCAG 1.4.11 / 2.4.7: foco visible homogéneo.
+     · WCAG 1.4.3: contraste suficiente en campos y etiquetas.
+     · Un único punto de verdad para los colores de formularios,
+       evitando cadenas de "!important" repartidas por el tema.
+   ========================================================= */
+
+:root {
+  /* Tokens de formulario (tema claro institucional) */
+  --jm-field-bg: #ffffff;
+  --jm-field-fg: #1f2a24;
+  --jm-field-border: #c9c2b2;
+  --jm-field-border-hover: #a89f8b;
+  --jm-field-placeholder: #5a6a5f;
+  --jm-field-focus-border: #1b4a34;
+  --jm-field-focus-ring: rgba(27, 74, 52, 0.28);
+
+  /* Tokens de foco (visibles sobre fondos claros y oscuros) */
+  --jm-focus-outline: #8a6a2f;
+  --jm-focus-halo: rgba(255, 255, 255, 0.92);
+
+  /* Errores de validación */
+  --jm-field-error: #8d2f1f;
+  --jm-field-error-ring: rgba(141, 47, 31, 0.22);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* ---------------------------------------------------------
+   1. FOCO VISIBLE
+   --------------------------------------------------------- */
+:root :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--jm-focus-outline);
+  outline-offset: 2px;
+}
+
+/* El foco programático de ratón no dibuja el anillo. */
+:root :is(a, button, input, select, textarea, summary, [tabindex]):focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ---------------------------------------------------------
+   2. CONTROLES DE FORMULARIO
+   ---------------------------------------------------------
+   Los selectores de esta capa son deliberadamente limpios:
+   no usan "!important". Las vistas que necesiten una variante
+   (login, formulario de contacto oscuro, etc.) la declaran con
+   mayor especificidad en serviteca-premium.css.
+   --------------------------------------------------------- */
+input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']):not([type='file']),
+select,
+textarea {
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--jm-field-border);
+  border-radius: 8px;
+  background-color: var(--jm-field-bg);
+  color: var(--jm-field-fg);
+  font-family: inherit;
+  line-height: 1.45;
+  caret-color: var(--jm-field-focus-border);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']):not([type='file']):hover,
+select:hover,
+textarea:hover {
+  border-color: var(--jm-field-border-hover);
+}
+
+input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']):not([type='file']):focus,
+select:focus,
+textarea:focus {
+  border-color: var(--jm-field-focus-border);
+  box-shadow: 0 0 0 3px var(--jm-field-focus-ring);
+}
+
+textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--jm-field-placeholder);
+  opacity: 1;
+}
+
+/* Evita el zoom automático de iOS al enfocar un campo. */
+@media (max-width: 640px) {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']):not([type='file']),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* ---------------------------------------------------------
+   3. ETIQUETAS, AYUDA Y ERRORES
+   --------------------------------------------------------- */
+label,
+.fl,
+.form-label {
+  color: #33443a;
+  font-weight: 600;
+}
+
+label .req,
+.fl .req,
+.form-label .req,
+.obligatorio {
+  color: var(--jm-field-error);
+  font-weight: 700;
+}
+
+.ayuda,
+.form-help,
+.field-help {
+  color: #4f5f55;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+input[aria-invalid='true'],
+select[aria-invalid='true'],
+textarea[aria-invalid='true'],
+.campo-error input,
+.campo-error select,
+.campo-error textarea {
+  border-color: var(--jm-field-error);
+  box-shadow: 0 0 0 3px var(--jm-field-error-ring);
+}
+
+/* ---------------------------------------------------------
+   4. CASILLAS Y SELECTORES
+   --------------------------------------------------------- */
+input[type='checkbox'],
+input[type='radio'] {
+  width: 18px;
+  height: 18px;
+  min-height: 18px;
+  accent-color: var(--jm-field-focus-border);
+  cursor: pointer;
+}
+
+/* ---------------------------------------------------------
+   5. UTILIDADES
+   --------------------------------------------------------- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Respeta la preferencia de movimiento reducido. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto;
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+  }
+}
+
+/* Modo de contraste alto del sistema operativo. */
+@media (forced-colors: active) {
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 3px solid CanvasText;
+  }
+}

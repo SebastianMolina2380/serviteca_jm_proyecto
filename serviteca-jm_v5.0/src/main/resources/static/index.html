@@ -2,7 +2,7 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Serviteca JM - Inicio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link
@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="serviteca-theme.css">
   <link rel="stylesheet" href="serviteca-premium.css">
+  <link rel="stylesheet" href="accesibilidad.css">
 </head>
   <body id="jm-home">
     <!-- ── NAVBAR ── -->
@@ -385,7 +386,7 @@
           </div>
         </div>
 
-        <div class="cform">
+        <form class="cform" id="contact-form" novalidate>
           <h4>Envíanos un mensaje</h4>
           <div class="form-group">
             <label class="fl" for="contact-name">Nombre</label>
@@ -411,12 +412,14 @@
                     placeholder="¿En qué podemos ayudarte?"
             ></textarea>
           </div>
-          <button type="button" class="btn btn-y"
+          <button type="submit" class="btn btn-y" id="contact-submit"
                   style="width: 100%; justify-content: center; padding: 13px"
           >
             Enviar mensaje
           </button>
-        </div>
+          <div id="contact-status" role="status" aria-live="polite"
+               style="margin-top: 10px; font-size: 0.78rem; text-align: center; min-height: 18px;"></div>
+        </form>
       </div>
     </div>
 

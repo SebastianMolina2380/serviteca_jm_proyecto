@@ -11,13 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
-@Table(
-        name = "cita",
-        uniqueConstraints = @UniqueConstraint(
-                name = "uk_cita_vehiculo_fecha_hora",
-                columnNames = {"idvehiculo", "fecha", "hora"}
-        )
-)
+@Table(name = "cita")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -71,7 +65,7 @@ public class Cita {
     })
     private Vehiculo vehiculo;
 
-    @OneToOne(mappedBy = "cita", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "cita", fetch = FetchType.LAZY)
     @ToString.Exclude
     @JsonIgnore // La API de citas no necesita cargar la factura inversa al serializar.
     @JsonIgnoreProperties({

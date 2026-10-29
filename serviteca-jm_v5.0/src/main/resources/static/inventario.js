@@ -140,7 +140,7 @@ let invCats = [];
 async function cargarCategorias() {
   if (!invSelectCat) return;
   try {
-    const r = await fetch("/api/productos", { headers: inventoryHeaders(), credentials: "same-origin" });
+    const r = await fetch("/api/productos/catalogo", { headers: inventoryHeaders(), credentials: "same-origin" });
     const data = await r.json().catch(() => []);
     if (!r.ok || !Array.isArray(data)) return;
     const visto = new Set();

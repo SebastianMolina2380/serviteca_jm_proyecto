@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Serviteca JM - Dashboard General</title>
   <link
           href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="serviteca-theme.css">
   <link rel="stylesheet" href="serviteca-premium.css">
+  <link rel="stylesheet" href="accesibilidad.css">
 </head>
 <body>
 <div class="layout">
@@ -31,13 +32,13 @@
     <nav class="sb-nav">
       <div class="sb-sec">Principal</div>
       <a class="sb-link active" href="dashboard.html"><span class="sb-ico">📊</span> Dashboard</a>
-      <a class="sb-link" href="citas.html"><span class="sb-ico">📅</span> Citas <span class="sb-badge">4</span></a>
+      <a class="sb-link" href="citas.html"><span class="sb-ico">📅</span> Citas</a>
       <a class="sb-link" href="nueva-cita.html"><span class="sb-ico">➕</span> Nueva Cita</a>
       <a class="sb-link" href="clientes.html"><span class="sb-ico">👤</span> Clientes</a>
       <a class="sb-link" href="vehiculo.html"><span class="sb-ico">🚗</span> Vehículos</a>
       <div class="sb-sec" style="margin-top: 8px">Administración</div>
       <a class="sb-link" href="usuarios.html"><span class="sb-ico">👥</span> Usuarios</a>
-      <a class="sb-link" href="inventario.html"><span class="sb-ico">🔩</span> Inventario <span class="sb-badge" style="background: var(--red)">2</span></a>
+      <a class="sb-link" href="inventario.html"><span class="sb-ico">🔩</span> Inventario</a>
       <a class="sb-link" href="facturacion.html"><span class="sb-ico">💵</span> Facturación</a>
       <a class="sb-link" href="reportes.html"><span class="sb-ico">📈</span> Reportes</a>
 
@@ -89,37 +90,37 @@
           <span class="kpi-ico"></span>
           <div class="kpi-lbl">Citas Hoy</div>
           <div class="kpi-val" id="kpi-citas">0</div>
-          <div class="kpi-sub">↑ 3 más que ayer</div>
+          <div class="kpi-sub" id="kpi-citas-sub">Según agenda del día</div>
         </div>
         <div class="kpi ko">
           <span class="kpi-ico"></span>
           <div class="kpi-lbl">En Taller</div>
           <div class="kpi-val" id="kpi-taller">0</div>
-          <div class="kpi-sub">3 en proceso</div>
+          <div class="kpi-sub">Servicios en proceso</div>
         </div>
         <div class="kpi ky">
           <span class="kpi-ico"></span>
-          <div class="kpi-lbl">Ingresos Semana</div>
+          <div class="kpi-lbl">Ingresos del Mes</div>
           <div class="kpi-val" id="kpi-ingresos">$0</div>
-          <div class="kpi-sub">↑ 18% vs ant.</div>
+          <div class="kpi-sub">Facturación acumulada</div>
         </div>
         <div class="kpi kr">
           <span class="kpi-ico"></span>
           <div class="kpi-lbl">Canceladas</div>
           <div class="kpi-val" id="kpi-canceladas">0</div>
-          <div class="kpi-sub">Esta semana</div>
+          <div class="kpi-sub">Últimos 7 días</div>
         </div>
         <div class="kpi kb">
           <span class="kpi-ico">§</span>
           <div class="kpi-lbl">Técnicos</div>
           <div class="kpi-val" id="kpi-tecnicos">0</div>
-          <div class="kpi-sub">1 en descanso</div>
+          <div class="kpi-sub">Cuentas activas</div>
         </div>
         <div class="kpi" style="--g: #a78bfa">
-          <span class="kpi-ico">⭐</span>
-          <div class="kpi-lbl">Calificación</div>
-          <div class="kpi-val" id="kpi-calificacion">-</div>
-          <div class="kpi-sub">Último mes</div>
+          <span class="kpi-ico">👥</span>
+          <div class="kpi-lbl">Clientes</div>
+          <div class="kpi-val" id="kpi-clientes">0</div>
+          <div class="kpi-sub">Clientes activos</div>
         </div>
       </div>
 
@@ -144,36 +145,13 @@
               <thead>
               <tr>
                 <th>Cliente</th>
-                <th>Servicio</th>
+                <th>Vehículo</th>
                 <th>Hora</th>
                 <th>Estado</th>
               </tr>
               </thead>
               <tbody id="citas-hoy">
-              <tr>
-                <td>Carlos M.</td>
-                <td>Frenos</td>
-                <td>08:30</td>
-                <td><span class="badge bg">Completada</span></td>
-              </tr>
-              <tr>
-                <td>Luisa T.</td>
-                <td>Alineación</td>
-                <td>09:00</td>
-                <td><span class="badge bo">En proceso</span></td>
-              </tr>
-              <tr>
-                <td>Andrés R.</td>
-                <td>Diagnóstico</td>
-                <td>10:30</td>
-                <td><span class="badge by">Pendiente</span></td>
-              </tr>
-              <tr>
-                <td>María G.</td>
-                <td>Aceite</td>
-                <td>11:00</td>
-                <td><span class="badge bgr">Confirmada</span></td>
-              </tr>
+              <tr><td colspan="4">Cargando citas…</td></tr>
               </tbody>
             </table>
           </div>
@@ -186,47 +164,10 @@
                   margin-bottom: 14px;
                 "
           >
-            Estado Técnicos
+            Servicios en Proceso
           </h4>
-          <div class="ti">
-            <div class="tav">CR</div>
-            <div>
-              <div class="tn">Carlos Ruiz</div>
-              <div class="tt">Frenos · TKT-0041</div>
-            </div>
-            <div class="sdot sdo"></div>
-          </div>
-          <div class="ti">
-            <div class="tav">MP</div>
-            <div>
-              <div class="tn">Miguel Pérez</div>
-              <div class="tt">Alineación · TKT-0042</div>
-            </div>
-            <div class="sdot sdo"></div>
-          </div>
-          <div class="ti">
-            <div class="tav">JG</div>
-            <div>
-              <div class="tn">Juan Gómez</div>
-              <div class="tt">Disponible</div>
-            </div>
-            <div class="sdot sdg"></div>
-          </div>
-          <div class="ti">
-            <div class="tav">AL</div>
-            <div>
-              <div class="tn">Andrés López</div>
-              <div class="tt">Disponible</div>
-            </div>
-            <div class="sdot sdg"></div>
-          </div>
-          <div class="ti">
-            <div class="tav">SM</div>
-            <div>
-              <div class="tn">Sergio Mora</div>
-              <div class="tt">Descanso</div>
-            </div>
-            <div class="sdot sdx"></div>
+          <div id="servicios-proceso">
+            <div class="ti"><div class="tav">…</div><div><div class="tn">Cargando…</div></div></div>
           </div>
         </div>
       </div>

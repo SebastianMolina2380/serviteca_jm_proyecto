@@ -2,6 +2,8 @@ package com.serviteca.Mapper;
 
 import com.serviteca.DTOs.SeguimientoDTOs;
 import com.serviteca.modelos.Seguimiento;
+import com.serviteca.modelos.Servicio;
+import com.serviteca.modelos.Usuario;
 
 public final class SeguimientoMapper {
 
@@ -17,45 +19,40 @@ public final class SeguimientoMapper {
             return null;
         }
 
-        Long idUsuario = null;
-        Long idServicio = null;
+        SeguimientoDTOs dto = new SeguimientoDTOs();
 
-        // Usuario: Integer -> Long
-        if (entity.getUsuario() != null
-                && entity.getUsuario().getIdUsuario() != null) {
+        dto.setIdseguimiento(entity.getIdSeguimiento());
+        dto.setIdusuario(entity.getUsuario() != null
+                ? entity.getUsuario().getIdUsuario() : null);
+        dto.setIdservicio(entity.getServicio() != null
+                ? entity.getServicio().getIdServicio() : null);
+        dto.setTipo(entity.getTipo());
+        dto.setTitulo(entity.getTitulo());
+        dto.setFlujo(entity.getFlujo());
+        dto.setDescripcion(entity.getDescripcion());
+        dto.setEstado(entity.getEstado());
+        dto.setMensaje(entity.getMensaje());
+        dto.setRemitente(entity.getRemitente());
+        dto.setTiempoestimado(entity.getTiempoestimado());
+        dto.setLeida(entity.getLeida());
+        dto.setFecha(entity.getFecha());
 
-            idUsuario = entity.getUsuario().getIdUsuario().longValue();
-        }
-
-        // Servicio: Integer -> Long
-        if (entity.getServicio() != null
-                && entity.getServicio().getIdServicio() != null) {
-
-            idServicio = entity.getServicio().getIdServicio().longValue();
-        }
-
-        return new SeguimientoDTOs(
-                entity.getIdSeguimiento(),
-                idUsuario,
-                idServicio,
-                entity.getTipo(),
-                entity.getTitulo(),
-                entity.getFlujo(),
-                entity.getDescripcion(),
-                entity.getEstado(),
-                entity.getMensaje(),
-                entity.getRemitente(),
-                entity.getTiempoestimado(),
-                entity.getLeida(),
-                entity.getFecha()
-        );
+        return dto;
     }
-
 
     // =========================
     // DTO -> ENTITY
     // =========================
+    /**
+     * Convierte solo los campos escalares. Las asociaciones Usuario y
+     * Servicio deben resolverse con sus repositorios; para eso existe la
+     * sobrecarga {@link #toEntity(SeguimientoDTOs, Usuario, Servicio)}.
+     */
     public static Seguimiento toEntity(SeguimientoDTOs dto) {
+        return toEntity(dto, null, null);
+    }
+
+    public static Seguimiento toEntity(SeguimientoDTOs dto, Usuario usuario, Servicio servicio) {
 
         if (dto == null) {
             return null;
@@ -63,8 +60,9 @@ public final class SeguimientoMapper {
 
         Seguimiento entity = new Seguimiento();
 
-        entity.setIdSeguimiento(dto.getIdSeguimiento());
-
+        entity.setIdSeguimiento(dto.getIdseguimiento());
+        entity.setUsuario(usuario);
+        entity.setServicio(servicio);
         entity.setTipo(dto.getTipo());
         entity.setTitulo(dto.getTitulo());
         entity.setFlujo(dto.getFlujo());

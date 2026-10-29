@@ -11,6 +11,14 @@
   margin-top: 26px;
 }
 
+.user-form select {
+  width: 100%;
+}
+
+.user-form [hidden] {
+  display: none !important;
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-end;

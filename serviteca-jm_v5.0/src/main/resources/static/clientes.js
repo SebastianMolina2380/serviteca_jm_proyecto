@@ -1,15 +1,47 @@
 
 const API_CLIENTES = "/api/clientes";
+const PAGE_SIZE_CLIENTES = 10;
+const CLIENTES_USUARIO = JSON.parse(localStorage.getItem("servitecaUser") || "null");
+let PUEDE_EDITAR_CLIENTES =
+  String(CLIENTES_USUARIO?.rol || CLIENTES_USUARIO?.role || "").toLowerCase() === "admin";
 let clientesData = [];
+let clientesPagina = 0;
+let clientesTotalPaginas = 0;
+let clientesTotal = 0;
+let clientesBusqueda = "";
+let temporizadorBusqueda = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
   setDate();
 
-  document.getElementById("buscar-cliente")
-    ?.addEventListener("input", render);
+  const buscador = document.getElementById("buscar-cliente");
+  buscador?.addEventListener("input", () => {
+    clearTimeout(temporizadorBusqueda);
+    temporizadorBusqueda = setTimeout(() => {
+      clientesBusqueda = String(buscador.value || "").trim();
+      clientesPagina = 0;
+      loadClientes();
+    }, 350);
+  });
 
   document.getElementById("btn-refresh")
     ?.addEventListener("click", loadClientes);
+
+  document.getElementById("btn-prev-clientes")
+    ?.addEventListener("click", () => {
+      if (clientesPagina > 0) {
+        clientesPagina--;
+        loadClientes();
+      }
+    });
+
+  document.getElementById("btn-next-clientes")
+    ?.addEventListener("click", () => {
+      if (clientesPagina + 1 < clientesTotalPaginas) {
+        clientesPagina++;
+        loadClientes();
+      }
+    });
 
   const btnMenu = document.getElementById("hambtn");
   if (btnMenu) {
@@ -39,6 +71,7 @@ async function loadSessionUser() {
 
     const nombre = u?.nombre || u?.username || u?.correo || "Usuario";
     const rol = String(u?.rol || u?.role || "").toUpperCase();
+    PUEDE_EDITAR_CLIENTES = rol === "ADMIN";
 
     const sbName = document.getElementById("sbname");
     const sbRole = document.getElementById("sbrole");
@@ -68,17 +101,30 @@ async function loadClientes() {
   }
 
   try {
-    const r = await fetch(API_CLIENTES, { credentials: "same-origin" });
+    const params = new URLSearchParams({
+      page: String(clientesPagina),
+      size: String(PAGE_SIZE_CLIENTES)
+    });
+    if (clientesBusqueda) params.set("q", clientesBusqueda);
+
+    const r = await fetch(`${API_CLIENTES}?${params.toString()}`, {
+      credentials: "same-origin",
+      headers: { Accept: "application/json" }
+    });
 
     if (r.status === 401 || r.status === 403) {
       location.href = "login.html";
       return;
     }
 
-    const data = await r.json();
-    if (!r.ok) throw new Error(data?.error || "No se pudieron cargar los clientes.");
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(data?.message || data?.error || "No se pudieron cargar los clientes.");
 
-    clientesData = Array.isArray(data) ? data : [];
+    clientesData = Array.isArray(data?.content) ? data.content : [];
+    clientesPagina = Number(data?.number ?? 0);
+    clientesTotalPaginas = Number(data?.totalPages ?? 0);
+    clientesTotal = Number(data?.totalElements ?? clientesData.length);
+
     render();
   } catch (e) {
     if (tbody) {
@@ -93,28 +139,19 @@ function render() {
   const count = document.getElementById("clientes-count");
   if (!tbody) return;
 
-  const q = String(document.getElementById("buscar-cliente")?.value || "")
-    .trim().toLowerCase();
-
-  const filtrados = clientesData.filter(c => {
-    const texto = [
-      c.nombre, c.numeroDoc, c.documento, c.correo, c.email
-    ].map(v => String(v ?? "")).join(" ").toLowerCase();
-    return !q || texto.includes(q);
-  });
-
   if (count) {
-    count.textContent =
-      filtrados.length === 1 ? "1 cliente" : `${filtrados.length} clientes`;
+    count.textContent = clientesTotal === 1 ? "1 cliente" : `${clientesTotal} clientes`;
   }
 
-  if (!filtrados.length) {
+  actualizarPaginacion();
+
+  if (!clientesData.length) {
     tbody.innerHTML =
       '<tr><td colspan="6" class="cliente-vacio">No hay clientes para mostrar.</td></tr>';
     return;
   }
 
-  tbody.innerHTML = filtrados.map(c => {
+  tbody.innerHTML = clientesData.map(c => {
     const id = c.idusuario ?? c.idUsuario ?? c.id;
     const nombre = c.nombre ?? "";
     const documento =
@@ -137,12 +174,28 @@ function render() {
         <td>${esc(correo)}</td>
         <td><span class="badge ${estado === "ACTIVO" ? "badge-green" : "badge-red"}">${esc(estado)}</span></td>
         <td>${esc(fechaAcceso)}</td>
-        <td style="display:flex;gap:5px">
-          <button type="button" class="btn-sm-ghost" data-edit-client="${esc(id ?? "")}">Editar</button>
-          <button type="button" class="btn-sm-ghost" data-toggle-client="${esc(id ?? "")}" data-state="${esc(estado)}">${estado === "ACTIVO" ? "Bloquear" : "Activar"}</button>
+        <td>
+          ${PUEDE_EDITAR_CLIENTES ? `
+            <div style="display:flex;gap:5px">
+              <button type="button" class="btn-sm-ghost" data-edit-client="${esc(id ?? "")}">Editar</button>
+              <button type="button" class="btn-sm-ghost" data-toggle-client="${esc(id ?? "")}" data-state="${esc(estado)}">${estado === "ACTIVO" ? "Bloquear" : "Activar"}</button>
+            </div>` : '<span style="color:var(--gray2)">Solo lectura</span>'}
         </td>
       </tr>`;
   }).join("");
+}
+
+function actualizarPaginacion() {
+  const pagina = document.getElementById("clientes-pagina");
+  const prev = document.getElementById("btn-prev-clientes");
+  const next = document.getElementById("btn-next-clientes");
+  const totalPaginas = Math.max(1, clientesTotalPaginas);
+
+  if (pagina) {
+    pagina.textContent = `Página ${clientesPagina + 1} de ${totalPaginas}`;
+  }
+  if (prev) prev.disabled = clientesPagina <= 0;
+  if (next) next.disabled = clientesPagina + 1 >= clientesTotalPaginas;
 }
 
 function esc(v) {
@@ -153,27 +206,47 @@ function esc(v) {
 }
 
 document.addEventListener("click", async e => {
-  const del = e.target.closest("[data-delete-client]");
-  if (!del) return;
+  const editar = e.target.closest("[data-edit-client]");
+  if (editar) {
+    const id = editar.dataset.editClient;
+    if (id) location.href = `nuevo-usuario.html?id=${encodeURIComponent(id)}&cliente=1`;
+    return;
+  }
 
-  const id = del.dataset.deleteClient;
+  const alternar = e.target.closest("[data-toggle-client]");
+  if (!alternar || !PUEDE_EDITAR_CLIENTES) return;
+
+  const id = alternar.dataset.toggleClient;
+  const estado = String(alternar.dataset.state || "").toUpperCase();
   if (!id) return;
-  if (!confirm("¿Eliminar este cliente?")) return;
+
+  const bloquear = estado === "ACTIVO";
+  const texto = bloquear
+    ? "¿Bloquear este cliente? No podrá iniciar sesión, pero su historial se conserva."
+    : "¿Activar nuevamente este cliente?";
+  if (!confirm(texto)) return;
 
   try {
-    const r = await fetch(`${API_CLIENTES}/${encodeURIComponent(id)}`, {
-      method: "DELETE",
-      credentials: "same-origin"
-    });
+    const r = bloquear
+      ? await fetch(`${API_CLIENTES}/${encodeURIComponent(id)}`, {
+          method: "DELETE",
+          credentials: "same-origin"
+        })
+      : await fetch(`${API_CLIENTES}/${encodeURIComponent(id)}`, {
+          method: "PUT",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ estado: "ACTIVO" })
+        });
 
-    if (r.status === 401 || r.status === 403) {
+    if (r.status === 401) {
       location.href = "login.html";
       return;
     }
 
     if (!r.ok) {
       const data = await r.json().catch(() => ({}));
-      throw new Error(data?.error || "No se pudo eliminar el cliente.");
+      throw new Error(data?.message || data?.error || "No se pudo actualizar el cliente.");
     }
 
     await loadClientes();

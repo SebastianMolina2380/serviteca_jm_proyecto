@@ -163,7 +163,7 @@ h3 {
 
 .password-wrap .fc {
     width: 100%;
-    padding-right: 42px !important; /* Espacio para que el texto no toque el ojo */
+    padding-right: 42px; /* Espacio para que el texto no toque el ojo */
 }
 
 .password-wrap .eye {

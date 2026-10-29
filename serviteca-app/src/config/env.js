@@ -1,42 +1,54 @@
 // ============================================================
 // SERVITECA JM - CONFIGURACIÓN DE ENTORNO
 // ============================================================
-// Define la URL base de la API del backend Spring Boot.
+// Prioridad para la URL del backend:
 //
-// Backend por defecto:  http://<IP_DE_TU_PC>:8082/api
+//   1. EXPO_PUBLIC_API_URL  (variable de entorno de Expo)
+//   2. extra.apiUrl         (app.config.js en el build)
+//   3. Detección automática de la IP de la máquina que ejecuta
+//      Expo (Expo Go en la red local).
+//   4. http://localhost:8082/api (último recurso).
 //
-// Si estás probando con Expo Go desde el celular, el celular
-// NO puede usar "localhost" (localhost sería el propio celular).
-// Por eso la app detecta automáticamente la IP de tu PC
-// (la misma que usa Expo), o puedes fijarla manualmente.
+// La URL debe apuntar a la raíz de la API, por ejemplo:
+//   https://api.servitecajm.com/api
+// Si se omite el sufijo "/api", se agrega automáticamente.
 // ============================================================
 
 import Constants from 'expo-constants';
 
-// ------------------------------------------------------------
-// OPCIONAL: fija aquí la IP de tu PC si la detección automática
-// no funciona. Ejemplo: 'http://192.168.1.15:8082/api'
-// Dejar vacío ('') para usar la detección automática.
-// ------------------------------------------------------------
-export const MANUAL_API_URL = 'https://lushly-singer-munchkin.ngrok-free.dev/api';
+const DEFAULT_PORT = 8082;
 
-// Puerto del backend Spring Boot (server.port en application.properties)
-export const API_PORT = 8082;
+function leerExtra() {
+  return (Constants.expoConfig && Constants.expoConfig.extra) || {};
+}
+
+function normalizarApiUrl(valor) {
+  const limpio = String(valor || '')
+    .trim()
+    .replace(/\/+$/, '');
+
+  if (!limpio) return '';
+
+  return /\/api$/i.test(limpio) ? limpio : `${limpio}/api`;
+}
+
+// Expo inyecta las variables EXPO_PUBLIC_* en el bundle. En los
+// builds de producción también queda disponible extra.apiUrl.
+const urlEntorno = normalizarApiUrl(process.env.EXPO_PUBLIC_API_URL);
+const urlConfig = normalizarApiUrl(leerExtra().apiUrl);
+
+export const API_PORT = Number(leerExtra().apiPort) || DEFAULT_PORT;
 
 // ------------------------------------------------------------
 // Detección automática de la IP de la máquina donde corre Expo.
-// hostUri tiene formato: "192.168.1.15:8081"
+// hostUri tiene formato: "192.168.1.15:8081".
 // ------------------------------------------------------------
 function detectHost() {
   try {
     const hostUri =
       (Constants.expoConfig && Constants.expoConfig.hostUri) || '';
 
-    const host = hostUri.split('/')[0].split(':')[0];
-
-    // Si Expo no informa la IP (por ejemplo en un build EAS),
-    // se usa la IP configurada en MANUAL_API_URL.
-    return host || '';
+    return hostUri.split('/')[0].split(':')[0] || '';
   } catch (e) {
     return '';
   }
@@ -44,8 +56,15 @@ function detectHost() {
 
 const detectedHost = detectHost();
 
-export const API_URL =
-  MANUAL_API_URL ||
-  (detectedHost
-    ? `http://${detectedHost}:${API_PORT}/api`
-    : `http://localhost:${API_PORT}/api`);
+const urlAutomatica = detectedHost
+  ? `http://${detectedHost}:${API_PORT}/api`
+  : `http://localhost:${API_PORT}/api`;
+
+export const API_URL = urlEntorno || urlConfig || urlAutomatica;
+
+// Útil para diagnósticos: indica de dónde salió la URL activa.
+export const API_URL_SOURCE = urlEntorno
+  ? 'EXPO_PUBLIC_API_URL'
+  : urlConfig
+    ? 'app.config.js (extra.apiUrl)'
+    : 'detección automática';

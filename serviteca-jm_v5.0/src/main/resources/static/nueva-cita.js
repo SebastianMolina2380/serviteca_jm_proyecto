@@ -180,11 +180,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  /* La placa escrita a mano debe viajar en mayúsculas como se ve. */
+  /* La placa escrita a mano se normaliza como en el backend:
+     mayúsculas, sin espacios y conservando los guiones. */
   const inpPlaca = document.getElementById("placa-vehiculo");
   if (inpPlaca) {
     inpPlaca.addEventListener("input", function () {
-      inpPlaca.value = inpPlaca.value.toUpperCase();
+      const normalizada = inpPlaca.value.toUpperCase().replace(/\s+/g, "");
+      if (inpPlaca.value !== normalizada) inpPlaca.value = normalizada;
     });
   }
 

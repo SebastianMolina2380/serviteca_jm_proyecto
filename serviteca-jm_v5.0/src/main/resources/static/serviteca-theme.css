@@ -180,7 +180,7 @@ h1, h2, h3, h4, h5, h6,
 .userbox small, .sb-urole,
 .form-label, .fl, label,
 .nav-title, .sb-sec {
-  color: var(--muted) !important;
+  color: var(--muted);
 }
 
 /* ─────────────────────────────────────────
@@ -273,26 +273,29 @@ h1, h2, h3, h4, h5, h6,
 /* ─────────────────────────────────────────
    INPUTS Y FORMULARIOS
 ───────────────────────────────────────── */
+/* Los colores viven en accesibilidad.css (tokens --jm-field-*).
+   Esta capa solo aporta la forma base; las variantes de cada
+   vista se declaran con mayor especificidad y sin "!important". */
 input, select, textarea,
 .form-control, .fc,
 .field input, .field select, .field textarea {
-  background: #141414 !important;
-  border: 1px solid var(--line) !important;
-  color: var(--white) !important;
-  border-radius: 10px !important;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  background: var(--jm-field-bg, #FFFFFF);
+  border: 1px solid var(--jm-field-border, #C9C2B2);
+  color: var(--jm-field-fg, #1F2A24);
+  border-radius: 10px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: #555555 !important;
+  color: var(--jm-field-placeholder, #5A6A5F);
+  opacity: 1;
 }
 
 input:focus, select:focus, textarea:focus,
 .form-control:focus, .fc:focus {
-  border-color: var(--jm-verde) !important;
-  box-shadow: 0 0 0 3px rgba(27, 138, 46, 0.2) !important;
-  outline: none !important;
+  border-color: var(--jm-field-focus-border, #1B4A34);
+  box-shadow: 0 0 0 3px var(--jm-field-focus-ring, rgba(27, 74, 52, 0.28));
 }
 
 /* ─────────────────────────────────────────

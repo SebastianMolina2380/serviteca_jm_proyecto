@@ -9,11 +9,19 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Configuration
 @EnableWebSecurity
@@ -38,7 +46,7 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
                                 SessionCreationPolicy.IF_REQUIRED
-                        )
+                        ).sessionFixation(fixation -> fixation.changeSessionId())
                 )
 
                 .authorizeHttpRequests(auth -> auth
@@ -50,8 +58,11 @@ public class SecurityConfig {
                                 "/",
                                 "/index.html",
                                 "/login.html",
+                                "/recuperar.html",
                                 "/login.js",
                                 "/login.css",
+                                "/recuperar.js",
+                                "/recuperar.css",
                                 "/favicon.ico",
 
                                 "/*.css",
@@ -64,7 +75,20 @@ public class SecurityConfig {
                                 "/*.ico",
                                 "/*.json",
 
-                                "/scripts/**"
+                                "/scripts/**",
+
+                                // Monitoreo: la sonda de salud es pública y
+                                // no revela detalles en producción.
+                                "/actuator/health",
+                                "/actuator/health/**",
+                                "/actuator/info",
+
+                                // Documentación OpenAPI. Si springdoc está
+                                // desactivado (prod por defecto) estas rutas
+                                // simplemente responden 404.
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
                         ).permitAll()
 
                         // ==============================
@@ -72,7 +96,9 @@ public class SecurityConfig {
                         // ==============================
                         .requestMatchers(
                                 "/api/auth/login",
-                                "/api/auth/me"
+                                "/api/auth/me",
+                                "/api/auth/password/**",
+                                "/api/contacto"
                         ).permitAll()
 
                         // ==============================
@@ -80,37 +106,45 @@ public class SecurityConfig {
                         // ==============================
                         .requestMatchers(
                                 "/usuarios.html",
-                                "/nuevo-usuario.html"
+                                "/nuevo-usuario.html",
+                                // El resto de Actuator (métricas, env, etc.)
+                                // queda reservado a ADMIN aunque por ahora
+                                // solo se expongan health e info.
+                                "/actuator/**"
                         ).hasRole("ADMIN")
 
                         // ==============================
                         // ADMIN + TÉCNICO
                         // ==============================
                         .requestMatchers(
+                                "/dashboard.html",
                                 "/clientes.html",
                                 "/inventario.html",
-                                "/reportes.html"
+                                "/reportes.html",
+                                "/registrar-pago.html"
                         ).hasAnyRole(
                                 "ADMIN",
                                 "TECNICO"
                         )
 
                         // Facturación: ADMIN/TÉCNICO gestionan; CLIENTE solo consulta sus propias facturas.
-                        .requestMatchers("/facturacion.html").hasAnyRole(
+                        .requestMatchers(
+                                "/facturacion.html",
+                                "/factura_elect_teca_jm.html"
+                        ).hasAnyRole(
                                 "ADMIN", "TECNICO", "CLIENTE"
                         )
-                        .requestMatchers("/registrar-pago.html").hasAnyRole("ADMIN", "TECNICO")
 
                         // ==============================
                         // ADMIN + TÉCNICO + CLIENTE
                         // ==============================
                         .requestMatchers(
-                                "/dashboard.html",
                                 "/citas.html",
                                 "/nueva-cita.html",
                                 "/vehiculo.html",
                                 "/vehiculo",
-                                "/nuevo-vehiculo"
+                                "/nuevo-vehiculo",
+                                "/nuevo-vehiculo.html"
                         ).hasAnyRole(
                                 "ADMIN",
                                 "TECNICO",
@@ -132,11 +166,27 @@ public class SecurityConfig {
 
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint((request, response, exception) -> {
+                            /* Navegación del navegador -> login con retorno.
+                               Llamadas de API/fetch -> JSON 401 de siempre. */
+                            if (esNavegacionHtml(request)) {
+                                String destino = request.getRequestURI();
+                                response.sendRedirect(
+                                        "/login.html?next="
+                                                + URLEncoder.encode(destino, StandardCharsets.UTF_8)
+                                );
+                                return;
+                            }
                             response.setStatus(401);
                             response.setContentType("application/json;charset=UTF-8");
                             response.getWriter().write("{\"status\":401,\"error\":\"Unauthorized\",\"message\":\"Autenticación requerida.\"}");
                         })
                         .accessDeniedHandler((request, response, exception) -> {
+                            /* Un cliente que abre una página de staff vuelve a su
+                               portal en lugar de ver un 403 sin salida. */
+                            if (esNavegacionHtml(request)) {
+                                response.sendRedirect(inicioDelRolActual());
+                                return;
+                            }
                             response.setStatus(403);
                             response.setContentType("application/json;charset=UTF-8");
                             response.getWriter().write("{\"status\":403,\"error\":\"Forbidden\",\"message\":\"No tiene permisos para esta operación.\"}");
@@ -155,6 +205,32 @@ public class SecurityConfig {
                 );
 
         return http.build();
+    }
+
+    /**
+     * true solo para navegaciones GET del navegador. Las llamadas
+     * fetch/XHR (Accept: *&#47;* o application/json) siguen recibiendo
+     * respuestas JSON 401/403, que es lo que espera api.js y la app móvil.
+     */
+    private static boolean esNavegacionHtml(HttpServletRequest request) {
+        if (!"GET".equalsIgnoreCase(request.getMethod())) {
+            return false;
+        }
+        String accept = request.getHeader("Accept");
+        return accept != null && accept.contains("text/html");
+    }
+
+    /** Página de inicio que corresponde al rol autenticado. */
+    private static String inicioDelRolActual() {
+        Authentication autenticacion =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        boolean esCliente = autenticacion != null
+                && autenticacion.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .anyMatch("ROLE_CLIENTE"::equals);
+
+        return esCliente ? "/portal-cliente.html" : "/dashboard.html";
     }
 
     @Bean

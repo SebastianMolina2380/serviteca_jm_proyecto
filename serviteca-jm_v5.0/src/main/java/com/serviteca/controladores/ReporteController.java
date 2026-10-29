@@ -1,44 +1,52 @@
 package com.serviteca.controladores;
 
-import com.serviteca.modelos.Cita;
-import com.serviteca.modelos.Servicio;
-import com.serviteca.repository.CitaRepository;
-import com.serviteca.repository.ServicioRepository;
+import com.serviteca.DTOs.ReporteResumen;
+import com.serviteca.servicios.ReporteExportService;
+import com.serviteca.servicios.ReporteService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reportes")
 @RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('ADMIN','TECNICO')")
 public class ReporteController {
-    private final CitaRepository citaRepository;
-    private final ServicioRepository servicioRepository;
+
+    private final ReporteService reporteService;
+    private final ReporteExportService reporteExportService;
 
     @GetMapping
-    public Map<String,Object> resumen(
-        @RequestParam(required=false) LocalDate desde,
-        @RequestParam(required=false) LocalDate hasta){
-        var citas=citaRepository.findAll().stream()
-            .filter(c->desde==null||!c.getFecha().isBefore(desde))
-            .filter(c->hasta==null||!c.getFecha().isAfter(hasta)).toList();
-        var servicios=servicioRepository.findAll().stream()
-            .filter(s->s.getFechaServicio()==null ||
-                (desde==null||!s.getFechaServicio().toLocalDate().isBefore(desde)) &&
-                (hasta==null||!s.getFechaServicio().toLocalDate().isAfter(hasta))).toList();
-        BigDecimal ingresos=servicios.stream().filter(s->s.getEstado()==Servicio.Estado.COMPLETADO)
-            .map(Servicio::getPrecio).filter(java.util.Objects::nonNull)
-            .reduce(BigDecimal.ZERO,BigDecimal::add);
-        Map<String,Object> r=new LinkedHashMap<>();
-        r.put("citas",citas);r.put("totalCitas",citas.size());
-        r.put("servicios",servicios);r.put("totalServicios",servicios.size());
-        r.put("ingresosServiciosCompletados",ingresos);
-        return r;
+    public ReporteResumen resumen(
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
+        return reporteService.resumen(desde, hasta);
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<byte[]> exportar(
+            @RequestParam(defaultValue = "csv") String formato,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
+
+        ReporteResumen resumen = reporteService.resumen(desde, hasta);
+        ReporteExportService.Exportacion exportacion =
+                reporteExportService.generar(resumen, formato);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + exportacion.nombreArchivo() + "\"")
+                .contentType(MediaType.parseMediaType(exportacion.contentType()))
+                .body(exportacion.contenido());
     }
 }

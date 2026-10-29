@@ -24,6 +24,8 @@ target/
 # --- Entornos y secretos ---
 .env
 .env.*
+# La plantilla sí se versiona; solo los .env reales quedan fuera.
+!.env.example
 *.pem
 *.keystore
 

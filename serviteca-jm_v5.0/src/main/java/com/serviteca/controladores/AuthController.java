@@ -1,31 +1,42 @@
 package com.serviteca.controladores;
 
+import com.serviteca.config.LoginRateLimiter;
 import com.serviteca.modelos.Usuario;
 import com.serviteca.repository.UsuarioRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.*;
-import org.springframework.security.authentication.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.*;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
+    private static final Set<String> ROLES_VALIDOS = Set.of("ADMIN", "TECNICO", "CLIENTE");
+    private static final String CREDENCIALES_INVALIDAS =
+            "Correo, contraseña o rol incorrectos.";
+
     private final AuthenticationManager authenticationManager;
     private final UsuarioRepository usuarioRepository;
     private final SecurityContextRepository securityContextRepository;
+    private final LoginRateLimiter loginRateLimiter;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body,
@@ -34,89 +45,118 @@ public class AuthController {
 
         String correo = body.getOrDefault("correo", "").trim();
         String contrasena = body.getOrDefault("contrasena", "");
-
-        // 1. Normalizar el rol recibido del frontend a MAYÚSCULAS
         String rolSeleccionado = body.get("rol") == null
                 ? ""
-                : body.get("rol").trim().toUpperCase();
+                : body.get("rol").trim().toUpperCase(Locale.ROOT);
 
-        // 2. Validar campos obligatorios
         if (correo.isBlank() || contrasena.isBlank() || rolSeleccionado.isBlank()) {
             return ResponseEntity.badRequest().body(Map.of(
                     "error", "Correo, contraseña y rol son obligatorios."
             ));
         }
 
-        // 3. Buscar el usuario en la BD
-        Usuario u = usuarioRepository.findByCorreo(correo).orElse(null);
-
-        // 4. Validar existencia del usuario y coincidencia de rol (normalizado)
-        if (u == null || u.getRol() == null || !u.getRol().name().equals(rolSeleccionado)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
-                    "error", "El correo no pertenece al rol seleccionado o credenciales inválidas."
+        if (!ROLES_VALIDOS.contains(rolSeleccionado)) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "El rol indicado no es válido."
             ));
         }
 
-        // 5. Validar estado del usuario
-        if (u.getEstado() == Usuario.Estado.INACTIVO) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
-                    "error", "El usuario está inactivo."
-            ));
+        String ip = request.getRemoteAddr();
+        long bloqueoSegundos = loginRateLimiter.remainingBlockSeconds(ip, correo);
+        if (bloqueoSegundos > 0) {
+            SecurityContextHolder.clearContext();
+            long minutos = Math.max(1, (bloqueoSegundos + 59) / 60);
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .header(HttpHeaders.RETRY_AFTER, Long.toString(bloqueoSegundos))
+                    .body(Map.of(
+                            "error", "Demasiados intentos fallidos. Intente de nuevo en "
+                                    + minutos + " minuto(s)."
+                    ));
         }
 
         try {
-            // 6. Autenticar credenciales
-            Authentication a = authenticationManager.authenticate(
+            // Se validan primero las credenciales. El rol se comprueba después
+            // para no revelar si el correo existe o a qué rol pertenece.
+            Authentication authentication = authenticationManager.authenticate(
                     UsernamePasswordAuthenticationToken.unauthenticated(correo, contrasena)
             );
 
+            Usuario usuario = usuarioRepository.findByCorreo(correo).orElse(null);
+            if (usuario == null
+                    || usuario.getRol() == null
+                    || !usuario.getRol().name().equals(rolSeleccionado)
+                    || usuario.getEstado() == Usuario.Estado.INACTIVO) {
+                loginRateLimiter.registerFailure(ip, correo);
+                SecurityContextHolder.clearContext();
+                return credencialesInvalidas();
+            }
+
             SecurityContext context = SecurityContextHolder.createEmptyContext();
-            context.setAuthentication(a);
+            context.setAuthentication(authentication);
             SecurityContextHolder.setContext(context);
 
-            // 7. Persistir la sesión HTTP
-            HttpSession session = request.getSession(true);
+            // Rotación del ID de sesión para impedir session fixation.
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                request.changeSessionId();
+            } else {
+                request.getSession(true);
+            }
+
             securityContextRepository.saveContext(context, request, response);
 
-            u.setUltimoAcceso(LocalDateTime.now());
-            usuarioRepository.save(u);
+            usuario.setUltimoAcceso(LocalDateTime.now());
+            usuarioRepository.save(usuario);
+            loginRateLimiter.registerSuccess(ip, correo);
 
             return ResponseEntity.ok(Map.of(
-                    "idUsuario", u.getIdUsuario(),
-                    "nombre", u.getNombre(),
-                    "correo", u.getCorreo(),
-                    "rol", u.getRol().name(),
-                    "tipoDocumento", u.getTipoDocumento() == null ? "" : u.getTipoDocumento(),
-                    "estado", u.getEstado().name()
+                    "idUsuario", usuario.getIdUsuario(),
+                    "nombre", usuario.getNombre(),
+                    "correo", usuario.getCorreo(),
+                    "rol", usuario.getRol().name(),
+                    "tipoDocumento", usuario.getTipoDocumento() == null ? "" : usuario.getTipoDocumento(),
+                    "estado", usuario.getEstado().name()
             ));
 
         } catch (AuthenticationException ex) {
+            loginRateLimiter.registerFailure(ip, correo);
             SecurityContextHolder.clearContext();
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
-                    "error", "Correo, contraseña o rol incorrectos."
-            ));
+            return credencialesInvalidas();
         }
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> me(Authentication authentication) {
+    public ResponseEntity<?> me(Authentication authentication, HttpServletRequest request) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
                     "error", "Sesión no iniciada."
             ));
         }
 
-        return usuarioRepository.findByCorreo(authentication.getName())
-                .map(u -> ResponseEntity.ok(Map.of(
-                        "idUsuario", u.getIdUsuario(),
-                        "nombre", u.getNombre(),
-                        "correo", u.getCorreo(),
-                        "rol", u.getRol().name(),
-                        "tipoDocumento", u.getTipoDocumento() == null ? "" : u.getTipoDocumento(),
-                        "estado", u.getEstado().name()
-                )))
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
-                        "error", "Usuario no encontrado."
-                )));
+        Usuario usuario = usuarioRepository.findByCorreo(authentication.getName()).orElse(null);
+        if (usuario == null || usuario.getEstado() == Usuario.Estado.INACTIVO) {
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
+            SecurityContextHolder.clearContext();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "error", "Sesión no válida."
+            ));
+        }
+
+        return ResponseEntity.ok(Map.of(
+                "idUsuario", usuario.getIdUsuario(),
+                "nombre", usuario.getNombre(),
+                "correo", usuario.getCorreo(),
+                "rol", usuario.getRol().name(),
+                "tipoDocumento", usuario.getTipoDocumento() == null ? "" : usuario.getTipoDocumento(),
+                "estado", usuario.getEstado().name()
+        ));
+    }
+
+    private ResponseEntity<Map<String, String>> credencialesInvalidas() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("error", CREDENCIALES_INVALIDAS));
     }
 }

@@ -27,6 +27,7 @@ import {
 
 import Button from '../components/Button';
 import Card from '../components/Card';
+import DatePickerField from '../components/DatePickerField';
 import Input from '../components/Input';
 import Loader, { EmptyState } from '../components/Loader';
 import VehiculoForm from '../components/VehiculoForm';
@@ -363,22 +364,21 @@ export default function SolicitarMantenimientoScreen({ navigation }) {
             {esEmpleado ? '3.' : '2.'} Fecha y hora
           </Text>
 
-          <Input
-            label="Fecha (AAAA-MM-DD)"
-            placeholder="2026-10-05"
+          <DatePickerField
+            label="Fecha"
+            mode="date"
             value={fecha}
-            onChangeText={setFecha}
-            keyboardType="numbers-and-punctuation"
-            maxLength={10}
+            onChange={setFecha}
+            placeholder="Selecciona una fecha"
+            minimumDate={new Date(new Date().setHours(0, 0, 0, 0))}
           />
 
-          <Input
-            label="Hora (HH:MM)"
-            placeholder="09:30"
+          <DatePickerField
+            label="Hora"
+            mode="time"
             value={hora}
-            onChangeText={setHora}
-            keyboardType="numbers-and-punctuation"
-            maxLength={5}
+            onChange={setHora}
+            placeholder="Selecciona una hora"
           />
 
           {esCliente ? (

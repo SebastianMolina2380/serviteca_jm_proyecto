@@ -46,7 +46,7 @@ textarea {
 input:focus,
 select:focus,
 textarea:focus {
-  border-color: var(--green) !important;
+  border-color: var(--green);
 }
 .btn {
   display: inline-flex;

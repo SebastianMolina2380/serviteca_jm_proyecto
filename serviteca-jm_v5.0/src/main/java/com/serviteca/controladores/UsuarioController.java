@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,8 +50,36 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Integer id,@Valid @RequestBody UsuarioDTOs dto){
+    public ResponseEntity<?> actualizar(@PathVariable Integer id,@Valid @RequestBody UsuarioDTOs dto,
+                                        Authentication authentication){
         return usuarioRepository.findById(id).map(u->{
+            boolean eraAdminActivo = u.getRol() == Usuario.Rol.ADMIN
+                    && u.getEstado() == Usuario.Estado.ACTIVO;
+            boolean seguiraAdminActivo = eraAdminActivo;
+
+            if (dto.getRol() != null) {
+                Usuario.Rol nuevoRol = Usuario.Rol.valueOf(dto.getRol().trim().toUpperCase());
+                seguiraAdminActivo = seguiraAdminActivo && nuevoRol == Usuario.Rol.ADMIN;
+            }
+            if (dto.getEstado() != null) {
+                Usuario.Estado nuevoEstado = Usuario.Estado.valueOf(dto.getEstado().trim().toUpperCase());
+                if (nuevoEstado == Usuario.Estado.INACTIVO) {
+                    if (authentication != null && u.getCorreo() != null
+                            && u.getCorreo().equalsIgnoreCase(authentication.getName())) {
+                        return ResponseEntity.status(HttpStatus.CONFLICT)
+                                .body(Map.of("error", "No puede desactivar su propia cuenta."));
+                    }
+                    seguiraAdminActivo = false;
+                }
+            }
+
+            if (eraAdminActivo && !seguiraAdminActivo
+                    && usuarioRepository.countByRolAndEstado(
+                            Usuario.Rol.ADMIN, Usuario.Estado.ACTIVO) <= 1) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(Map.of("error", "No puede desactivar el último administrador activo."));
+            }
+
             if(dto.getNombre()!=null)u.setNombre(dto.getNombre());
             if(dto.getNumeroDoc()!=null)u.setNumeroDoc(dto.getNumeroDoc());
             if(dto.getCorreo()!=null)u.setCorreo(dto.getCorreo());
@@ -67,8 +96,26 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Integer id){
-        if(!usuarioRepository.existsById(id))return ResponseEntity.notFound().build();
-        usuarioRepository.deleteById(id); return ResponseEntity.noContent().build();
+    public ResponseEntity<?> eliminar(@PathVariable Integer id, Authentication authentication){
+        Usuario objetivo = usuarioRepository.findById(id).orElse(null);
+        if (objetivo == null) return ResponseEntity.notFound().build();
+
+        if (authentication != null && objetivo.getCorreo() != null
+                && objetivo.getCorreo().equalsIgnoreCase(authentication.getName())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "No puede desactivar su propia cuenta."));
+        }
+
+        if (objetivo.getRol() == Usuario.Rol.ADMIN
+                && objetivo.getEstado() == Usuario.Estado.ACTIVO
+                && usuarioRepository.countByRolAndEstado(Usuario.Rol.ADMIN, Usuario.Estado.ACTIVO) <= 1) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "No puede desactivar el último administrador activo."));
+        }
+
+        // Borrado lógico: evita destruir facturas, pagos y trazabilidad asociada.
+        objetivo.setEstado(Usuario.Estado.INACTIVO);
+        usuarioRepository.save(objetivo);
+        return ResponseEntity.noContent().build();
     }
 }

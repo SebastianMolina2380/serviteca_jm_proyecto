@@ -15,6 +15,7 @@ import java.util.List;
 @RequestMapping("/api/inventarios")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
+@PreAuthorize("hasAnyRole('ADMIN','TECNICO')")
 public class InventarioController {
 
     private final InventarioRepository inventarioRepository;

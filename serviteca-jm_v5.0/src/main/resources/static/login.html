@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Serviteca JM - Login</title>
   <link
           href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="serviteca-theme.css">
   <link rel="stylesheet" href="serviteca-premium.css">
+  <link rel="stylesheet" href="accesibilidad.css">
 </head>
 <body>
 <!-- PANTALLA P01: Login / Inicio de Sesión -->
@@ -30,14 +31,14 @@
   </div>
 
   <!-- COMPONENTE: Selector de rol de usuario -->
-  <div class="roles" id="roles">
-    <button type="button" class="role" onclick="setRole('cliente', this)">
+  <div class="roles" id="roles" role="group" aria-label="Tipo de usuario">
+    <button type="button" class="role" aria-pressed="false" onclick="setRole('cliente', this)">
       👤 Cliente
     </button>
-    <button type="button" class="role" onclick="setRole('tecnico', this)">
+    <button type="button" class="role" aria-pressed="false" onclick="setRole('tecnico', this)">
       🔧 Técnico
     </button>
-    <button type="button" class="role active" onclick="setRole('admin', this)">⚙️ Admin</button>
+    <button type="button" class="role" aria-pressed="false" onclick="setRole('admin', this)">⚙️ Admin</button>
   </div>
 
   <form id="loginForm">

@@ -228,7 +228,8 @@ async function deleteCita(id) {
 
 async function getServicios() {
 
-  return request('/servicios');
+  const data = await request('/servicios');
+  return Array.isArray(data) ? data : (data?.content || []);
 }
 
 
@@ -543,7 +544,10 @@ document.addEventListener(
     'DOMContentLoaded',
     () => {
 
-      const user = JSON.parse(
+      /* role-guard.js ya validó /api/auth/me y normalizó el rol.
+         Se usa esa fuente para no competir con la guarda. */
+      const user = (window.JM && window.JM.user) || JSON.parse(
+          localStorage.getItem('servitecaUser') ||
           localStorage.getItem('user') || 'null'
       );
 

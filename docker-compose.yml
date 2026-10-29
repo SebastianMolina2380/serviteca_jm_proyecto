@@ -1,0 +1,95 @@
+# ============================================================
+# SERVITECA JM — POSTGRESQL + APLICACIÓN SPRING BOOT
+# ============================================================
+# Requisitos:
+#   - Docker con Compose v2.
+#   - Archivo .env en esta carpeta (copia .env.example y cambia los
+#     secretos). Compose falla de forma explícita si falta alguno.
+#
+# Uso:
+#   docker compose up -d --build
+#   docker compose ps
+#   docker compose logs -f app
+#   docker compose down          # conserva los datos
+#   docker compose down -v       # elimina también el volumen
+#
+# La base solo se publica en 127.0.0.1 para no exponerla en la red.
+# ============================================================
+
+services:
+
+  db:
+    image: postgres:17-alpine
+    container_name: serviteca-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-DB_PRODISJM}
+      POSTGRES_USER: ${POSTGRES_USER:?Define POSTGRES_USER en .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Define POSTGRES_PASSWORD en .env}
+      TZ: America/Bogota
+      PGTZ: America/Bogota
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - serviteca
+
+  app:
+    build:
+      context: ./serviteca-jm_v5.0
+      dockerfile: Dockerfile
+    image: serviteca-jm:latest
+    container_name: serviteca-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SERVITECA_PROFILE: ${SERVITECA_PROFILE:-prod}
+
+      # Conexión interna: el host es el servicio "db", nunca localhost.
+      SERVITECA_DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-DB_PRODISJM}
+      SERVITECA_DB_USER: ${POSTGRES_USER:?Define POSTGRES_USER en .env}
+      SERVITECA_DB_PASSWORD: ${POSTGRES_PASSWORD:?Define POSTGRES_PASSWORD en .env}
+      SERVITECA_DB_POOL_SIZE: ${SERVITECA_DB_POOL_SIZE:-20}
+
+      SERVITECA_COOKIE_SECURE: ${SERVITECA_COOKIE_SECURE:-false}
+      SERVITECA_API_DOCS: ${SERVITECA_API_DOCS:-false}
+      SERVITECA_APP_URL: ${SERVITECA_APP_URL:-http://localhost:8082}
+      SERVITECA_RESET_MINUTOS: ${SERVITECA_RESET_MINUTOS:-30}
+
+      # Solo se usan si la base está vacía; la contraseña exige 16+.
+      INITIAL_ADMIN_NAME: ${INITIAL_ADMIN_NAME:-}
+      INITIAL_ADMIN_DOCUMENT: ${INITIAL_ADMIN_DOCUMENT:-}
+      INITIAL_ADMIN_DOCUMENT_TYPE: ${INITIAL_ADMIN_DOCUMENT_TYPE:-CC}
+      INITIAL_ADMIN_EMAIL: ${INITIAL_ADMIN_EMAIL:-}
+      INITIAL_ADMIN_PASSWORD: ${INITIAL_ADMIN_PASSWORD:-}
+
+      # SMTP opcional: vacío = los correos se registran en el log.
+      SERVITECA_SMTP_HOST: ${SERVITECA_SMTP_HOST:-}
+      SERVITECA_SMTP_PORT: ${SERVITECA_SMTP_PORT:-587}
+      SERVITECA_SMTP_USER: ${SERVITECA_SMTP_USER:-}
+      SERVITECA_SMTP_PASSWORD: ${SERVITECA_SMTP_PASSWORD:-}
+      SERVITECA_MAIL_FROM: ${SERVITECA_MAIL_FROM:-no-reply@servitecajm.com}
+      SERVITECA_CONTACTO_EMAIL: ${SERVITECA_CONTACTO_EMAIL:-contacto@servitecajm.com}
+
+      JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75 -XX:+UseG1GC -Djava.awt.headless=true -Duser.timezone=America/Bogota}
+    ports:
+      - "${APP_PORT:-8082}:8082"
+    networks:
+      - serviteca
+
+volumes:
+  postgres_data:
+    name: serviteca_postgres_data
+
+networks:
+  serviteca:
+    name: serviteca_network

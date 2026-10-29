@@ -170,3 +170,41 @@
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
 }
+
+/* ==========================================================
+   PAGINACIÓN SERVER-SIDE
+   ========================================================== */
+.clientes-paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.clientes-paginacion span {
+  color: var(--gray1);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.clientes-paginacion .btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .clientes-paginacion {
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .clientes-paginacion .btn {
+    flex: 1;
+  }
+
+  .clientes-paginacion span {
+    flex: 1.2;
+    text-align: center;
+  }
+}
