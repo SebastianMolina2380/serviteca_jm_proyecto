@@ -107,13 +107,13 @@ una ejecución manual con `psql`); en el flujo normal ya no son necesarios.
 | Variable | Obligatoria | Valor por defecto | Descripción |
 |---|---|---|---|
 | `SERVITECA_PROFILE` | No | `dev` | Perfil `dev` o `prod`. |
-| `SERVITECA_DB_URL` | No en `dev` / **Sí en `prod`** | `jdbc:postgresql://localhost:5432/DB_PRODISJM` (solo `dev`) | URL JDBC. |
+| `SERVITECA_DB_URL` | No (en `prod` basta una de las tres formas de conexión) | `jdbc:postgresql://localhost:5432/DB_PRODISJM` (solo `dev`) | URL JDBC. Si la defines, se usa tal cual y `SERVITECA_DB_SSLMODE` se ignora. |
 | `SERVITECA_DB_HOST`<br>`SERVITECA_DB_PORT`<br>`SERVITECA_DB_NAME` | Alternativa a `SERVITECA_DB_URL` en `prod` | — | Si no hay URL, se compone `jdbc:postgresql://HOST:PORT/NAME` (Render Blueprint). |
 | `PGHOST`<br>`PGPORT`<br>`PGDATABASE`<br>`PGUSER`<br>`PGPASSWORD` | Alternativa (Render Postgres) | — | Tercera opción: variables estándar de la base; la app compone la URL. |
-| `SERVITECA_DB_SSLMODE` | No | `prefer` | Modo SSL de la URL compuesta. `require` fuerza TLS (bases externas). |
+| `SERVITECA_DB_SSLMODE` | No | `prefer` | Solo se aplica a la URL que compone la app (`SERVITECA_DB_*` o `PG*`). `require` fuerza TLS (bases externas). Con `SERVITECA_DB_URL`, añade `?sslmode=require` en la propia URL. |
 | `SERVITECA_DB_USER` | No en `dev` / **Sí en `prod`** | `postgres` (solo `dev`) | Usuario de PostgreSQL. |
 | `SERVITECA_DB_PASSWORD` | **Sí** | — | Contraseña de PostgreSQL. |
-| `SERVITECA_DB_POOL_SIZE` | No | `10` en `dev`, `20` en `prod` | Conexiones máximas del pool. |
+| `SERVITECA_DB_POOL_SIZE` | No | `10` en `dev`, `5` en `prod` | Conexiones máximas del pool. |
 | `PORT` | No | `8082` | Puerto HTTP. Render lo inyecta automáticamente (10000). |
 | `SERVITECA_EMISOR_*` | No | Datos de ejemplo | Razón social, NIT, dirección, ciudad, teléfono, correo. |
 | `SERVITECA_SOFTWARE_*` | No | Vacío | Datos del software emisor. |
@@ -628,7 +628,7 @@ eas build -p android --profile preview --local
 | Error de red al compilar el APK | Revisa las variables de entorno del proyecto en Expo/EAS. |
 | Render: **502** o "no open ports detected" | La app no escucha en `$PORT`. No fijes `PORT=8082`; confirma `server.port=${PORT:8082}` y que el servicio escuche en `0.0.0.0`. |
 | Render: health check en `/actuator/health` falla pero la app arranca | Revisa que `SERVITECA_PROFILE=prod` y que la base responde; el endpoint devuelve `503` si la base está caída. |
-| Render: `Could not resolve placeholder 'SERVITECA_DB_HOST'` | Perfil `prod` sin `SERVITECA_DB_URL` ni las variables `SERVITECA_DB_HOST/PORT/NAME` ni `PGHOST/PGPORT/PGDATABASE`. Define una de las tres formas. |
+| Render: `UnknownHostException: ${PGHOST}` (o `${PGPORT}` / `${PGDATABASE}`) | Perfil `prod` sin `SERVITECA_DB_URL`, sin `SERVITECA_DB_HOST/PORT/NAME` y sin `PGHOST/PGPORT/PGDATABASE`. El placeholder anidado queda literal y pgjdbc intenta resolver `${PGHOST}` como host. Define una de las tres formas de conexión. |
 | Render: `password authentication failed` | Usa el usuario y la contraseña de la base de Render, no los de desarrollo. |
 | Render: `Connection refused` al host interno | El servicio y la base están en regiones distintas, o la base free caducó (30 días). |
 | Render: `no pg_hba.conf entry ... no encryption` | Base externa sin SSL: agrega `?sslmode=require` a `SERVITECA_DB_URL`. |

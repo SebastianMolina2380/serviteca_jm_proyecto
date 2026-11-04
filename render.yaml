@@ -67,7 +67,7 @@ services:
           name: serviteca-db
           property: password
       - key: SERVITECA_DB_POOL_SIZE
-        value: "10"
+        value: "5"
 
       # Enlaces de recuperación de contraseña con el dominio real.
       - key: SERVITECA_APP_URL
