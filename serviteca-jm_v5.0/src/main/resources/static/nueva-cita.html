@@ -133,7 +133,7 @@
         </div>
         <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px;">
           <a href="citas.html" class="btn btn-ghost">Cancelar</a>
-          <button type="button" class="btn btn-yellow" onclick="goStep(2)">Continuar →</button>
+          <button type="button" class="btn btn-yellow" id="btn-continuar-cliente" onclick="avanzarDesdePaso1()">Continuar →</button>
         </div>
       </div>
 
@@ -252,7 +252,7 @@
 
         <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px;">
           <button type="button" class="btn btn-ghost" onclick="goStep(1)">← Anterior</button>
-          <button type="button" class="btn btn-yellow" onclick="goStep(3)">Continuar →</button>
+          <button type="button" class="btn btn-yellow" onclick="avanzarDesdePaso2()">Continuar →</button>
         </div>
       </div>
 
@@ -344,7 +344,7 @@
         </div>
         <div style="display: flex; justify-content: flex-end; gap: 10px">
           <button type="button" class="btn btn-ghost" onclick="goStep(3)">← Anterior</button>
-          <button type="button" class="btn btn-yellow" onclick="goStep(5)">✅ Confirmar Cita</button>
+          <button type="button" class="btn btn-yellow" id="btn-confirmar-cita" onclick="confirmarCita()">✅ Confirmar Cita</button>
         </div>
       </div>
 
@@ -354,7 +354,7 @@
         <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.8rem; color: var(--yellow); margin-bottom: 8px; letter-spacing: 1px;">¡CITA REGISTRADA!</h3>
         <p style="color: var(--gray1); font-size: 0.88rem; margin-bottom: 20px;">El cliente recibirá confirmación por WhatsApp y correo electrónico.</p>
         <div style="background: var(--black3); border-radius: 8px; padding: 14px; display: inline-block; font-size: 0.82rem; color: #fff; margin-bottom: 28px;">
-          <strong style="color: var(--green); font-family: 'Oswald', sans-serif;">TKT-0050</strong> · Carlos Mendoza · ABC-123 · Frenos · 20/03/2026 09:00
+          <strong id="cita-ticket" style="color: var(--green); font-family: 'Oswald', sans-serif;">TKT-—</strong> · <span id="cita-confirmada-detalle">Cita guardada</span>
         </div>
         <br />
         <a href="citas.html" class="btn btn-yellow">Ver todas las citas →</a>

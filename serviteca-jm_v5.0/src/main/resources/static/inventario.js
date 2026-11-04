@@ -139,10 +139,12 @@ let invFocoPrevio = null;
 let invCats = [];
 async function cargarCategorias() {
   if (!invSelectCat) return;
+  invSelectCat.disabled = true;
+  invSelectCat.innerHTML = '<option value="">Cargando categorías…</option>';
   try {
     const r = await fetch("/api/productos/catalogo", { headers: inventoryHeaders(), credentials: "same-origin" });
     const data = await r.json().catch(() => []);
-    if (!r.ok || !Array.isArray(data)) return;
+    if (!r.ok || !Array.isArray(data)) throw new Error("No se pudo cargar el catálogo de productos.");
     const visto = new Set();
     invCats = data
       .filter((p) => p && p.idProducto != null)
@@ -155,24 +157,31 @@ async function cargarCategorias() {
         id: Number(p.idProducto),
         nombre: String(p.descripcionProducto || p.nombreProducto).trim(),
       }));
-    /* Se conserva la opcion vacia inicial. */
-    invSelectCat.querySelectorAll("option:not([value=''])").forEach((o) => o.remove());
+    invSelectCat.innerHTML = '<option value="">- Seleccione categoría -</option>';
     invCats.forEach((c) => {
       const o = document.createElement("option");
       o.value = String(c.id);
       o.textContent = c.nombre;
       invSelectCat.appendChild(o);
     });
+    if (!invCats.length) {
+      invSelectCat.innerHTML = '<option value="">No hay categorías registradas</option>';
+    }
+    invSelectCat.disabled = invCats.length === 0;
   } catch (e) {
-    /* Sin catalogo la categoria queda libre para elegir manualmente. */
+    invSelectCat.innerHTML = '<option value="">No se pudieron cargar las categorías</option>';
+    invSelectCat.disabled = true;
+    throw e;
   }
 }
 
-function abrirModal() {
+async function abrirModal() {
   if (!invModal) return;
   invFocoPrevio = document.activeElement;
   invModal.hidden = false;
   document.body.style.overflow = "hidden";
+  try { await cargarCategorias(); }
+  catch (e) { alert(e.message); }
   const primero = document.getElementById("inv-nombre");
   if (primero) primero.focus();
 }

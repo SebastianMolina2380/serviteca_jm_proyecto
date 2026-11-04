@@ -14,11 +14,5 @@ function instalarPasswordUI(){
     meter.textContent=input.value?`Contraseña ${x.nivel}`:"Escribe una contraseña.";
     meter.className=`password-strength ${x.clase}`;
   });
-  document.addEventListener("click",e=>{
-    const b=e.target.closest("[data-toggle-password]"); if(!b)return;
-    const input=document.querySelector(b.dataset.togglePassword); if(!input)return;
-    input.type=input.type==="password"?"text":"password";
-    b.textContent=input.type==="password"?"👁":"🙈";
-  });
 }
 document.addEventListener("DOMContentLoaded",instalarPasswordUI);

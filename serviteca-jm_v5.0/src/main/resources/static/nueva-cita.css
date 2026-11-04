@@ -967,5 +967,13 @@ tr:hover td {
   .card *,
   .step-content * {
     max-width: 100%;
+
+    /* Agrega o ajusta esta regla en tus estilos para los textos de resumen del Paso 4 */
+    #paso-4 .resumen-valor,
+    .confirmation-details span,
+    .resumen-container p {
+      color: #1a202c !important; /* Color oscuro bien legible */
+      font-weight: 500;
+    }
   }
 }

@@ -55,15 +55,17 @@
   }
 
   function bindPasswordButtons() {
-    document.querySelectorAll("[data-toggle-password]").forEach(button => {
-      button.addEventListener("click", () => {
-        const input = document.querySelector(button.dataset.togglePassword);
-        if (!input) return;
-        const visible = input.type === "password";
-        input.type = visible ? "text" : "password";
-        button.textContent = visible ? "🙈" : "👁";
-        button.setAttribute("aria-label", visible ? "Ocultar contraseña" : "Mostrar contraseña");
-      });
+    // Delegación única: evita que un segundo listener vuelva a alternar
+    // el tipo en el mismo clic (y deje el campo como estaba).
+    document.addEventListener("click", event => {
+      const button = event.target.closest("[data-toggle-password]");
+      if (!button) return;
+      const input = document.querySelector(button.getAttribute("data-toggle-password"));
+      if (!input) return;
+      const visible = input.getAttribute("type") === "password";
+      input.setAttribute("type", visible ? "text" : "password");
+      button.textContent = visible ? "🙈" : "👁";
+      button.setAttribute("aria-label", visible ? "Ocultar contraseña" : "Mostrar contraseña");
     });
   }
 
