@@ -108,9 +108,13 @@ una ejecución manual con `psql`); en el flujo normal ya no son necesarios.
 |---|---|---|---|
 | `SERVITECA_PROFILE` | No | `dev` | Perfil `dev` o `prod`. |
 | `SERVITECA_DB_URL` | No en `dev` / **Sí en `prod`** | `jdbc:postgresql://localhost:5432/DB_PRODISJM` (solo `dev`) | URL JDBC. |
+| `SERVITECA_DB_HOST`<br>`SERVITECA_DB_PORT`<br>`SERVITECA_DB_NAME` | Alternativa a `SERVITECA_DB_URL` en `prod` | — | Si no hay URL, se compone `jdbc:postgresql://HOST:PORT/NAME` (Render Blueprint). |
+| `PGHOST`<br>`PGPORT`<br>`PGDATABASE`<br>`PGUSER`<br>`PGPASSWORD` | Alternativa (Render Postgres) | — | Tercera opción: variables estándar de la base; la app compone la URL. |
+| `SERVITECA_DB_SSLMODE` | No | `prefer` | Modo SSL de la URL compuesta. `require` fuerza TLS (bases externas). |
 | `SERVITECA_DB_USER` | No en `dev` / **Sí en `prod`** | `postgres` (solo `dev`) | Usuario de PostgreSQL. |
 | `SERVITECA_DB_PASSWORD` | **Sí** | — | Contraseña de PostgreSQL. |
 | `SERVITECA_DB_POOL_SIZE` | No | `10` en `dev`, `20` en `prod` | Conexiones máximas del pool. |
+| `PORT` | No | `8082` | Puerto HTTP. Render lo inyecta automáticamente (10000). |
 | `SERVITECA_EMISOR_*` | No | Datos de ejemplo | Razón social, NIT, dirección, ciudad, teléfono, correo. |
 | `SERVITECA_SOFTWARE_*` | No | Vacío | Datos del software emisor. |
 | `SERVITECA_RESPONSABILIDADES_FISCALES` | No | Ejemplo | Responsabilidades tributarias. |
@@ -337,6 +341,8 @@ dentro de la base o recrea el volumen.
 - [ ] Programar copias de seguridad de PostgreSQL.
 - [ ] Verificar `/actuator/health`.
 - [ ] Probar login, una cita, un documento de venta y un reporte.
+- [ ] En Render: dejar que la plataforma defina `PORT` y usar
+      `/actuator/health` como *Health Check Path* (§6.5).
 
 ### 6.2 HTTPS con proxy inverso
 
@@ -396,6 +402,118 @@ Get-Content respaldo.sql | docker compose exec -T db psql -U postgres -d DB_PROD
 
 Programa el respaldo fuera del horario de atención y prueba la restauración al
 menos una vez al mes.
+
+### 6.5 Despliegue en Render
+
+Render ejecuta el `Dockerfile` multietapa del backend y termina TLS en su
+balanceador. La app ya escucha en `$PORT` (Render inyecta `10000`), así que no
+hay que tocar código para desplegar.
+
+**Requisitos**
+
+- Repositorio en GitHub con `render.yaml` y `serviteca-jm_v5.0/Dockerfile`.
+- Cuenta en Render (el plan `free` sirve para pruebas).
+
+#### Opción A — Blueprint (recomendado)
+
+El archivo `render.yaml` de la raíz crea el servicio web, la base PostgreSQL 17
+y todas las variables de conexión.
+
+1. Haz commit y push de `render.yaml`.
+2. Render Dashboard → **New** → **Blueprint** → conecta el repositorio.
+3. Render pide los valores de `INITIAL_ADMIN_*` (marcados `sync: false`).
+   - `INITIAL_ADMIN_PASSWORD` debe tener **16 caracteres o más**.
+4. **Apply**: se crean la base y el servicio, y arranca el primer build
+   (5–10 minutos).
+5. Al terminar, abre la URL `https://<servicio>.onrender.com`.
+
+> Solo se permite **una** base Postgres `free` por workspace. Si ya tienes una,
+> borra el bloque `databases` del `render.yaml` y define la conexión a mano
+> (Opción B).
+
+#### Opción B — Configuración manual
+
+1. **New → Postgres**: nombre `serviteca-db`, misma región que el servicio,
+   plan `free`, PostgreSQL 17.
+2. **New → Web Service** → repositorio → **Runtime: Docker**.
+   - *Dockerfile Path*: `./serviteca-jm_v5.0/Dockerfile`
+   - *Docker Build Context Directory*: `./serviteca-jm_v5.0`
+   - *Health Check Path*: `/actuator/health`
+3. En **Environment** define las variables de la tabla siguiente.
+4. **Create Web Service**.
+
+#### Variables de entorno
+
+| Variable | Valor |
+|---|---|
+| `SERVITECA_PROFILE` | `prod` |
+| `SERVITECA_DB_URL` | `jdbc:postgresql://<host-interno>:5432/serviteca_jm` |
+| `SERVITECA_DB_USER` | `serviteca` (el usuario de la base) |
+| `SERVITECA_DB_PASSWORD` | La contraseña que muestra Render |
+| `SERVITECA_COOKIE_SECURE` | `true` |
+| `SERVITECA_API_DOCS` | `false` |
+| `SERVITECA_APP_URL` | `https://<servicio>.onrender.com` |
+| `SERVITECA_DB_POOL_SIZE` | `10` (plan free) |
+| `INITIAL_ADMIN_NAME`<br>`INITIAL_ADMIN_DOCUMENT`<br>`INITIAL_ADMIN_EMAIL`<br>`INITIAL_ADMIN_PASSWORD` | Solo en el primer arranque con la base vacía |
+
+> `PORT` lo define Render: **no la sobrescribas**. Si la fijas en `8082`, el
+> enrutador seguirá esperando `10000` y verás errores 502.
+
+> La **Internal Database URL** de Render tiene la forma
+> `postgresql://usuario:clave@host/base`, que **no** es una URL JDBC. Usa los
+> campos *Hostname*, *Port*, *Database*, *Username* y *Password* para armar
+> `SERVITECA_DB_URL`, o define `SERVITECA_DB_HOST`, `SERVITECA_DB_PORT`,
+> `SERVITECA_DB_NAME`, `SERVITECA_DB_USER` y `SERVITECA_DB_PASSWORD` por
+> separado (la app compone la URL). También se aceptan las variables estándar
+> `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER` y `PGPASSWORD`.
+
+> Si conectas una base **externa** (Neon, Supabase, RDS), añade
+> `?sslmode=require` a la URL JDBC. La conexión interna de Render no necesita
+> SSL.
+
+#### Verificación
+
+```powershell
+# 1. Salud: debe devolver {"status":"UP"}
+curl.exe https://<servicio>.onrender.com/actuator/health
+
+# 2. Login web
+Start-Process https://<servicio>.onrender.com/login.html
+
+# 3. Logs del deploy: busca "Successfully applied N migrations" y
+#    "Started ServitecaJmApplication"
+```
+
+En el Dashboard → **Logs** confirma que Flyway aplicó las migraciones y que no
+hay `Connection refused`, `password authentication failed` ni
+`Could not resolve placeholder`.
+
+#### Límites del plan free
+
+- El servicio se suspende tras **15 minutos sin tráfico**; el siguiente acceso
+  tarda ~1 minuto en arrancar.
+- La base gratuita **caduca a los 30 días** (14 días de gracia) y tiene 1 GB,
+  sin copias de seguridad. Solo se permite **una** base free por workspace.
+- Los puertos SMTP `25`, `465` y `587` están bloqueados: el correo de
+  recuperación no sale por SMTP en free. Usa un proveedor por HTTPS (API) o
+  pasa a un plan pago.
+- El disco es efímero: no guardes archivos en el contenedor; todo va a
+  PostgreSQL.
+
+#### CORS
+
+No hace falta configurar CORS: el frontend (`static/`) se sirve desde el mismo
+origen que la API y el `fetch` usa `credentials: "same-origin"`. La app móvil
+tampoco está sujeta a CORS porque no es un navegador. Solo necesitarías CORS si
+publicaras el frontend en **otro dominio** distinto al del backend.
+
+#### App móvil
+
+```env
+EXPO_PUBLIC_API_URL=https://<servicio>.onrender.com/api
+```
+
+Compila el APK con esa URL (ver §7.2). No incluyas `/` al final.
 
 ---
 
@@ -508,6 +626,13 @@ eas build -p android --profile preview --local
 | `Expected app version ... native version` en Expo Go | Ejecuta `npx expo install --fix` y reinicia `npx expo start -c`. |
 | El APK no conecta | Reconfigura `EXPO_PUBLIC_API_URL`, vuelve a compilar y verifica que el backend sea accesible desde internet o la red del celular. |
 | Error de red al compilar el APK | Revisa las variables de entorno del proyecto en Expo/EAS. |
+| Render: **502** o "no open ports detected" | La app no escucha en `$PORT`. No fijes `PORT=8082`; confirma `server.port=${PORT:8082}` y que el servicio escuche en `0.0.0.0`. |
+| Render: health check en `/actuator/health` falla pero la app arranca | Revisa que `SERVITECA_PROFILE=prod` y que la base responde; el endpoint devuelve `503` si la base está caída. |
+| Render: `Could not resolve placeholder 'SERVITECA_DB_HOST'` | Perfil `prod` sin `SERVITECA_DB_URL` ni las variables `SERVITECA_DB_HOST/PORT/NAME` ni `PGHOST/PGPORT/PGDATABASE`. Define una de las tres formas. |
+| Render: `password authentication failed` | Usa el usuario y la contraseña de la base de Render, no los de desarrollo. |
+| Render: `Connection refused` al host interno | El servicio y la base están en regiones distintas, o la base free caducó (30 días). |
+| Render: `no pg_hba.conf entry ... no encryption` | Base externa sin SSL: agrega `?sslmode=require` a `SERVITECA_DB_URL`. |
+| Render: el correo de recuperación no llega en free | Los puertos SMTP 25/465/587 están bloqueados en el plan free; usa un proveedor por HTTPS o un plan pago. |
 
 ---
 
