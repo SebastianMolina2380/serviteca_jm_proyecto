@@ -18,7 +18,7 @@ Software (ADSO)** del SENA, ficha 3171149-B.
 |---|---|
 | [`docs/MANUAL_TECNICO.md`](docs/MANUAL_TECNICO.md) | Arquitectura, modelo de datos, API, seguridad, accesibilidad y app móvil. |
 | [`docs/MANUAL_USUARIO.md`](docs/MANUAL_USUARIO.md) | Uso del sistema por rol, app móvil y preguntas frecuentes. |
-| [`docs/GUIA_DESPLIEGUE.md`](docs/GUIA_DESPLIEGUE.md) | Instalación, variables de entorno, Docker, producción y APK. |
+| [`docs/GUIA_DESPLIEGUE.md`](docs/GUIA_DESPLIEGUE.md) | Instalación, variables de entorno, Docker, producción, Render y APK. |
 
 ---
 
@@ -169,7 +169,9 @@ de credenciales históricas.
   presentarse como factura electrónica validada.
 
 Las condiciones de producción y los riesgos pendientes están detallados en la
-[guía de despliegue](docs/GUIA_DESPLIEGUE.md#6-producción).
+[guía de despliegue](docs/GUIA_DESPLIEGUE.md#6-producción), incluido el
+[despliegue en Render](docs/GUIA_DESPLIEGUE.md#65-despliegue-en-render) con el
+`render.yaml` incluido.
 
 ---
 

@@ -1,0 +1,97 @@
+# ============================================================
+# RENDER BLUEPRINT — SERVITECA JM (PRODISJM)
+# ============================================================
+# Crea de una sola vez:
+#   - El servicio web Docker (Spring Boot) a partir del Dockerfile
+#     multietapa de ./serviteca-jm_v5.0.
+#   - Una base PostgreSQL 17 gratuita en la misma región.
+#   - Las variables de entorno que conectan ambos recursos.
+#
+# Uso:
+#   1. Sube este archivo a la raíz del repositorio (rama main).
+#   2. Render Dashboard -> New -> Blueprint -> elige el repositorio.
+#   3. Render pide los valores marcados con `sync: false`
+#      (INITIAL_ADMIN_*). Rellénalos y aplica el Blueprint.
+#
+# Si prefieres una base externa (Neon, Supabase, RDS...) borra el
+# bloque `databases` y define a mano en el Dashboard:
+#   SERVITECA_DB_URL=jdbc:postgresql://host:5432/base?sslmode=require
+#   SERVITECA_DB_USER / SERVITECA_DB_PASSWORD
+# ============================================================
+
+services:
+  - type: web
+    name: serviteca-jm
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerContext: ./serviteca-jm_v5.0
+    dockerfilePath: ./serviteca-jm_v5.0/Dockerfile
+    healthCheckPath: /actuator/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: SERVITECA_PROFILE
+        value: prod
+
+      # Render termina TLS en el balanceador y la app recibe HTTP:
+      # la cookie de sesión debe marcarse Secure igualmente.
+      - key: SERVITECA_COOKIE_SECURE
+        value: "true"
+      - key: SERVITECA_API_DOCS
+        value: "false"
+
+      # En el plan free (512 MB) conviene un heap menor y SerialGC.
+      - key: JAVA_OPTS
+        value: "-XX:MaxRAMPercentage=60 -XX:+UseSerialGC -Djava.awt.headless=true -Duser.timezone=America/Bogota"
+
+      # Conexión a la base creada abajo. Render inyecta cada dato
+      # por separado; application-prod.properties compone la URL JDBC.
+      - key: SERVITECA_DB_HOST
+        fromDatabase:
+          name: serviteca-db
+          property: host
+      - key: SERVITECA_DB_PORT
+        fromDatabase:
+          name: serviteca-db
+          property: port
+      - key: SERVITECA_DB_NAME
+        fromDatabase:
+          name: serviteca-db
+          property: database
+      - key: SERVITECA_DB_USER
+        fromDatabase:
+          name: serviteca-db
+          property: user
+      - key: SERVITECA_DB_PASSWORD
+        fromDatabase:
+          name: serviteca-db
+          property: password
+      - key: SERVITECA_DB_POOL_SIZE
+        value: "10"
+
+      # Enlaces de recuperación de contraseña con el dominio real.
+      - key: SERVITECA_APP_URL
+        fromService:
+          name: serviteca-jm
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+
+      # Administrador inicial: solo se crea si la tabla usuario está
+      # vacía. Render los pedirá al aplicar el Blueprint. Retíralos
+      # después del primer acceso.
+      - key: INITIAL_ADMIN_NAME
+        sync: false
+      - key: INITIAL_ADMIN_DOCUMENT
+        sync: false
+      - key: INITIAL_ADMIN_EMAIL
+        sync: false
+      - key: INITIAL_ADMIN_PASSWORD
+        sync: false
+
+databases:
+  - name: serviteca-db
+    plan: free
+    region: oregon
+    postgresMajorVersion: "17"
+    databaseName: serviteca_jm
+    user: serviteca

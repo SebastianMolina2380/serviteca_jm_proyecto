@@ -8,7 +8,8 @@
 # Construcción (desde la raíz del repositorio):
 #   docker build -t serviteca-jm ./serviteca-jm_v5.0
 #
-# La aplicación escucha en 8082 y arranca con el perfil prod.
+# La aplicación escucha en el puerto que indique PORT (8082 por
+# defecto). Render y otros PaaS definen PORT automáticamente.
 # ============================================================
 
 # ── ETAPA 1: COMPILACIÓN ────────────────────────────────────
@@ -36,6 +37,7 @@ RUN chown -R serviteca:serviteca /app
 
 USER serviteca
 
+# Solo informativo: el puerto real lo decide la variable PORT.
 EXPOSE 8082
 
 # Ajustes de JVM conservadores para contenedores pequeños; se pueden
@@ -43,7 +45,8 @@ EXPOSE 8082
 ENV JAVA_OPTS="-XX:MaxRAMPercentage=75 -XX:+UseG1GC -Djava.awt.headless=true -Duser.timezone=America/Bogota"
 
 # El endpoint de salud es público y no expone detalles en prod.
+# Se interpola PORT para que el healthcheck siga al puerto real.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
-    CMD wget -qO- http://127.0.0.1:8082/actuator/health >/dev/null || exit 1
+    CMD wget -qO- "http://127.0.0.1:${PORT:-8082}/actuator/health" >/dev/null || exit 1
 
 ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar /app/app.jar"]
