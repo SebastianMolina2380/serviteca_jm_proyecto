@@ -29,8 +29,10 @@
 		<!-- Pruebas de caja negra (Selenium) y cobertura (JaCoCo). -->
 		<selenium.version>4.27.0</selenium.version>
 		<jacoco.version>0.8.12</jacoco.version>
-		<sonar.maven.plugin.version>3.11.0.3922</sonar.maven.plugin.version>
+		<sonar.maven.plugin.version>4.0.0.4121</sonar.maven.plugin.version>
 		<serviteca.e2e.url>http://localhost:8082</serviteca.e2e.url>
+
+
 
 		<!-- ── PROPIEDADES DE SONARQUBE Y JACOCO ────────────────── -->
 		<sonar.host.url>http://localhost:9000</sonar.host.url>
@@ -210,9 +212,6 @@
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
 				<version>${sonar.maven.plugin.version}</version>
-
-
-
 			</plugin>
 		</plugins>
 	</build>
@@ -221,28 +220,30 @@
 		<profile>
 			<id>e2e</id>
 			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-failsafe-plugin</artifactId>
-						<configuration>
-							<includes>
-								<include>**/e2e/*E2ETest.java</include>
-							</includes>
-							<systemPropertyVariables>
-								<serviteca.e2e.url>${serviteca.e2e.url}</serviteca.e2e.url>
-							</systemPropertyVariables>
-						</configuration>
-						<executions>
-							<execution>
-								<goals>
-									<goal>integration-test</goal>
-									<goal>verify</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-failsafe-plugin</artifactId>
+							<configuration>
+								<includes>
+									<include>**/e2e/*E2ETest.java</include>
+								</includes>
+								<systemPropertyVariables>
+									<serviteca.e2e.url>${serviteca.e2e.url}</serviteca.e2e.url>
+								</systemPropertyVariables>
+							</configuration>
+							<executions>
+								<execution>
+									<goals>
+										<goal>integration-test</goal>
+										<goal>verify</goal>
+									</goals>
+								</execution>
+							</executions>
+						</plugin>
+					</plugins>
+				</pluginManagement>
 			</build>
 		</profile>
 	</profiles>
