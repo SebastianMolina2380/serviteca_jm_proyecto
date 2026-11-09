@@ -1,0 +1,76 @@
+# ============================================================
+# SERVITECA JM · SONARQUBE LOCAL (CAJA BLANCA)
+# ============================================================
+# Uso:
+#   docker compose -f docker-compose.sonarqube.yml up -d
+#   docker compose -f docker-compose.sonarqube.yml logs -f sonarqube
+#   docker compose -f docker-compose.sonarqube.yml down
+#
+# Interfaz: http://localhost:9000  (admin / admin la primera vez)
+#
+# Se separa del docker-compose.yml principal para que el servidor de
+# análisis no arranque junto con la aplicación ni compita por recursos.
+# La base de datos de SonarQube es interna y no se publica en el host.
+# ============================================================
+
+services:
+
+  sonarqube:
+    image: sonarqube:lts-community
+    container_name: serviteca-sonarqube
+    restart: unless-stopped
+    depends_on:
+      sonar-db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:9000:9000"
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://sonar-db:5432/sonarqube
+      SONAR_JDBC_USERNAME: sonarqube
+      SONAR_JDBC_PASSWORD: ${SONAR_DB_PASSWORD:-sonarqube}
+      # Docker Desktop en Windows/WSL2 no siempre expone vm.max_map_count.
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:9000/api/system/status | grep -q '\"status\":\"UP\"'"]
+      interval: 20s
+      timeout: 10s
+      retries: 30
+      start_period: 120s
+    networks:
+      - sonar
+
+  sonar-db:
+    image: postgres:17-alpine
+    container_name: serviteca-sonar-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: sonarqube
+      POSTGRES_USER: sonarqube
+      POSTGRES_PASSWORD: ${SONAR_DB_PASSWORD:-sonarqube}
+    volumes:
+      - sonarqube_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sonarqube -d sonarqube"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - sonar
+
+volumes:
+  sonarqube_data:
+    name: serviteca_sonarqube_data
+  sonarqube_extensions:
+    name: serviteca_sonarqube_extensions
+  sonarqube_logs:
+    name: serviteca_sonarqube_logs
+  sonarqube_db:
+    name: serviteca_sonarqube_db
+
+networks:
+  sonar:
+    name: serviteca_sonar_network

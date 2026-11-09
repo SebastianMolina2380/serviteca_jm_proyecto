@@ -19,7 +19,10 @@
     const confirmation = document.getElementById("confirm-password");
     const role = form.elements.namedItem("rol");
 
-    bindPasswordButtons();
+    /* El botón del ojo lo maneja password-utils.js mediante un único
+       listener delegado en document. Antes se registraba aquí otro
+       listener sobre el mismo botón: cada clic alternaba dos veces y el
+       campo quedaba siempre en type="password". */
 
     if (id) {
       title && (title.textContent = "Editar Usuario");
@@ -52,21 +55,6 @@
     form.addEventListener("submit", event => save(event, {
       form, id, clientMode, message, password, confirmation, role
     }));
-  }
-
-  function bindPasswordButtons() {
-    // Delegación única: evita que un segundo listener vuelva a alternar
-    // el tipo en el mismo clic (y deje el campo como estaba).
-    document.addEventListener("click", event => {
-      const button = event.target.closest("[data-toggle-password]");
-      if (!button) return;
-      const input = document.querySelector(button.getAttribute("data-toggle-password"));
-      if (!input) return;
-      const visible = input.getAttribute("type") === "password";
-      input.setAttribute("type", visible ? "text" : "password");
-      button.textContent = visible ? "🙈" : "👁";
-      button.setAttribute("aria-label", visible ? "Ocultar contraseña" : "Mostrar contraseña");
-    });
   }
 
   function fillForm(form, user) {

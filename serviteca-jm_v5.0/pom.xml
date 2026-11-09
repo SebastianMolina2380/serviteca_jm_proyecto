@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- Spring Boot como padre: gestiona versiones de todas las deps -->
@@ -22,8 +22,20 @@
 		<java.version>17</java.version>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
+
 		<!-- Flyway 10.20+ reconoce PostgreSQL 17 de forma oficial. -->
 		<flyway.version>10.20.1</flyway.version>
+
+		<!-- Pruebas de caja negra (Selenium) y cobertura (JaCoCo). -->
+		<selenium.version>4.27.0</selenium.version>
+		<jacoco.version>0.8.12</jacoco.version>
+		<sonar.maven.plugin.version>3.11.0.3922</sonar.maven.plugin.version>
+		<serviteca.e2e.url>http://localhost:8082</serviteca.e2e.url>
+
+		<!-- ── PROPIEDADES DE SONARQUBE Y JACOCO ────────────────── -->
+		<sonar.host.url>http://localhost:9000</sonar.host.url>
+		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+		<sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
 
 	<dependencies>
@@ -48,8 +60,6 @@
 		</dependency>
 
 		<!-- ── MIGRACIONES DE ESQUEMA (FLYWAY) ───────────────────── -->
-		<!-- Flyway aplica db/migration/V*.sql al arrancar. La variante
-		     flyway-database-postgresql es obligatoria desde Flyway 10. -->
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
@@ -100,20 +110,22 @@
 		</dependency>
 
 		<!-- ── CORREO TRANSACCIONAL ────────────────────────────────── -->
-		<!-- Si no se configura SERVITECA_SMTP_HOST, EmailService registra
-		     el mensaje en el log (fallback de desarrollo). -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 
 		<!-- ── EXPORTACIÓN PDF ─────────────────────────────────────── -->
-		<!-- OpenPDF genera los reportes descargables sin depender de
-		     servicios externos. -->
 		<dependency>
 			<groupId>com.github.librepdf</groupId>
 			<artifactId>openpdf</artifactId>
 			<version>2.0.3</version>
+		</dependency>
+
+		<!-- ── VISTAS THYMELEAF ───────────────────────────────────── -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 
 		<!-- ── TESTS ──────────────────────────────────────────────── -->
@@ -127,10 +139,15 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Selenium WebDriver: Pruebas de caja negra (E2E) -->
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>${selenium.version}</version>
+			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -139,7 +156,6 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<!-- Excluir Lombok del jar final -->
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
@@ -148,7 +164,87 @@
 					</excludes>
 				</configuration>
 			</plugin>
+
+			<!-- Separación de pruebas unitarias y E2E -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>**/e2e/**</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+			<!-- Cobertura de caja blanca (JaCoCo) -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<executions>
+					<execution>
+						<id>preparar-agente-jacoco</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>informe-jacoco-test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>informe-jacoco-verify</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- SonarQube Scanner -->
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>${sonar.maven.plugin.version}</version>
+
+
+
+			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>e2e</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<configuration>
+							<includes>
+								<include>**/e2e/*E2ETest.java</include>
+							</includes>
+							<systemPropertyVariables>
+								<serviteca.e2e.url>${serviteca.e2e.url}</serviteca.e2e.url>
+							</systemPropertyVariables>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>
