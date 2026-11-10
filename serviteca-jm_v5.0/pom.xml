@@ -220,30 +220,31 @@
 		<profile>
 			<id>e2e</id>
 			<build>
-				<pluginManagement>
-					<plugins>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-failsafe-plugin</artifactId>
-							<configuration>
-								<includes>
-									<include>**/e2e/*E2ETest.java</include>
-								</includes>
-								<systemPropertyVariables>
-									<serviteca.e2e.url>${serviteca.e2e.url}</serviteca.e2e.url>
-								</systemPropertyVariables>
-							</configuration>
-							<executions>
-								<execution>
-									<goals>
-										<goal>integration-test</goal>
-										<goal>verify</goal>
-									</goals>
-								</execution>
-							</executions>
-						</plugin>
-					</plugins>
-				</pluginManagement>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<configuration>
+							<includes>
+								<include>**/e2e/**/*.java</include>
+							</includes>
+							<systemPropertyVariables>
+								<serviteca.e2e.url>${serviteca.e2e.url}</serviteca.e2e.url>
+								<SERVITECA_E2E_HEADLESS>${SERVITECA_E2E_HEADLESS}</SERVITECA_E2E_HEADLESS>
+								<SERVITECA_E2E_ADMIN_EMAIL>${SERVITECA_E2E_ADMIN_EMAIL}</SERVITECA_E2E_ADMIN_EMAIL>
+								<SERVITECA_E2E_ADMIN_PASSWORD>${SERVITECA_E2E_ADMIN_PASSWORD}</SERVITECA_E2E_ADMIN_PASSWORD>
+							</systemPropertyVariables>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
 			</build>
 		</profile>
 	</profiles>

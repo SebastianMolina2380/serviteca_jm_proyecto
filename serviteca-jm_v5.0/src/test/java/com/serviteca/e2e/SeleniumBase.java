@@ -59,7 +59,8 @@ public abstract class SeleniumBase {
 
         ChromeOptions opciones = new ChromeOptions();
         if (!"false".equalsIgnoreCase(
-                System.getenv().getOrDefault("SERVITECA_E2E_HEADLESS", "true"))) {
+                System.getProperty("SERVITECA_E2E_HEADLESS",
+                System.getenv().getOrDefault("SERVITECA_E2E_HEADLESS", "true")))) {
             opciones.addArguments("--headless=new");
         }
         opciones.addArguments(
@@ -167,9 +168,10 @@ public abstract class SeleniumBase {
      * en el repositorio: se leen de variables de entorno.
      */
     protected void iniciarSesionAdmin() {
-        String correo = System.getenv("SERVITECA_E2E_ADMIN_EMAIL");
-        String clave = System.getenv("SERVITECA_E2E_ADMIN_PASSWORD");
-
+     String correo = System.getProperty("SERVITECA_E2E_ADMIN_EMAIL",
+        System.getenv("SERVITECA_E2E_ADMIN_EMAIL"));
+     String clave = System.getProperty("SERVITECA_E2E_ADMIN_PASSWORD",
+        System.getenv("SERVITECA_E2E_ADMIN_PASSWORD"));
         assumeTrue(correo != null && !correo.isBlank()
                         && clave != null && !clave.isBlank(),
                 "Define SERVITECA_E2E_ADMIN_EMAIL y SERVITECA_E2E_ADMIN_PASSWORD "
@@ -188,7 +190,7 @@ public abstract class SeleniumBase {
     }
 
     private static long leerPausa() {
-        String valor = System.getenv().getOrDefault("SERVITECA_E2E_PAUSA_MS", "0");
+        String valor = System.getProperty("SERVITECA_E2E_PAUSA_MS", System.getenv().getOrDefault("SERVITECA_E2E_PAUSA_MS", "0"));
         try {
             return Math.max(0, Long.parseLong(valor.trim()));
         } catch (NumberFormatException ignorado) {
