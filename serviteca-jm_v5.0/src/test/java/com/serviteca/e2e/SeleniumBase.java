@@ -184,6 +184,20 @@ public abstract class SeleniumBase {
         clic(By.cssSelector("#loginForm button[type='submit']"));
         wait.until(ExpectedConditions.urlContains("dashboard.html"));
     }
+    /**
+     * Descarta cualquier alert inesperado y devuelve su texto.
+     * Si no hay alert, devuelve null.
+     */
+    protected String descartarAlertSiExiste() {
+        try {
+            org.openqa.selenium.Alert alerta = driver.switchTo().alert();
+            String texto = alerta.getText();
+            alerta.accept();
+            return texto;
+        } catch (org.openqa.selenium.NoAlertPresentException sinAlerta) {
+            return null;
+        }
+    }
 
     private static String sinBarraFinal(String url) {
         return url.endsWith("/") ? url.substring(0, url.length() - 1) : url;

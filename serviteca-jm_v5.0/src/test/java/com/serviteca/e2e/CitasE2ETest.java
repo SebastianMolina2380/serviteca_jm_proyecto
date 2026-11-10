@@ -44,6 +44,13 @@ class CitasE2ETest extends SeleniumBase {
         escribir(By.id("telefono-cliente"), "3001234567");
         escribir(By.id("correo-cliente"), "cliente." + documento + "@test.local");
         clic(By.id("btn-continuar-cliente"));
+
+        String alertaCliente = descartarAlertSiExiste();
+        org.junit.jupiter.api.Assertions.assertNull(
+                alertaCliente,
+                "El backend rechazó el cliente: " + alertaCliente
+        );
+
         esperar(By.id("p2"));
 
         // PASO 2 · vehículo nuevo
@@ -68,6 +75,12 @@ class CitasE2ETest extends SeleniumBase {
 
         // PASO 4 · confirmación real contra /api/citas
         clic(By.id("btn-confirmar-cita"));
+
+        String alertaCita = descartarAlertSiExiste();
+        org.junit.jupiter.api.Assertions.assertNull(
+                alertaCita,
+                "El backend rechazó la cita: " + alertaCita
+        );
         WebElement ticketElemento = wait.until(
                 ExpectedConditions.visibilityOfElementLocated(By.id("cita-ticket")));
         wait.until(d -> ticketElemento.getText().matches("TKT-\\d+"));
