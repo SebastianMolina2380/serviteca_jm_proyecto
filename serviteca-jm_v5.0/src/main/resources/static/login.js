@@ -22,6 +22,7 @@
 
   const ACCESO_PAGINA = {
     'dashboard.html': ['admin', 'tecnico'],
+    'portal-tecnico.html': ['admin', 'tecnico'],
     'portal-cliente.html': ['cliente'],
     'citas.html': ['admin', 'tecnico', 'cliente'],
     'nueva-cita.html': ['admin', 'tecnico', 'cliente'],
@@ -185,6 +186,14 @@
     const parametros = new URLSearchParams(location.search);
     if (parametros.get('expirada') === '1') {
       showLoginMessage('⚠️ Tu sesión expiró. Vuelve a iniciar sesión.');
+    }
+
+    /* Confirmación tras un registro público exitoso. */
+    if (parametros.get('registrado') === '1') {
+      showLoginMessage(
+        '✅ Cuenta creada. Ya puedes iniciar sesión con tu correo y contraseña.',
+        '#1f9d64'
+      );
     }
 
     /* Ojo de contraseña */

@@ -23,8 +23,8 @@
 
    REGLAS (deben coincidir con SecurityConfig):
      ADMIN                     -> todo
-     ADMIN + TÉCNICO           -> dashboard, clientes, inventario,
-                                  reportes, registrar-pago
+     ADMIN + TÉCNICO           -> dashboard, portal-tecnico, clientes,
+                                  inventario, reportes, registrar-pago
      ADMIN + TÉCNICO + CLIENTE -> citas, nueva-cita, vehículo,
                                   nuevo-vehículo, facturación
      CLIENTE                   -> portal-cliente
@@ -33,7 +33,7 @@
   'use strict';
 
   const PAGE = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
-  const PAGINAS_PUBLICAS = new Set(['login.html', 'recuperar.html', 'index.html', '']);
+  const PAGINAS_PUBLICAS = new Set(['login.html', 'registro.html', 'recuperar.html', 'index.html', '']);
 
   const CLAVES_USUARIO = ['servitecaUser', 'user'];
   const CLAVES_SESION = [...CLAVES_USUARIO, 'servitecaToken', 'nombreUsuario'];
@@ -49,6 +49,7 @@
 
   const ACCESO_PAGINA = {
     'dashboard.html': STAFF,
+    'portal-tecnico.html': STAFF,
     'clientes.html': STAFF,
     'inventario.html': STAFF,
     'reportes.html': STAFF,
@@ -71,12 +72,12 @@
   /* Enlaces visibles en el sidebar para cada rol. */
   const NAVEGACION_POR_ROL = {
     admin: [
-      'dashboard', 'clientes', 'citas', 'nueva-cita', 'vehiculo',
+      'dashboard', 'portal-tecnico', 'clientes', 'citas', 'nueva-cita', 'vehiculo',
       'nuevo-vehiculo', 'usuarios', 'nuevo-usuario', 'inventario',
       'facturacion', 'reportes'
     ],
     tecnico: [
-      'dashboard', 'clientes', 'citas', 'nueva-cita', 'vehiculo',
+      'dashboard', 'portal-tecnico', 'clientes', 'citas', 'nueva-cita', 'vehiculo',
       'nuevo-vehiculo', 'inventario', 'facturacion', 'reportes'
     ],
     cliente: [
@@ -110,7 +111,8 @@
     inventario: '📦',
     facturacion: '💲',
     reportes: '📈',
-    'portal-cliente': '🏠'
+    'portal-cliente': '🏠',
+    'portal-tecnico': '🔧'
   };
 
   const TEXTO_MENU = {
@@ -123,7 +125,8 @@
     inventario: 'Inventario',
     facturacion: 'Facturación',
     reportes: 'Reportes',
-    'portal-cliente': 'Portal Cliente'
+    'portal-cliente': 'Portal Cliente',
+    'portal-tecnico': 'Portal Técnico'
   };
 
   const SECCIONES_MENU = [
@@ -137,7 +140,7 @@
     },
     {
       titulo: 'Portales',
-      items: ['portal-cliente']
+      items: ['portal-cliente', 'portal-tecnico']
     }
   ];
 

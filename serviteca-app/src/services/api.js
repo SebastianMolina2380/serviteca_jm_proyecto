@@ -155,6 +155,7 @@ export function request(method, path, body) {
       }
 
       const mensaje =
+        (data && typeof data === 'object' && data.message) ||
         (data && typeof data === 'object' && data.error) ||
         (typeof data === 'string' && data.trim()) ||
         (xhr.status === 401

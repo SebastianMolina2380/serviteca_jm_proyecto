@@ -11,6 +11,10 @@ public class CitaDTOs {
     private LocalTime hora;
     private Long idUsuario;
     private String estado;
+    private String servicioSolicitado;
+    private String observaciones;
+    private Long idTecnico;
+    private String tecnicoNombre;
 
     public CitaDTOs() {
     }
@@ -62,5 +66,37 @@ public class CitaDTOs {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public String getServicioSolicitado() {
+        return servicioSolicitado;
+    }
+
+    public void setServicioSolicitado(String servicioSolicitado) {
+        this.servicioSolicitado = servicioSolicitado;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
+
+    public Long getIdTecnico() {
+        return idTecnico;
+    }
+
+    public void setIdTecnico(Long idTecnico) {
+        this.idTecnico = idTecnico;
+    }
+
+    public String getTecnicoNombre() {
+        return tecnicoNombre;
+    }
+
+    public void setTecnicoNombre(String tecnicoNombre) {
+        this.tecnicoNombre = tecnicoNombre;
     }
 }

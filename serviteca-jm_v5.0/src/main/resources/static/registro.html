@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Serviteca JM - Registro de cliente</title>
+  <link
+          href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"
+  >
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="stylesheet" href="login.css">
+  <link rel="stylesheet" href="registro.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="serviteca-theme.css">
+  <link rel="stylesheet" href="serviteca-premium.css">
+  <link rel="stylesheet" href="accesibilidad.css">
+</head>
+<body>
+<!-- PANTALLA P02: Registro público de clientes -->
+<div class="card registro-card">
+  <div class="card-logo">
+    <img class="sb-logo" src="jm-logo.png" alt="JM">
+    <h2>CREAR CUENTA</h2>
+    <p>Regístrate para agendar y seguir tus servicios</p>
+  </div>
+
+  <form id="registroForm" novalidate>
+    <div class="fr">
+      <div class="fg">
+        <label class="fl" for="nombre">Nombre completo</label>
+        <input class="fc" id="nombre" name="nombre" placeholder="Nombre y apellido"
+               autocomplete="name" maxlength="120" required>
+      </div>
+      <div class="fg">
+        <label class="fl" for="tipoDocumento">Tipo de documento</label>
+        <select class="fc" id="tipoDocumento" name="tipoDocumento">
+          <option value="CC" selected>Cédula de ciudadanía</option>
+          <option value="CE">Cédula de extranjería</option>
+          <option value="PASAPORTE">Pasaporte</option>
+          <option value="NIT">NIT</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="fr">
+      <div class="fg">
+        <label class="fl" for="numeroDoc">Número de documento</label>
+        <input class="fc" id="numeroDoc" name="numeroDoc" placeholder="12345678"
+               autocomplete="off" maxlength="30" required>
+      </div>
+      <div class="fg">
+        <label class="fl" for="telefono">Teléfono</label>
+        <input class="fc" id="telefono" name="telefono" placeholder="300 000 0000"
+               autocomplete="tel" maxlength="30">
+      </div>
+    </div>
+
+    <div class="fg">
+      <label class="fl" for="correo">Correo electrónico</label>
+      <input class="fc" id="correo" name="correo" type="email" placeholder="tu@correo.com"
+             autocomplete="email" maxlength="100" required>
+    </div>
+
+    <div class="fr">
+      <div class="fg">
+        <label class="fl" for="ciudad">Ciudad</label>
+        <input class="fc" id="ciudad" name="ciudad" placeholder="Tunja"
+               autocomplete="address-level2" maxlength="80">
+      </div>
+      <div class="fg">
+        <label class="fl" for="direccion">Dirección (opcional)</label>
+        <input class="fc" id="direccion" name="direccion" placeholder="Calle 00 # 00-00"
+               autocomplete="street-address" maxlength="180">
+      </div>
+    </div>
+
+    <div class="fr">
+      <div class="fg">
+        <label class="fl" for="contrasena">Contraseña</label>
+        <div class="password-wrap">
+          <input class="fc" id="contrasena" name="contrasena" type="password"
+                 placeholder="Mínimo 8 caracteres" autocomplete="new-password"
+                 minlength="8" maxlength="72" required>
+          <button type="button" class="eye" data-toggle-password="#contrasena"
+                  aria-label="Mostrar contraseña" title="Mostrar contraseña">👁</button>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl" for="confirmar">Confirmar contraseña</label>
+        <div class="password-wrap">
+          <input class="fc" id="confirmar" name="confirmar" type="password"
+                 placeholder="Repite la contraseña" autocomplete="new-password"
+                 minlength="8" maxlength="72" required>
+          <button type="button" class="eye" data-toggle-password="#confirmar"
+                  aria-label="Mostrar contraseña" title="Mostrar contraseña">👁</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="registro-hint">
+      La cuenta se crea de inmediato con rol <strong>Cliente</strong>. No se envía
+      correo de verificación: podrás iniciar sesión al terminar.
+    </p>
+
+    <button type="submit" class="btn-login btn btn-primary" id="btn-registro">
+      CREAR CUENTA →
+    </button>
+  </form>
+
+  <div class="error" id="err" role="alert" aria-live="assertive"></div>
+  <div class="ok" id="ok" role="status" aria-live="polite"></div>
+
+  <div class="foot foot-center">
+    <a href="login.html">← Volver al inicio de sesión</a>
+  </div>
+</div>
+
+<script src="registro.js"></script>
+</body>
+</html>

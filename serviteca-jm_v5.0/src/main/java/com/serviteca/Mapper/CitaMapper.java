@@ -17,13 +17,22 @@ public class CitaMapper {
             idUsuario = entity.getVehiculo().getUsuario().getIdUsuario().longValue();
         }
 
-        return new CitaDTOs(
+        CitaDTOs dto = new CitaDTOs(
                 idCita,
                 entity.getFecha(),
                 entity.getHora(),
                 idUsuario,
                 entity.getEstado() != null ? entity.getEstado().name() : null
         );
+        dto.setServicioSolicitado(entity.getServicioSolicitado());
+        dto.setObservaciones(entity.getObservaciones());
+        if (entity.getTecnico() != null) {
+            dto.setIdTecnico(entity.getTecnico().getIdUsuario() == null
+                    ? null
+                    : entity.getTecnico().getIdUsuario().longValue());
+            dto.setTecnicoNombre(entity.getTecnico().getNombre());
+        }
+        return dto;
     }
 
     public static Cita toEntity(CitaDTOs dto) {
@@ -41,7 +50,11 @@ public class CitaMapper {
             entity.setEstado(Cita.Estado.valueOf(dto.getEstado()));
         }
 
-        // El vehículo se resuelve en el Controller/Service mediante VehiculoRepository
+        entity.setServicioSolicitado(dto.getServicioSolicitado());
+        entity.setObservaciones(dto.getObservaciones());
+
+        // El vehículo y el técnico se resuelven en el Controller/Service
+        // mediante sus repositorios.
         return entity;
     }
 }

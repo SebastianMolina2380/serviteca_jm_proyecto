@@ -20,11 +20,74 @@ function goStep(num = 1) {
 
     if (line) line.className = "stp-line" + (i < num ? " done" : "");
   }
+
+  if (num === 4) actualizarResumenCita();
 }
 
 function selSvc(el) {
   document.querySelectorAll(".svc").forEach((svc) => svc.classList.remove("sel"));
   el.classList.add("sel");
+}
+
+/* Nombre del servicio marcado en el paso 3. */
+function servicioSeleccionado() {
+  const activo = document.querySelector(".svc.sel .svc-n");
+  return activo ? activo.textContent.trim() : "";
+}
+
+function textoObservaciones() {
+  const campo = document.getElementById("observaciones");
+  return campo ? campo.value.trim() : "";
+}
+
+function nombreTecnicoSeleccionado() {
+  const select = document.getElementById("tecnico-asignado");
+  if (!select || !select.value) return "Sin asignar";
+  const opcion = select.options[select.selectedIndex];
+  return opcion ? opcion.textContent : "Sin asignar";
+}
+
+function nombreClienteSesion() {
+  try {
+    const usuario = JSON.parse(localStorage.getItem("servitecaUser") || "null");
+    return usuario?.nombre || usuario?.name || "Cliente";
+  } catch (_) {
+    return "Cliente";
+  }
+}
+
+function actualizarResumenCita() {
+  const cliente = document.getElementById("resumen-cliente");
+  if (cliente) cliente.textContent = nombreClienteSesion();
+
+  const vehiculo = window.vehiculoSeleccionado?.();
+  const resumenVehiculo = document.getElementById("resumen-vehiculo");
+  if (resumenVehiculo) {
+    resumenVehiculo.textContent = vehiculo
+        ? `${vehiculo.marca || ""} ${vehiculo.modelo || ""} · ${vehiculo.placa || ""}`.trim()
+        : "—";
+  }
+
+  const servicio = document.getElementById("resumen-servicio");
+  if (servicio) servicio.textContent = servicioSeleccionado() || "—";
+
+  const tecnico = document.getElementById("resumen-tecnico");
+  if (tecnico) tecnico.textContent = nombreTecnicoSeleccionado();
+
+  const fecha = document.getElementById("fecha-preferida")?.value;
+  const hora = document.getElementById("hora-disponible")?.value;
+  const resumenFecha = document.getElementById("resumen-fecha");
+  if (resumenFecha) {
+    resumenFecha.textContent = fecha
+        ? `${fecha}${hora ? " · " + hora : ""}`
+        : "—";
+  }
+
+  const resumenObs = document.getElementById("resumen-observaciones");
+  if (resumenObs) {
+    const obs = textoObservaciones();
+    resumenObs.textContent = obs || "Sin observaciones";
+  }
 }
 
 async function confirmarCita() {
@@ -61,9 +124,34 @@ async function confirmarCita() {
   if (match[3].toUpperCase() === "PM") horas += 12;
   const hora = `${String(horas).padStart(2, "0")}:${match[2]}`;
 
+  const servicioSolicitado = servicioSeleccionado();
+  const observaciones = textoObservaciones();
+  const idTecnico = document.getElementById("tecnico-asignado")?.value || "";
+
+  if (!servicioSolicitado) {
+    alert("Selecciona el servicio que necesitas.");
+    goStep(3);
+    return;
+  }
+
   if (boton) boton.disabled = true;
 
   try {
+    const cuerpo = {
+      fecha,
+      hora,
+      estado: "PENDIENTE",
+      servicioSolicitado,
+      observaciones: observaciones || null,
+      vehiculo: { idvehiculo: Number(citaData.vehiculoId) }
+    };
+
+    // El cliente puede ver el selector, pero el backend ignora este campo
+    // cuando la sesión es de rol CLIENTE.
+    if (idTecnico) {
+      cuerpo.tecnico = { idUsuario: Number(idTecnico) };
+    }
+
     const respuesta = await fetch("/api/citas", {
       method: "POST",
       credentials: "same-origin",
@@ -71,12 +159,7 @@ async function confirmarCita() {
         "Content-Type": "application/json",
         Accept: "application/json"
       },
-      body: JSON.stringify({
-        fecha,
-        hora,
-        estado: "PENDIENTE",
-        vehiculo: { idvehiculo: Number(citaData.vehiculoId) }
-      })
+      body: JSON.stringify(cuerpo)
     });
 
     const data = await respuesta.json().catch(() => ({}));
@@ -92,7 +175,7 @@ async function confirmarCita() {
     const vehiculo = window.vehiculoSeleccionado?.();
     const detalle = document.getElementById("cita-confirmada-detalle");
     if (detalle) {
-      detalle.textContent = `${vehiculo?.placa || "Vehículo"} · ${fecha} ${hora}`;
+      detalle.textContent = `${servicioSolicitado} · ${vehiculo?.placa || "Vehículo"} · ${fecha} ${hora}`;
     }
 
     goStep(5);
@@ -376,6 +459,35 @@ document.addEventListener("DOMContentLoaded", function () {
     ) || null;
   };
 
+  async function cargarTecnicos() {
+    const select = document.getElementById("tecnico-asignado");
+    if (!select) return;
+
+    try {
+      const respuesta = await fetch("/api/tecnicos", {
+        credentials: "same-origin",
+        headers: { Accept: "application/json" }
+      });
+      const data = await respuesta.json().catch(() => []);
+
+      if (!respuesta.ok || !Array.isArray(data)) {
+        throw new Error("No se pudieron cargar los técnicos.");
+      }
+
+      select.innerHTML = "";
+      select.appendChild(new Option("Sin asignar", ""));
+
+      data.forEach(function (tecnico) {
+        select.appendChild(
+            new Option(tecnico.nombre || "Técnico", String(tecnico.idUsuario))
+        );
+      });
+    } catch (_) {
+      // El selector queda con "Sin asignar": la cita puede agendarse sin técnico.
+    }
+  }
+
+  cargarTecnicos();
   cargarVehiculos();
   goStep(1);
 });

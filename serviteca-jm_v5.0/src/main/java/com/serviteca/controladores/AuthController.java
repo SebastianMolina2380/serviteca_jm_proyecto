@@ -1,11 +1,15 @@
 package com.serviteca.controladores;
 
 import com.serviteca.config.LoginRateLimiter;
+import com.serviteca.config.RegistroRateLimiter;
+import com.serviteca.DTOs.RegistroClienteRequest;
 import com.serviteca.modelos.Usuario;
 import com.serviteca.repository.UsuarioRepository;
+import com.serviteca.servicios.RegistroClienteService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -37,13 +41,15 @@ public class AuthController {
     private final UsuarioRepository usuarioRepository;
     private final SecurityContextRepository securityContextRepository;
     private final LoginRateLimiter loginRateLimiter;
+    private final RegistroClienteService registroClienteService;
+    private final RegistroRateLimiter registroRateLimiter;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body,
                                    HttpServletRequest request,
                                    HttpServletResponse response) {
 
-        String correo = body.getOrDefault("correo", "").trim();
+        String correo = body.getOrDefault("correo", "").trim().toLowerCase(Locale.ROOT);
         String contrasena = body.getOrDefault("contrasena", "");
         String rolSeleccionado = body.get("rol") == null
                 ? ""
@@ -81,7 +87,7 @@ public class AuthController {
                     UsernamePasswordAuthenticationToken.unauthenticated(correo, contrasena)
             );
 
-            Usuario usuario = usuarioRepository.findByCorreo(correo).orElse(null);
+            Usuario usuario = usuarioRepository.findByCorreoIgnoreCase(correo).orElse(null);
             if (usuario == null
                     || usuario.getRol() == null
                     || !usuario.getRol().name().equals(rolSeleccionado)
@@ -125,6 +131,37 @@ public class AuthController {
         }
     }
 
+    /**
+     * Registro público de clientes. No crea sesión: el usuario podrá
+     * iniciar sesión inmediatamente después con el mismo correo.
+     */
+    @PostMapping("/registro")
+    public ResponseEntity<?> registro(@Valid @RequestBody RegistroClienteRequest body,
+                                      HttpServletRequest request) {
+
+        String ip = request.getRemoteAddr();
+        long esperaSegundos = registroRateLimiter.tryConsume(ip);
+        if (esperaSegundos > 0) {
+            long minutos = Math.max(1, (esperaSegundos + 59) / 60);
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .header(HttpHeaders.RETRY_AFTER, Long.toString(esperaSegundos))
+                    .body(Map.of(
+                            "error", "Demasiados registros desde esta conexión. Intente de nuevo en "
+                                    + minutos + " minuto(s)."
+                    ));
+        }
+
+        Usuario usuario = registroClienteService.registrar(body);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "idUsuario", usuario.getIdUsuario(),
+                "nombre", usuario.getNombre(),
+                "correo", usuario.getCorreo(),
+                "rol", usuario.getRol().name(),
+                "estado", usuario.getEstado().name()
+        ));
+    }
+
     @GetMapping("/me")
     public ResponseEntity<?> me(Authentication authentication, HttpServletRequest request) {
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -133,7 +170,7 @@ public class AuthController {
             ));
         }
 
-        Usuario usuario = usuarioRepository.findByCorreo(authentication.getName()).orElse(null);
+        Usuario usuario = usuarioRepository.findByCorreoIgnoreCase(authentication.getName()).orElse(null);
         if (usuario == null || usuario.getEstado() == Usuario.Estado.INACTIVO) {
             HttpSession session = request.getSession(false);
             if (session != null) {

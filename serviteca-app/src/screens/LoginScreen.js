@@ -29,7 +29,7 @@ const ROLES = [
   { value: 'ADMIN', label: 'Administrador' },
 ];
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation, route }) {
   const { login } = useAuth();
 
   const [correo, setCorreo] = useState('');
@@ -37,6 +37,11 @@ export default function LoginScreen() {
   const [rol, setRol] = useState('CLIENTE');
   const [error, setError] = useState('');
   const [cargando, setCargando] = useState(false);
+  const [aviso] = useState(
+    route?.params?.registrado
+      ? '✅ Cuenta creada. Ya puedes iniciar sesión.'
+      : ''
+  );
 
   async function iniciarSesion() {
     setError('');
@@ -83,6 +88,12 @@ export default function LoginScreen() {
 
         <View style={styles.form}>
           <Text style={styles.sectionTitle}>Iniciar sesión</Text>
+
+          {aviso ? (
+            <View style={styles.avisoBox}>
+              <Text style={styles.avisoText}>{aviso}</Text>
+            </View>
+          ) : null}
 
           <Text style={styles.roleLabel}>¿Cómo entras?</Text>
 
@@ -142,6 +153,16 @@ export default function LoginScreen() {
             El cliente accede con su correo registrado. El personal debe
             seleccionar Técnico o Administrador.
           </Text>
+
+          <Pressable
+            onPress={() => navigation.navigate('Registro')}
+            style={styles.linkWrap}
+          >
+            <Text style={styles.link}>
+              ¿No tienes cuenta?{' '}
+              <Text style={styles.linkStrong}>Regístrate aquí</Text>
+            </Text>
+          </Pressable>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -239,6 +260,30 @@ const styles = StyleSheet.create({
     color: colors.danger,
     fontSize: 14,
     textAlign: 'center',
+  },
+  avisoBox: {
+    backgroundColor: colors.successLight,
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 16,
+  },
+  avisoText: {
+    color: colors.success,
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  linkWrap: {
+    marginTop: 18,
+    alignItems: 'center',
+  },
+  link: {
+    fontSize: 13,
+    color: colors.textMuted,
+  },
+  linkStrong: {
+    color: colors.primary,
+    fontWeight: '700',
   },
   hint: {
     marginTop: 16,

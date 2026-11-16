@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Serviteca JM - Portal Técnico</title>
+  <link
+          href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"
+  >
+  <link rel="stylesheet" href="citas.css">
+  <link rel="stylesheet" href="portal-tecnico.css">
+  <script src="role-guard.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="serviteca-theme.css">
+  <link rel="stylesheet" href="serviteca-premium.css">
+  <link rel="stylesheet" href="accesibilidad.css">
+</head>
+<body>
+<div class="layout">
+  <!-- SIDEBAR LATERAL -->
+  <aside class="sb">
+    <div class="sb-head">
+      <img class="sb-logo" src="jm-logo.png" alt="JM">
+      <div>
+        <div class="sb-brand">JM SERVITECA<small>PRODISJM v1.0</small></div>
+      </div>
+    </div>
+    <nav class="sb-nav" aria-label="Navegación principal">
+      <div class="sb-sec">Principal</div>
+      <a class="sb-link" href="dashboard.html"><span class="sb-ico" aria-hidden="true">📊</span> Dashboard</a>
+      <a class="sb-link active" href="portal-tecnico.html" aria-current="page"><span class="sb-ico" aria-hidden="true">🔧</span> Portal Técnico</a>
+      <a class="sb-link" href="citas.html"><span class="sb-ico" aria-hidden="true">📅</span> Citas</a>
+      <a class="sb-link" href="nueva-cita.html"><span class="sb-ico" aria-hidden="true">➕</span> Nueva Cita</a>
+      <a class="sb-link" href="clientes.html"><span class="sb-ico" aria-hidden="true">👥</span> Clientes</a>
+      <a class="sb-link" href="vehiculo.html"><span class="sb-ico" aria-hidden="true">🚗</span> Vehículos</a>
+      <div class="sb-sec" style="margin-top: 8px">Administración</div>
+      <a class="sb-link" href="usuarios.html"><span class="sb-ico" aria-hidden="true">👤</span> Usuarios</a>
+      <a class="sb-link" href="inventario.html"><span class="sb-ico" aria-hidden="true">📦</span> Inventario</a>
+      <a class="sb-link" href="facturacion.html"><span class="sb-ico" aria-hidden="true">💲</span> Facturación</a>
+      <a class="sb-link" href="reportes.html"><span class="sb-ico" aria-hidden="true">📈</span> Reportes</a>
+      <div class="sb-sec" style="margin-top: 8px">Portales</div>
+      <a class="sb-link" href="portal-cliente.html"><span class="sb-ico" aria-hidden="true">🏠</span> Portal Cliente</a>
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-av" id="sbav">JM</div>
+      <div>
+        <div class="sb-uname" id="sbname">Usuario</div>
+        <div class="sb-urole" id="sbrole">Usuario</div>
+      </div>
+      <a href="index.html" class="sb-out" title="Cerrar sesión" aria-label="Cerrar sesión">⏻</a>
+    </div>
+  </aside>
+
+  <div id="sb-overlay"></div>
+
+  <main class="main">
+    <div class="topbar">
+      <button type="button" id="hambtn" class="btn-gh" aria-label="Abrir menú" title="Abrir menú">☰</button>
+      <div class="tb-title">Portal Técnico</div>
+      <span style="font-size: 0.74rem; color: var(--gray1)" id="tbdate"></span>
+      <div class="av">JM</div>
+    </div>
+
+    <div class="pg">
+      <div class="pg-head">
+        <div>
+          <div class="pg-title">Portal Técnico</div>
+          <div class="pg-sub">Citas asignadas, estado y avance de los servicios</div>
+        </div>
+        <button type="button" class="btn btn-ghost" id="btn-refresh">↻ Actualizar</button>
+      </div>
+
+      <!-- INDICADORES -->
+      <div class="kpi-grid">
+        <div class="kpi ky">
+          <div class="kpi-lbl">Citas pendientes</div>
+          <div class="kpi-val" id="kpi-pendientes">—</div>
+          <div class="kpi-sub">Por confirmar</div>
+          <div class="kpi-ico" aria-hidden="true">📅</div>
+        </div>
+        <div class="kpi kb">
+          <div class="kpi-lbl">Citas confirmadas</div>
+          <div class="kpi-val" id="kpi-confirmadas">—</div>
+          <div class="kpi-sub">Agendadas</div>
+          <div class="kpi-ico" aria-hidden="true">✅</div>
+        </div>
+        <div class="kpi ko">
+          <div class="kpi-lbl">Servicios en proceso</div>
+          <div class="kpi-val" id="kpi-proceso">—</div>
+          <div class="kpi-sub">En taller</div>
+          <div class="kpi-ico" aria-hidden="true">🛠</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-lbl">Servicios completados</div>
+          <div class="kpi-val" id="kpi-completados">—</div>
+          <div class="kpi-sub">Listos para entrega</div>
+          <div class="kpi-ico" aria-hidden="true">🏁</div>
+        </div>
+      </div>
+
+      <div id="portal-msg" class="portal-msg" role="status" aria-live="polite"></div>
+
+      <!-- FILTROS -->
+      <div class="card portal-filters">
+        <div class="fg">
+          <label class="fl" for="portal-search">Buscar</label>
+          <input class="fc" id="portal-search" type="search"
+                 placeholder="Cliente, placa, servicio o técnico…">
+        </div>
+        <div class="fg">
+          <label class="fl" for="filtro-cita">Estado de cita</label>
+          <select class="fc" id="filtro-cita">
+            <option value="">Todas</option>
+            <option value="PENDIENTE">Pendiente</option>
+            <option value="CONFIRMADO">Confirmada</option>
+            <option value="COMPLETADA">Completada</option>
+            <option value="CANCELADA">Cancelada</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl" for="filtro-servicio">Estado de servicio</label>
+          <select class="fc" id="filtro-servicio">
+            <option value="">Todos</option>
+            <option value="PROGRAMADO">Programado</option>
+            <option value="EN_PROCESO">En proceso</option>
+            <option value="COMPLETADO">Completado</option>
+            <option value="CANCELADO">Cancelado</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- CITAS -->
+      <div class="card portal-panel">
+        <div class="portal-section-head">
+          <span>📅 Citas</span>
+          <span class="portal-count" id="citas-count">0</span>
+        </div>
+        <div class="tw">
+          <table>
+            <thead>
+            <tr>
+              <th>#TKT</th>
+              <th>Cliente</th>
+              <th>Vehículo</th>
+              <th>Servicio solicitado</th>
+              <th>Técnico</th>
+              <th>Fecha</th>
+              <th>Estado</th>
+              <th>Observaciones</th>
+            </tr>
+            </thead>
+            <tbody id="tbody-citas"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SERVICIOS -->
+      <div class="card portal-panel">
+        <div class="portal-section-head">
+          <span>🛠 Servicios</span>
+          <span class="portal-count" id="servicios-count">0</span>
+        </div>
+        <div class="tw">
+          <table>
+            <thead>
+            <tr>
+              <th>#</th>
+              <th>Cliente</th>
+              <th>Vehículo</th>
+              <th>Tipo</th>
+              <th>Fecha</th>
+              <th>Estado</th>
+              <th>Progreso</th>
+            </tr>
+            </thead>
+            <tbody id="tbody-servicios"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="portal-tecnico.js" defer></script>
+<script src="sidebar.js" defer></script>
+</body>
+</html>

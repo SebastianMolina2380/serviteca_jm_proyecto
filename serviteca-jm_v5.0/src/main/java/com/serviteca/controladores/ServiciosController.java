@@ -1,5 +1,6 @@
 package com.serviteca.controladores;
 
+import com.serviteca.DTOs.ServicioPortalDTO;
 import com.serviteca.modelos.Servicio;
 import com.serviteca.modelos.Usuario;
 import com.serviteca.repository.ServicioRepository;
@@ -18,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/servicios")
@@ -65,6 +67,20 @@ public class ServiciosController {
     @PreAuthorize("hasAnyRole('ADMIN','TECNICO','CLIENTE')")
     public ResponseEntity<List<Servicio>> catalogo() {
         return ResponseEntity.ok(servicioRepository.findByActivoTrueOrderByTipoAsc());
+    }
+
+    /**
+     * Listado operativo del portal técnico. Incluye placa y cliente, datos
+     * que la entidad oculta al serializarse directamente.
+     */
+    @GetMapping("/portal")
+    @PreAuthorize("hasAnyRole('ADMIN','TECNICO')")
+    public ResponseEntity<List<ServicioPortalDTO>> portal() {
+        List<ServicioPortalDTO> servicios = servicioRepository.findAllParaPortal()
+                .stream()
+                .map(ServicioPortalDTO::from)
+                .toList();
+        return ResponseEntity.ok(servicios);
     }
 
     @GetMapping("/{id}")
@@ -127,6 +143,78 @@ public class ServiciosController {
         }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    /** Cambia solo el estado operativo del servicio. */
+    @PatchMapping("/{id}/estado")
+    @PreAuthorize("hasAnyRole('ADMIN','TECNICO')")
+    public ResponseEntity<Servicio> cambiarEstado(
+            @PathVariable Integer id,
+            @RequestBody(required = false) Map<String, String> body) {
+
+        Servicio servicio = buscarServicio(id);
+        String valor = body == null ? null : body.get("estado");
+        if (valor == null || valor.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "El estado del servicio es obligatorio.");
+        }
+
+        Servicio.Estado nuevo;
+        try {
+            nuevo = Servicio.Estado.valueOf(valor.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Estado de servicio inválido. Use PROGRAMADO, EN_PROCESO, COMPLETADO o CANCELADO.");
+        }
+
+        servicio.setEstado(nuevo);
+        if (nuevo == Servicio.Estado.COMPLETADO) {
+            servicio.setProgreso(100);
+        } else if (nuevo == Servicio.Estado.PROGRAMADO) {
+            servicio.setProgreso(0);
+        }
+
+        return ResponseEntity.ok(servicioRepository.save(servicio));
+    }
+
+    /** Actualiza el avance (0-100) y sincroniza el estado operativo. */
+    @PatchMapping("/{id}/progreso")
+    @PreAuthorize("hasAnyRole('ADMIN','TECNICO')")
+    public ResponseEntity<Servicio> cambiarProgreso(
+            @PathVariable Integer id,
+            @RequestBody(required = false) Map<String, Object> body) {
+
+        Servicio servicio = buscarServicio(id);
+        Object valor = body == null ? null : body.get("progreso");
+        if (valor == null || String.valueOf(valor).isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "El progreso del servicio es obligatorio.");
+        }
+
+        int progreso;
+        try {
+            progreso = Integer.parseInt(String.valueOf(valor).trim());
+        } catch (NumberFormatException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "El progreso debe ser un número entero entre 0 y 100.");
+        }
+        if (progreso < 0 || progreso > 100) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "El progreso debe estar entre 0 y 100.");
+        }
+
+        servicio.setProgreso(progreso);
+        if (servicio.getEstado() != Servicio.Estado.CANCELADO) {
+            if (progreso >= 100) {
+                servicio.setEstado(Servicio.Estado.COMPLETADO);
+            } else if (progreso > 0 && servicio.getEstado() == Servicio.Estado.PROGRAMADO) {
+                servicio.setEstado(Servicio.Estado.EN_PROCESO);
+            } else if (progreso == 0 && servicio.getEstado() == Servicio.Estado.COMPLETADO) {
+                servicio.setEstado(Servicio.Estado.EN_PROCESO);
+            }
+        }
+
+        return ResponseEntity.ok(servicioRepository.save(servicio));
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
@@ -144,9 +232,19 @@ public class ServiciosController {
         if (authentication == null || authentication.getName() == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado.");
         }
-        return usuarioRepository.findByCorreo(authentication.getName())
+        return usuarioRepository.findByCorreoIgnoreCase(authentication.getName())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.UNAUTHORIZED, "Usuario no autenticado."));
+    }
+
+    private Servicio buscarServicio(Integer id) {
+        if (id == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "El ID del servicio es obligatorio.");
+        }
+        return servicioRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Servicio no encontrado con ID: " + id));
     }
 
     private Servicio.Estado parseEstado(String estado) {
