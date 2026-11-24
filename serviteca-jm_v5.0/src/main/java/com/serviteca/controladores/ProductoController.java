@@ -41,6 +41,19 @@ public class ProductoController {
         return ResponseEntity.ok(productoRepository.findAllByOrderByNombreProductoAsc());
     }
 
+    /** Categorías disponibles para el modal de inventario. */
+@GetMapping("/categorias")
+public ResponseEntity<List<String>> categorias() {
+    return ResponseEntity.ok(
+        productoRepository.findAllByOrderByNombreProductoAsc()
+            .stream()
+            .map(Producto::getNombreProducto)
+            .distinct()
+            .sorted()
+            .collect(java.util.stream.Collectors.toList())
+    );
+}
+
     @GetMapping("/{id}")
     public ResponseEntity<Producto> getProductoById(@PathVariable Integer id) {
         return productoRepository.findById(id)
