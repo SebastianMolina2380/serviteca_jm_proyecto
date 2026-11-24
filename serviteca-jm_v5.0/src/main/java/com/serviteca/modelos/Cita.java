@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -64,6 +65,32 @@ public class Cita {
             "handler"
     })
     private Vehiculo vehiculo;
+
+    /**
+     * Servicio solicitado por el cliente. Se guarda como texto libre para
+     * conservar lo que pidió aunque el catálogo cambie con el tiempo.
+     */
+    @Size(max = 80, message = "El servicio solicitado no puede superar 80 caracteres")
+    @Column(name = "servicio_solicitado", length = 80)
+    private String servicioSolicitado;
+
+    @Column(name = "observaciones", columnDefinition = "TEXT")
+    private String observaciones;
+
+    /**
+     * Técnico asignado a la cita. Es opcional y, si el usuario se elimina,
+     * la FK queda en NULL (ON DELETE SET NULL) para no perder la cita.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idtecnico")
+    @JsonIgnoreProperties({
+            "citas",
+            "vehiculos",
+            "facturas",
+            "hibernateLazyInitializer",
+            "handler"
+    })
+    private Usuario tecnico;
 
     @OneToOne(mappedBy = "cita", fetch = FetchType.LAZY)
     @ToString.Exclude

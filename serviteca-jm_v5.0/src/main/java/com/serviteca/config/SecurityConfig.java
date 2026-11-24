@@ -59,10 +59,13 @@ public class SecurityConfig {
                                 "/index.html",
                                 "/login.html",
                                 "/recuperar.html",
+                                "/registro.html",
                                 "/login.js",
                                 "/login.css",
                                 "/recuperar.js",
                                 "/recuperar.css",
+                                "/registro.js",
+                                "/registro.css",
                                 "/favicon.ico",
 
                                 "/*.css",
@@ -96,6 +99,7 @@ public class SecurityConfig {
                         // ==============================
                         .requestMatchers(
                                 "/api/auth/login",
+                                "/api/auth/registro",
                                 "/api/auth/me",
                                 "/api/auth/password/**",
                                 "/api/contacto"
@@ -118,6 +122,7 @@ public class SecurityConfig {
                         // ==============================
                         .requestMatchers(
                                 "/dashboard.html",
+                                "/portal-tecnico.html",
                                 "/clientes.html",
                                 "/inventario.html",
                                 "/reportes.html",

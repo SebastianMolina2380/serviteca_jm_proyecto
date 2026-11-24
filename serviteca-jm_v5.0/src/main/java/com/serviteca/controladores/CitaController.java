@@ -18,6 +18,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/citas")
@@ -36,7 +38,7 @@ public class CitaController {
             Usuario usuario = requireCurrentUser(authentication);
             return ResponseEntity.ok(citaRepository.buscarPorUsuario(usuario.getIdUsuario()));
         }
-        return ResponseEntity.ok(citaRepository.findAll());
+        return ResponseEntity.ok(citaRepository.findAllParaPortal());
     }
 
     @GetMapping("/{id}")
@@ -107,11 +109,15 @@ public class CitaController {
         }
 
         cita.setVehiculo(vehiculo);
+        cita.setServicioSolicitado(textoOpcional(cita.getServicioSolicitado()));
+        cita.setObservaciones(textoOpcional(cita.getObservaciones()));
 
         if (cliente) {
             cita.setUsuario(usuarioActual);
-            // Un cliente no puede crear una cita ya confirmada o completada.
+            // Un cliente no puede crear una cita ya confirmada o completada
+            // ni asignarse un técnico a sí mismo.
             cita.setEstado(Cita.Estado.PENDIENTE);
+            cita.setTecnico(null);
         } else {
             Usuario propietario;
             if (cita.getUsuario() != null && cita.getUsuario().getIdUsuario() != null) {
@@ -129,6 +135,7 @@ public class CitaController {
             if (cita.getEstado() == null) {
                 cita.setEstado(Cita.Estado.PENDIENTE);
             }
+            cita.setTecnico(resolverTecnico(cita.getTecnico()));
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(citaRepository.save(cita));
@@ -161,6 +168,12 @@ public class CitaController {
 
         cita.setFecha(citaDetalles.getFecha());
         cita.setHora(citaDetalles.getHora());
+        if (citaDetalles.getServicioSolicitado() != null) {
+            cita.setServicioSolicitado(textoOpcional(citaDetalles.getServicioSolicitado()));
+        }
+        if (citaDetalles.getObservaciones() != null) {
+            cita.setObservaciones(textoOpcional(citaDetalles.getObservaciones()));
+        }
 
         if (cliente) {
             // El cliente solo puede cancelar; no puede confirmar, completar ni reasignar.
@@ -206,6 +219,95 @@ public class CitaController {
             cita.setUsuario(propietario);
         }
 
+        if (!cliente && citaDetalles.getTecnico() != null) {
+            cita.setTecnico(resolverTecnico(citaDetalles.getTecnico()));
+        }
+
+        return ResponseEntity.ok(citaRepository.save(cita));
+    }
+
+    /** Cambia únicamente el estado de la cita (los 4 estados existentes). */
+    @PatchMapping("/{id}/estado")
+    @PreAuthorize("hasAnyRole('ADMIN','TECNICO')")
+    public ResponseEntity<Cita> cambiarEstado(@PathVariable Integer id,
+                                              @RequestBody(required = false) Map<String, String> body) {
+        Cita cita = buscarCita(id);
+
+        if (cita.getFactura() != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "La cita ya está facturada y no puede modificarse.");
+        }
+
+        String valor = body == null ? null : body.get("estado");
+        if (valor == null || valor.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "El estado de la cita es obligatorio.");
+        }
+
+        Cita.Estado nuevo;
+        try {
+            nuevo = Cita.Estado.valueOf(valor.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Estado de cita inválido. Use PENDIENTE, CONFIRMADO, COMPLETADA o CANCELADA.");
+        }
+
+        cita.setEstado(nuevo);
+        return ResponseEntity.ok(citaRepository.save(cita));
+    }
+
+    /** Actualiza las observaciones operativas de la cita. */
+    @PatchMapping("/{id}/observaciones")
+    @PreAuthorize("hasAnyRole('ADMIN','TECNICO')")
+    public ResponseEntity<Cita> actualizarObservaciones(
+            @PathVariable Integer id,
+            @RequestBody(required = false) Map<String, String> body) {
+
+        Cita cita = buscarCita(id);
+        if (cita.getFactura() != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "La cita ya está facturada y no puede modificarse.");
+        }
+
+        String observaciones = body == null ? null : body.get("observaciones");
+        cita.setObservaciones(textoOpcional(observaciones));
+        return ResponseEntity.ok(citaRepository.save(cita));
+    }
+
+    /**
+     * Asigna o desasigna un técnico. Enviar {@code idtecnico: null} deja la
+     * cita sin técnico; el usuario indicado debe tener rol TÉCNICO y estar
+     * activo.
+     */
+    @PatchMapping("/{id}/tecnico")
+    @PreAuthorize("hasAnyRole('ADMIN','TECNICO')")
+    public ResponseEntity<Cita> asignarTecnico(
+            @PathVariable Integer id,
+            @RequestBody(required = false) Map<String, Object> body) {
+
+        Cita cita = buscarCita(id);
+        if (cita.getFactura() != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "La cita ya está facturada y no puede modificarse.");
+        }
+
+        Object valor = body == null ? null
+                : (body.containsKey("idtecnico") ? body.get("idtecnico") : body.get("idTecnico"));
+
+        if (valor == null || String.valueOf(valor).isBlank()
+                || "null".equalsIgnoreCase(String.valueOf(valor))) {
+            cita.setTecnico(null);
+        } else {
+            Integer idTecnico;
+            try {
+                idTecnico = Integer.valueOf(String.valueOf(valor).trim());
+            } catch (NumberFormatException ex) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "El ID del técnico no es válido.");
+            }
+            cita.setTecnico(resolverTecnicoPorId(idTecnico));
+        }
+
         return ResponseEntity.ok(citaRepository.save(cita));
     }
 
@@ -247,9 +349,37 @@ public class CitaController {
         if (authentication == null || authentication.getName() == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado.");
         }
-        return usuarioRepository.findByCorreo(authentication.getName())
+        return usuarioRepository.findByCorreoIgnoreCase(authentication.getName())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.UNAUTHORIZED, "Usuario no autenticado."));
+    }
+
+    /**
+     * Resuelve el técnico recibido en el cuerpo. Devuelve null cuando no se
+     * indica ninguno y valida rol/estado cuando sí llega un ID.
+     */
+    private Usuario resolverTecnico(Usuario tecnico) {
+        if (tecnico == null || tecnico.getIdUsuario() == null) return null;
+        return resolverTecnicoPorId(tecnico.getIdUsuario());
+    }
+
+    private Usuario resolverTecnicoPorId(Integer idTecnico) {
+        Usuario encontrado = usuarioRepository.findById(idTecnico)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Técnico no encontrado."));
+
+        if (encontrado.getRol() != Usuario.Rol.TECNICO
+                || encontrado.getEstado() == Usuario.Estado.INACTIVO) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "El usuario indicado no es un técnico activo.");
+        }
+        return encontrado;
+    }
+
+    private String textoOpcional(String valor) {
+        if (valor == null) return null;
+        String limpio = valor.trim();
+        return limpio.isEmpty() ? null : limpio;
     }
 
     private void validarAccesoCita(Cita cita, Authentication authentication) {

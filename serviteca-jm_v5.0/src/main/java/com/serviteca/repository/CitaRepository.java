@@ -33,9 +33,15 @@ public interface CitaRepository extends JpaRepository<Cita, Integer> {
 
     long countByEstadoAndFechaBetween(Cita.Estado estado, LocalDate desde, LocalDate hasta);
 
+    @EntityGraph(attributePaths = {"usuario", "vehiculo", "tecnico"})
     @Query("SELECT c FROM Cita c WHERE c.usuario.idUsuario = :idUsuario " +
             "OR c.vehiculo.usuario.idUsuario = :idUsuario ORDER BY c.idCita ASC")
     List<Cita> buscarPorUsuario(@Param("idUsuario") Integer idUsuario);
+
+    /** Listado del portal técnico: todas las citas con sus relaciones. */
+    @EntityGraph(attributePaths = {"usuario", "vehiculo", "tecnico"})
+    @Query("SELECT c FROM Cita c ORDER BY c.fecha DESC, c.hora DESC")
+    List<Cita> findAllParaPortal();
 
     // Conflicto de horario basado únicamente en fecha y hora, ignorando citas canceladas
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END " +

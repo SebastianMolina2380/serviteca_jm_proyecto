@@ -5,7 +5,8 @@
 //
 // NavigationContainer
 // └── Stack (header oculto)
-//     ├── "Login"  -> LoginScreen        (si NO hay sesión)
+//     ├── "Login"    -> LoginScreen        (si NO hay sesión)
+//     ├── "Registro" -> RegistroScreen     (si NO hay sesión)
 //     └── "Main"   -> Bottom Tabs        (si hay sesión)
 //         ├── "Inicio"    -> DashboardScreen
 //         ├── "Solicitar" -> SolicitarMantenimientoScreen
@@ -21,6 +22,7 @@ import Loader from '../components/Loader';
 import { useAuth } from '../context/AuthContext';
 import DashboardScreen from '../screens/DashboardScreen';
 import LoginScreen from '../screens/LoginScreen';
+import RegistroScreen from '../screens/RegistroScreen';
 import SolicitarMantenimientoScreen from '../screens/SolicitarMantenimientoScreen';
 import VehiculosScreen from '../screens/VehiculosScreen';
 import { colors } from '../theme';
@@ -85,7 +87,10 @@ export default function RootNavigator() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!user ? (
-          <Stack.Screen name="Login" component={LoginScreen} />
+          <>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Registro" component={RegistroScreen} />
+          </>
         ) : (
           <Stack.Screen name="Main" component={MainTabs} />
         )}

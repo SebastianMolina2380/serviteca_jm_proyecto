@@ -66,11 +66,21 @@ function normalize(c) {
     estado: c.estado,
     cliente: c.usuario?.nombre
       || c.vehiculo?.usuario?.nombre
+      || c.vehiculo?.usuario?.nom
       || `Cliente #${c.usuario?.idUsuario || c.vehiculo?.usuario?.idUsuario || '—'}`,
     vehiculo: c.vehiculo
       ? `${c.vehiculo.placa || ''} ${c.vehiculo.marca || ''} ${c.vehiculo.modelo || ''}`.trim()
-      : '—'
+      : '—',
+    servicio: c.servicioSolicitado || '—',
+    tecnico: c.tecnico?.nombre || '—',
+    observaciones: c.observaciones || ''
   };
+}
+
+function escapeHtml(valor) {
+  return String(valor == null ? '' : valor).replace(/[&<>"']/g, function (c) {
+    return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+  });
 }
 
 /* ¿Pasa el filtro de estado? 'all' muestra todo; el resto se
@@ -91,7 +101,8 @@ function renderCitas() {
   const rows = citasData.filter(function (i) {
     if (!pasaFiltro(i.estado)) return false;
     if (!q) return true;
-    return `${i.id} ${i.cliente} ${i.vehiculo}`.toLowerCase().includes(q);
+    return `${i.id} ${i.cliente} ${i.vehiculo} ${i.servicio} ${i.tecnico}`
+      .toLowerCase().includes(q);
   });
 
   const tb = document.getElementById('tbody-citas');
@@ -102,10 +113,10 @@ function renderCitas() {
         const puedeBorrar = ['admin', 'tecnico'].includes(rolUsuario());
         return `<tr>
           <td style="color:var(--yellow);font-weight:700;">TKT-${String(i.id).padStart(4, '0')}</td>
-          <td>${i.cliente}</td>
-          <td>${i.vehiculo}</td>
-          <td>Servicio automotriz</td>
-          <td>—</td>
+          <td>${escapeHtml(i.cliente)}</td>
+          <td>${escapeHtml(i.vehiculo)}</td>
+          <td>${escapeHtml(i.servicio)}</td>
+          <td>${escapeHtml(i.tecnico)}</td>
           <td>${i.fecha || '—'} ${String(i.hora || '').slice(0, 5)}</td>
           <td><span class="badge ${citasBadge(i.estado)}">${i.estado}</span></td>
           <td>${puedeBorrar ? `<button type="button" class="btn-sm-g" data-delete-cita="${i.id}">🗑 Eliminar</button>` : ''}</td>

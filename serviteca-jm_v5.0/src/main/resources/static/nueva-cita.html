@@ -293,11 +293,12 @@
         </div>
         <div class="fg">
           <label class="fl" for="tecnico-asignado">Técnico asignado</label>
-          <select class="fc" id="tecnico-asignado" name="technician" required>
-            <option value="">- Seleccione técnico -</option>
-            <option>Juan Gómez - Disponible</option>
-            <option>Andrés López - Disponible</option>
+          <select class="fc" id="tecnico-asignado" name="technician">
+            <option value="">Sin asignar</option>
           </select>
+          <div style="font-size: 0.7rem; color: var(--gray1); margin-top: 5px;">
+            Si eres cliente, el taller asignará el técnico al confirmar la cita.
+          </div>
         </div>
         <div class="fg">
           <label class="fl" for="observaciones">Observaciones del cliente</label>
@@ -318,27 +319,31 @@
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px">
             <div>
               <div style="font-size: 0.62rem; color: var(--gray1); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;">Cliente</div>
-              <div style="font-size: 0.88rem; color: #fff; font-weight: 600">Carlos Mendoza</div>
+              <div id="resumen-cliente" style="font-size: 0.88rem; color: #fff; font-weight: 600">—</div>
             </div>
             <div>
               <div style="font-size: 0.62rem; color: var(--gray1); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;">Vehículo</div>
-              <div style="font-size: 0.88rem; color: #fff; font-weight: 600">Toyota Corolla · ABC-123</div>
+              <div id="resumen-vehiculo" style="font-size: 0.88rem; color: #fff; font-weight: 600">—</div>
             </div>
             <div>
               <div style="font-size: 0.62rem; color: var(--gray1); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;">Servicio</div>
-              <div style="font-size: 0.88rem; color: var(--yellow); font-weight: 700; font-family: 'Oswald', sans-serif;">Frenos</div>
+              <div id="resumen-servicio" style="font-size: 0.88rem; color: var(--yellow); font-weight: 700; font-family: 'Oswald', sans-serif;">—</div>
             </div>
             <div>
               <div style="font-size: 0.62rem; color: var(--gray1); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;">Técnico</div>
-              <div style="font-size: 0.88rem; color: #fff; font-weight: 600">Juan Gómez</div>
+              <div id="resumen-tecnico" style="font-size: 0.88rem; color: #fff; font-weight: 600">Sin asignar</div>
             </div>
             <div>
               <div style="font-size: 0.62rem; color: var(--gray1); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;">Fecha y Hora</div>
-              <div style="font-size: 0.88rem; color: #fff; font-weight: 600">20 Mar 2026 · 09:00 AM</div>
+              <div id="resumen-fecha" style="font-size: 0.88rem; color: #fff; font-weight: 600">—</div>
             </div>
             <div>
               <div style="font-size: 0.62rem; color: var(--gray1); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;">Notificación</div>
               <div style="font-size: 0.88rem; color: var(--green); font-weight: 600;"> WhatsApp + ✉️ Correo</div>
+            </div>
+            <div style="grid-column: 1 / -1">
+              <div style="font-size: 0.62rem; color: var(--gray1); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;">Observaciones</div>
+              <div id="resumen-observaciones" style="font-size: 0.82rem; color: var(--gray1); font-weight: 500;">Sin observaciones</div>
             </div>
           </div>
         </div>

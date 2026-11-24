@@ -1,9 +1,10 @@
 // ============================================================
 // SERVITECA JM - SERVICIO DE AUTENTICACIÓN
 // ============================================================
-// POST /api/auth/login  -> crea la sesión (cookie SERVITECASESSION)
-// GET  /api/auth/me     -> usuario de la sesión actual
-// POST /api/auth/logout -> cierra la sesión
+// POST /api/auth/login    -> crea la sesión (cookie SERVITECASESSION)
+// POST /api/auth/registro -> crea una cuenta de CLIENTE
+// GET  /api/auth/me       -> usuario de la sesión actual
+// POST /api/auth/logout   -> cierra la sesión
 // ============================================================
 
 import api, { clearSession } from './api';
@@ -21,6 +22,30 @@ export async function login(correo, contrasena, rol) {
   });
 
   return usuario;
+}
+
+// Registro público: el backend fuerza Rol.CLIENTE y Estado.ACTIVO.
+// No inicia sesión; el usuario entra después desde el login.
+export async function registro({
+  nombre,
+  numeroDoc,
+  tipoDocumento = 'CC',
+  correo,
+  telefono,
+  ciudad,
+  direccion,
+  contrasena,
+}) {
+  return api.post('/auth/registro', {
+    nombre: nombre.trim(),
+    numeroDoc: numeroDoc.trim(),
+    tipoDocumento,
+    correo: correo.trim().toLowerCase(),
+    telefono: telefono ? telefono.trim() : '',
+    ciudad: ciudad ? ciudad.trim() : '',
+    direccion: direccion ? direccion.trim() : '',
+    contrasena,
+  });
 }
 
 export async function me() {

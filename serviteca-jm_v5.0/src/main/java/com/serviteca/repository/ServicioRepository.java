@@ -3,6 +3,7 @@ package com.serviteca.repository;
 import com.serviteca.modelos.Servicio;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,6 +30,11 @@ public interface ServicioRepository extends JpaRepository<Servicio, Integer> {
     long countByEstado(Servicio.Estado estado);
 
     List<Servicio> findTop5ByEstadoOrderByFechaServicioAsc(Servicio.Estado estado);
+
+    /** Listado del portal técnico con vehículo y propietario ya cargados. */
+    @EntityGraph(attributePaths = {"vehiculo", "vehiculo.usuario"})
+    @Query("SELECT s FROM Servicio s ORDER BY s.idServicio DESC")
+    List<Servicio> findAllParaPortal();
 
     /**
      * Listado paginado con búsqueda y filtros resueltos en la base de datos.
