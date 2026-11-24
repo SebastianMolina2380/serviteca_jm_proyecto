@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  */
 public class SeguimientoDTOs {
 
-    private Long idseguimiento;
+    private Integer idseguimiento;
 
     @NotNull(message = "El usuario es obligatorio")
     private Integer idusuario;
@@ -48,11 +48,11 @@ public class SeguimientoDTOs {
 
     private LocalDateTime fecha;
 
-    public Long getIdseguimiento() {
+    public Integer getIdseguimiento() {
         return idseguimiento;
     }
 
-    public void setIdseguimiento(Long idseguimiento) {
+    public void setIdseguimiento(Integer idseguimiento) {
         this.idseguimiento = idseguimiento;
     }
 

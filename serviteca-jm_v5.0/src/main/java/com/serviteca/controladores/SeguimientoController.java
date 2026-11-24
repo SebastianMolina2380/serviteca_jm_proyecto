@@ -43,7 +43,7 @@ public class SeguimientoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SeguimientoDTOs> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<SeguimientoDTOs> obtenerPorId(@PathVariable Integer id) {
         return seguimientoRepository.findById(id)
                 .map(s -> ResponseEntity.ok(toDTO(s)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -93,7 +93,7 @@ public class SeguimientoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<SeguimientoDTOs> actualizar(
-            @PathVariable Long id,
+            @PathVariable Integer id,
             @Valid @RequestBody SeguimientoDTOs dto) {
 
         return seguimientoRepository.findById(id)
@@ -105,7 +105,7 @@ public class SeguimientoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         if (!seguimientoRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }

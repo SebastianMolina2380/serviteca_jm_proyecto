@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SeguimientoRepository extends JpaRepository<Seguimiento, Long> {
+public interface SeguimientoRepository extends JpaRepository<Seguimiento, Integer> {
 
     List<Seguimiento> findByUsuario_IdUsuario(Integer idUsuario);
 

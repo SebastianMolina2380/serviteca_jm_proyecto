@@ -19,7 +19,7 @@ public class Seguimiento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idseguimiento")
-    private Long idSeguimiento;
+    private Integer idSeguimiento;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idusuario", nullable = false)
