@@ -74,15 +74,15 @@
     admin: [
       'dashboard', 'portal-tecnico', 'clientes', 'citas', 'nueva-cita', 'vehiculo',
       'nuevo-vehiculo', 'usuarios', 'nuevo-usuario', 'inventario',
-      'facturacion', 'reportes'
+      'facturacion', 'reportes', 'accesibilidad'
     ],
     tecnico: [
       'dashboard', 'portal-tecnico', 'clientes', 'citas', 'nueva-cita', 'vehiculo',
-      'nuevo-vehiculo', 'inventario', 'facturacion', 'reportes'
+      'nuevo-vehiculo', 'inventario', 'facturacion', 'reportes', 'accesibilidad'
     ],
     cliente: [
       'citas', 'nueva-cita', 'vehiculo', 'nuevo-vehiculo',
-      'facturacion', 'portal-cliente'
+      'facturacion', 'portal-cliente', 'accesibilidad'
     ]
   };
 
@@ -112,7 +112,8 @@
     facturacion: '💲',
     reportes: '📈',
     'portal-cliente': '🏠',
-    'portal-tecnico': '🔧'
+    'portal-tecnico': '🔧',
+    accesibilidad: '♿'
   };
 
   const TEXTO_MENU = {
@@ -126,13 +127,14 @@
     facturacion: 'Facturación',
     reportes: 'Reportes',
     'portal-cliente': 'Portal Cliente',
-    'portal-tecnico': 'Portal Técnico'
+    'portal-tecnico': 'Portal Técnico',
+    accesibilidad: 'Accesibilidad'
   };
 
   const SECCIONES_MENU = [
     {
       titulo: 'Principal',
-      items: ['dashboard', 'citas', 'nueva-cita', 'clientes', 'vehiculo']
+      items: ['dashboard', 'citas', 'nueva-cita', 'clientes', 'vehiculo', 'accesibilidad']
     },
     {
       titulo: 'Administración',
@@ -417,6 +419,17 @@
       const rotulo = titulosEspeciales[titulo] || titulo;
 
       const enlaces = visibles.map((item) => {
+        /* Accesibilidad abre un panel; no es una navegación a otra vista. */
+        if (item === 'accesibilidad') {
+          return (
+            '<button type="button" class="sb-link jm-a11y-trigger"' +
+            ' data-jm-accesibilidad aria-haspopup="dialog" aria-expanded="false"' +
+            ' aria-controls="jm-a11y-panel">' +
+            '<span class="sb-ico" aria-hidden="true">♿</span> Accesibilidad' +
+            '</button>'
+          );
+        }
+
         const activo = item === paginaActual;
         return (
           '<a class="sb-link' + (activo ? ' active' : '') + '"' +

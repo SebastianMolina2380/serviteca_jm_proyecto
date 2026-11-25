@@ -186,3 +186,332 @@ input[type='radio'] {
     outline: 3px solid CanvasText;
   }
 }
+
+/* ---------------------------------------------------------
+   6. PREFERENCIAS DEL USUARIO (panel de accesibilidad)
+   ---------------------------------------------------------
+   jm-experiencia.js escribe estos atributos en <html> y los
+   conserva en localStorage. Se define un factor de escala para
+   que también crezca el `font-size: 15px` de serviteca-premium.css.
+   --------------------------------------------------------- */
+:root {
+  --jm-fuente-factor: 1;
+}
+
+:root[data-jm-fuente='90']  { --jm-fuente-factor: 0.9; }
+:root[data-jm-fuente='100'] { --jm-fuente-factor: 1; }
+:root[data-jm-fuente='112'] { --jm-fuente-factor: 1.12; }
+:root[data-jm-fuente='125'] { --jm-fuente-factor: 1.25; }
+:root[data-jm-fuente='140'] { --jm-fuente-factor: 1.4; }
+
+/* `rem` en :root equivale al tamaño inicial del navegador; así se
+   respeta la preferencia del usuario además del factor del panel. */
+:root { font-size: calc(1rem * var(--jm-fuente-factor)); }
+body  { font-size: 0.9375rem; }
+
+/* Espaciado / legibilidad */
+:root[data-jm-espaciado='amplio'] body {
+  line-height: 1.75;
+  word-spacing: 0.04em;
+}
+:root[data-jm-espaciado='amplio'] :is(p, li, td, th, .pg-sub, .sb-link) {
+  line-height: 1.65;
+}
+
+/* Contraste reforzado sobre el tema premium (fondos claros). */
+:root[data-jm-contraste='alto'] {
+  --jm-ink: #000000;
+  --jm-copy: #1B2A20;
+  --jm-brass: #715617;
+  --jm-brass-light: #8A6A1D;
+  --gray1: #1B2A20;
+  --gray2: #33443A;
+  --jm-soft-line: #78857B;
+  --jm-field-bg: #FFFFFF;
+  --jm-field-fg: #000000;
+  --jm-field-border: #1B2A20;
+  --jm-field-border-hover: #000000;
+  --jm-field-placeholder: #33443A;
+  --jm-field-focus-border: #0B4A1E;
+  --jm-field-focus-ring: rgba(11, 74, 30, 0.38);
+  --jm-focus-outline: #0B4A1E;
+  --jm-focus-halo: #FFFFFF;
+}
+
+/* Movimiento reducido elegido por el usuario (además del media query). */
+:root[data-jm-movimiento='reducido'] *,
+:root[data-jm-movimiento='reducido'] *::before,
+:root[data-jm-movimiento='reducido'] *::after {
+  scroll-behavior: auto !important;
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* ---------------------------------------------------------
+   7. BOTÓN Y PANEL DE ACCESIBILIDAD
+   ---------------------------------------------------------
+   El botón del sidebar lo genera role-guard.js; en páginas sin
+   menú lateral el módulo crea este botón flotante abajo a la
+   izquierda (zona libre: WhatsApp/chatbot están abajo a la derecha).
+   --------------------------------------------------------- */
+.jm-a11y-flotante {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 2147482990;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(211, 180, 125, 0.65);
+  background: #18211B;
+  color: #D0B77D;
+  font-size: 21px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.38);
+}
+
+.jm-a11y-flotante:hover { background: #243029; }
+
+.jm-a11y-trigger {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  font-family: inherit;
+  text-align: left;
+}
+
+.jm-a11y-panel {
+  position: fixed;
+  left: 16px;
+  bottom: 70px;
+  z-index: 2147483000;
+  width: min(320px, calc(100vw - 32px));
+  max-height: calc(100vh - 92px);
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 16px;
+  border: 1px solid rgba(211, 180, 125, 0.5);
+  border-radius: 16px;
+  background: #18211B;
+  color: #F6F3EC;
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  box-shadow: 0 20px 54px rgba(0, 0, 0, 0.45);
+}
+
+.jm-a11y-panel[hidden] { display: none !important; }
+
+.jm-a11y-cab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.jm-a11y-cab > span { color: #D0B77D; font-size: 1.2rem; }
+
+.jm-a11y-cab h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.jm-a11y-cerrar {
+  margin-left: auto;
+  width: 32px;
+  height: 32px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: #F6F3EC;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.jm-a11y-cerrar:hover { border-color: rgba(211, 180, 125, 0.6); }
+
+.jm-a11y-grupo {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(211, 180, 125, 0.22);
+}
+
+.jm-a11y-grupo > span {
+  display: block;
+  margin-bottom: 8px;
+  color: #C9BFAA;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.jm-a11y-controles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.jm-a11y-btn {
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid rgba(211, 180, 125, 0.5);
+  border-radius: 9px;
+  background: #202B23;
+  color: #F6F3EC;
+  font-family: inherit;
+  font-size: 0.84rem;
+  cursor: pointer;
+}
+
+.jm-a11y-btn:hover { background: #2C3A30; }
+
+.jm-a11y-btn[aria-pressed='true'] {
+  border-color: transparent;
+  background: #D0B77D;
+  color: #101713;
+  font-weight: 700;
+}
+
+.jm-a11y-nivel {
+  min-width: 48px;
+  color: #D0B77D;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.jm-a11y-pie {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+/* ---------------------------------------------------------
+   8. TRANSICIÓN DE MÓDULOS (temática serviteca)
+   ---------------------------------------------------------
+   Se muestra solo tras un retardo para no parpadear en cargas
+   instantáneas. `pointer-events: none` garantiza que nunca
+   bloquee la interfaz aunque un evento se pierda.
+   --------------------------------------------------------- */
+.jm-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 2147482995;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  background: rgba(16, 23, 19, 0.72);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 180ms ease, visibility 180ms ease;
+}
+
+.jm-loader.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.jm-loader[hidden] { display: none !important; }
+
+.jm-loader-card {
+  min-width: min(260px, 84vw);
+  padding: 20px 22px;
+  border: 1px solid rgba(211, 180, 125, 0.45);
+  border-radius: 16px;
+  background: #18211B;
+  color: #F6F3EC;
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  text-align: center;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+}
+
+.jm-loader-track {
+  position: relative;
+  width: 180px;
+  height: 34px;
+  margin: 0 auto 12px;
+  overflow: hidden;
+  border-bottom: 2px dashed rgba(211, 180, 125, 0.5);
+}
+
+.jm-loader-car {
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  width: 46px;
+  height: 18px;
+  animation: jm-auto-avance 1.5s ease-in-out infinite;
+}
+
+.jm-loader-chasis {
+  position: absolute;
+  right: 5px;
+  bottom: 4px;
+  left: 5px;
+  height: 11px;
+  border-radius: 7px 11px 3px 3px;
+  background: #D0B77D;
+}
+
+.jm-loader-cabina {
+  position: absolute;
+  bottom: 12px;
+  left: 14px;
+  width: 18px;
+  height: 9px;
+  border-radius: 6px 7px 0 0;
+  background: #D0B77D;
+  opacity: 0.75;
+}
+
+.jm-loader-rueda {
+  position: absolute;
+  bottom: 0;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #D0B77D;
+  border-radius: 50%;
+  background: #101713;
+  animation: jm-rueda-giro 0.55s linear infinite;
+}
+
+.jm-loader-rueda--i { left: 4px; }
+.jm-loader-rueda--d { right: 4px; }
+
+.jm-loader-texto {
+  margin: 0;
+  color: #D0B77D;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+@keyframes jm-auto-avance {
+  0%   { transform: translateX(0); }
+  50%  { transform: translateX(134px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes jm-rueda-giro {
+  to { transform: rotate(360deg); }
+}
+
+/* Preferencia del panel o del sistema: diagnóstico estático. */
+@media (prefers-reduced-motion: reduce) {
+  .jm-loader-car,
+  .jm-loader-rueda { animation: none; }
+  .jm-loader-car { left: 50%; transform: translateX(-50%); }
+}
+
+:root[data-jm-movimiento='reducido'] .jm-loader-car,
+:root[data-jm-movimiento='reducido'] .jm-loader-rueda { animation: none; }
+
+:root[data-jm-movimiento='reducido'] .jm-loader-car {
+  left: 50%;
+  transform: translateX(-50%);
+}
