@@ -44,13 +44,20 @@ class CitasE2ETest extends SeleniumBase {
         escribir(By.id("telefono-cliente"), "3001234567");
         escribir(By.id("correo-cliente"), "cliente." + documento + "@test.local");
         clic(By.id("btn-continuar-cliente"));
+
+        String alertaCliente = descartarAlertSiExiste();
+        org.junit.jupiter.api.Assertions.assertNull(
+                alertaCliente,
+                "El backend rechazó el cliente: " + alertaCliente
+        );
+
         esperar(By.id("p2"));
 
         // PASO 2 · vehículo nuevo
         clic(By.id("vh-tab-nuevo"));
         escribir(By.id("placa-vehiculo"), placa);
-        new Select(esperar(By.id("tipo-vehiculo"))).selectByVisibleText("Automóvil");
-        new Select(esperar(By.id("marca-vehiculo"))).selectByVisibleText("Toyota");
+       new Select(esperar(By.id("tipo-vehiculo"))).selectByIndex(1);
+       new Select(esperar(By.id("marca-vehiculo"))).selectByIndex(1);
         escribir(By.id("modelo-vehiculo"), "Corolla");
         escribir(By.id("anio-vehiculo"), "2020");
         escribir(By.id("kilometraje-vehiculo"), "10000");
@@ -62,13 +69,18 @@ class CitasE2ETest extends SeleniumBase {
         // para no chocar con la restricción global fecha+hora del backend.
         LocalDate fecha = LocalDate.now().plusDays(60 + new Random().nextInt(300));
         fijarValor("fecha-preferida", fecha.format(DateTimeFormatter.ISO_LOCAL_DATE));
-        new Select(esperar(By.id("hora-disponible")))
-                .selectByVisibleText(HORAS.get(new Random().nextInt(HORAS.size())));
+        new Select(esperar(By.id("hora-disponible"))).selectByIndex(1);
         clic(By.cssSelector("#p3 button[onclick='goStep(4)']"));
         esperar(By.id("p4"));
 
         // PASO 4 · confirmación real contra /api/citas
         clic(By.id("btn-confirmar-cita"));
+
+        String alertaCita = descartarAlertSiExiste();
+        org.junit.jupiter.api.Assertions.assertNull(
+                alertaCita,
+                "El backend rechazó la cita: " + alertaCita
+        );
         WebElement ticketElemento = wait.until(
                 ExpectedConditions.visibilityOfElementLocated(By.id("cita-ticket")));
         wait.until(d -> ticketElemento.getText().matches("TKT-\\d+"));

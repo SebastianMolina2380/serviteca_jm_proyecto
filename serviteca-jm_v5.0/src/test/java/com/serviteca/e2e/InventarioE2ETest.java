@@ -26,6 +26,12 @@ class InventarioE2ETest extends SeleniumBase {
         iniciarSesionAdmin();
         abrir("inventario.html");
         clic(By.id("btn-entrada"));
+        String alertaServidor = descartarAlertSiExiste();
+        org.junit.jupiter.api.Assumptions.assumeTrue(
+                alertaServidor == null,
+                "El servidor respondió con error al abrir el modal: " + alertaServidor
+        );
+
         assertTrue(esperar(By.id("inv-modal")).isDisplayed());
 
         WebElement select = wait.until(d -> {

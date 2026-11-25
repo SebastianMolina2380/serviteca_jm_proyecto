@@ -59,7 +59,8 @@ public abstract class SeleniumBase {
 
         ChromeOptions opciones = new ChromeOptions();
         if (!"false".equalsIgnoreCase(
-                System.getenv().getOrDefault("SERVITECA_E2E_HEADLESS", "true"))) {
+                System.getProperty("SERVITECA_E2E_HEADLESS",
+                System.getenv().getOrDefault("SERVITECA_E2E_HEADLESS", "true")))) {
             opciones.addArguments("--headless=new");
         }
         opciones.addArguments(
@@ -167,9 +168,10 @@ public abstract class SeleniumBase {
      * en el repositorio: se leen de variables de entorno.
      */
     protected void iniciarSesionAdmin() {
-        String correo = System.getenv("SERVITECA_E2E_ADMIN_EMAIL");
-        String clave = System.getenv("SERVITECA_E2E_ADMIN_PASSWORD");
-
+     String correo = System.getProperty("SERVITECA_E2E_ADMIN_EMAIL",
+        System.getenv("SERVITECA_E2E_ADMIN_EMAIL"));
+     String clave = System.getProperty("SERVITECA_E2E_ADMIN_PASSWORD",
+        System.getenv("SERVITECA_E2E_ADMIN_PASSWORD"));
         assumeTrue(correo != null && !correo.isBlank()
                         && clave != null && !clave.isBlank(),
                 "Define SERVITECA_E2E_ADMIN_EMAIL y SERVITECA_E2E_ADMIN_PASSWORD "
@@ -182,13 +184,27 @@ public abstract class SeleniumBase {
         clic(By.cssSelector("#loginForm button[type='submit']"));
         wait.until(ExpectedConditions.urlContains("dashboard.html"));
     }
+    /**
+     * Descarta cualquier alert inesperado y devuelve su texto.
+     * Si no hay alert, devuelve null.
+     */
+    protected String descartarAlertSiExiste() {
+        try {
+            org.openqa.selenium.Alert alerta = driver.switchTo().alert();
+            String texto = alerta.getText();
+            alerta.accept();
+            return texto;
+        } catch (org.openqa.selenium.NoAlertPresentException sinAlerta) {
+            return null;
+        }
+    }
 
     private static String sinBarraFinal(String url) {
         return url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
     }
 
     private static long leerPausa() {
-        String valor = System.getenv().getOrDefault("SERVITECA_E2E_PAUSA_MS", "0");
+        String valor = System.getProperty("SERVITECA_E2E_PAUSA_MS", System.getenv().getOrDefault("SERVITECA_E2E_PAUSA_MS", "0"));
         try {
             return Math.max(0, Long.parseLong(valor.trim()));
         } catch (NumberFormatException ignorado) {
